@@ -1,0 +1,9 @@
+# R Studio
+.Rproj.user
+.Rhistory
+.RData
+.Ruserdata
+
+# custom
+thesis_data
+etymologies_of_jargon.Rproj
