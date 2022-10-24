@@ -3,7 +3,12 @@
 .Rhistory
 .RData
 .Ruserdata
+.RDataTmp
 
 # custom
 thesis_data
 etymologies_of_jargon.Rproj
+
+# miscellaneous
+.DS_Store
+playground.*
