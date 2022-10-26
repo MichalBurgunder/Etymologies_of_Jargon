@@ -33,7 +33,14 @@ add_virtual_columns <- function(all_data) {
 # this is the function that computes all etymology depths, for all dat sets
 compute_all_depths <- function(data) {
     for (i in 1:nrow(data)) {
-        populate_depths(data, i, TRUE)
+        if(i %% 40 == 0) {
+            print(sprintf("computing entry %d", i))
+        }
+        if(i==100) {
+            return()
+        }
+        # new <- data.frame(name=data[i,"Cleaned.Name"])
+        data <- populate_depths(data, i)
 
     }
 }
@@ -50,45 +57,67 @@ find_location_jargon <- function(data_frame, word) {
     return(-1)
 }
 
+check_if_recursive <- function(names_found, current_name) {
+    for(i in 1:nrow(names_found)) {
+        # print("hi")
+        # print(names_found)
+        # print(current_name)
+        if(names_found[i,] == current_name) {
+            # print("??")
+            return(0)
+        }
+    }
+    return(-1)
+}
 # checks if a variable is an integer
 is_integer <- function(x) {
     return(grepl("^[0-9]{1,}$", x=x))
 }
 # computes the etymology depth of any given entry
-populate_depths <- function(data_frame, entry, first=FALSE) {
-    # if (data_frame[entry,][etymology_depth] != -1) {
-    #     # already done. We go back
-    #     return(data_frame[entry,][etymology_depth])
-    # }
+populate_depths <- function(data_frame, entry, found_names=data.frame(name=data_frame[entry,"Cleaned.Name"])) {
+    # we add things to our names list, so that if there is a recursive entry, we can handle it
+    # print(found_names)
+    # q()
+    
+    
 
     final_number <- -1 # denotes an entry that hasn't been checked yet
 
     for (i in 1:length((jargon_entries))) {
-        # check to see if we need to go in, in the first place
-        # if(i == 10 && first == TRUE) {
-        #     break
-        # }
-        print(i)
-        print(data_frame[entry,][jargon_entries[i]])
+
+        # print(i)
+        # print(data_frame[entry,][jargon_entries[i]])
         if (data_frame[entry,][jargon_entries[i]] != "") {
-            print("here")
+            # print("here")
             # jargon word has been found. Therefore, we need to go into it,
             # and find the depth of this jargon
             jargon_entry <- find_location_jargon(data_frame, all_data[entry,][jargon_entries[i]])
-            # print(jargon_entry)
-            # q()
-            if(jargon_entry == -1) {
 
+            if(jargon_entry == -1) {
                 rbind(new_additives, all_data[jargon_entry,])
                 next
             }
-            # print(max_depth["ety.depth"])
-            max_depth <- populate_depths(data_frame, jargon_entry)
-            
-            # print(max_depth["ety.depth"])
-            print(max_depth["ety.depth"])
-            # print(max_depth["ety.depth"] > final_number)
+
+            # check if it is a name we have already found
+            if(check_if_recursive(found_names, all_data[entry,"Cleaned.Name"]) != -1) {
+                # print("here")
+                # have already found it. We make sure it isn't another branch
+                if(data_frame[entry,][etymology_depth] == -1) {
+                     data_frame[entry,][etymology_depth] <- 0
+                }
+               
+                return(data_frame[entry,])
+            }
+
+            # print("made it")
+            # print(data_frame[jargon_entry,"Cleaned.Name"])
+            # print(found_names)
+            new_entry <-  data.frame(name=data_frame[jargon_entry,"Cleaned.Name"])
+            found_names <- rbind(found_names,new_entry)
+            # print(found_names)
             # q()
+            max_depth <- populate_depths(data_frame, jargon_entry, found_names)
+            
             if(max_depth["ety.depth"] > final_number) {
                 final_number <- max_depth["ety.depth"]
             }
@@ -96,14 +125,11 @@ populate_depths <- function(data_frame, entry, first=FALSE) {
         }
 
     }
-    print("tadaa")
-    print(data_frame[entry,][etymology_depth])
-    print(final_number)
+
     data_frame[entry,][etymology_depth] <- final_number + 1
-    print("Abra?")
-    print(final_number + 1)
+
  
-    return(data_frame[entry,])
+    return(data_frame)
 }
 
 all_raw_data <- rbind(pls)
@@ -111,10 +137,13 @@ all_raw_data <- rbind(pls)
 all_data <- add_virtual_columns(all_raw_data)
 
 
-entry <- 260
+
+
+entry <- 63
 # print(all_data[entry,]["Cleaned.Name"])
 # q()
-res <- populate_depths(all_data, entry)
-# print(res[c("Cleaned.Name", "ety.depth")])
+# res <- populate_depths(all_data, entry, found_names=data.frame(name=all_data[entry,"Cleaned.Name"]))
+res <- compute_all_depths(all_data)
+print(all_data[c("Cleaned.Name", "ety.depth")])
 # print(new_additives)
 # r <- "end"
