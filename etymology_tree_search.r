@@ -42,7 +42,7 @@ compute_all_depths <- function(data) {
 # finds the entry number of the jargon file in question
 # if jargon can't be found, simply returns the word
 find_location_jargon <- function(data_frame, word) {
-    for (i in 1:length(data_frame)) {
+    for (i in 1:nrow(data_frame)) {     
         if (all_data[i,][clean_name] == word) {
             return(i)
         }
@@ -68,31 +68,42 @@ populate_depths <- function(data_frame, entry, first=FALSE) {
         # if(i == 10 && first == TRUE) {
         #     break
         # }
-   
+        print(i)
+        print(data_frame[entry,][jargon_entries[i]])
         if (data_frame[entry,][jargon_entries[i]] != "") {
+            print("here")
             # jargon word has been found. Therefore, we need to go into it,
             # and find the depth of this jargon
             jargon_entry <- find_location_jargon(data_frame, all_data[entry,][jargon_entries[i]])
-
+            # print(jargon_entry)
+            # q()
             if(jargon_entry == -1) {
+
                 rbind(new_additives, all_data[jargon_entry,])
                 next
             }
-            
+            # print(max_depth["ety.depth"])
             max_depth <- populate_depths(data_frame, jargon_entry)
             
-            if(max_depth > final_number) {
-                final_number <- max_depth
+            # print(max_depth["ety.depth"])
+            print(max_depth["ety.depth"])
+            # print(max_depth["ety.depth"] > final_number)
+            # q()
+            if(max_depth["ety.depth"] > final_number) {
+                final_number <- max_depth["ety.depth"]
             }
 
         }
 
     }
-    
+    print("tadaa")
+    print(data_frame[entry,][etymology_depth])
+    print(final_number)
     data_frame[entry,][etymology_depth] <- final_number + 1
-    
+    print("Abra?")
+    print(final_number + 1)
  
-    return(data_frame[entry,][etymology_depth])
+    return(data_frame[entry,])
 }
 
 all_raw_data <- rbind(pls)
@@ -100,8 +111,10 @@ all_raw_data <- rbind(pls)
 all_data <- add_virtual_columns(all_raw_data)
 
 
-entry <- 101
+entry <- 260
 # print(all_data[entry,]["Cleaned.Name"])
-res <- populate_depths(all_data, entry)
 # q()
-# r <- "test"
+res <- populate_depths(all_data, entry)
+# print(res[c("Cleaned.Name", "ety.depth")])
+# print(new_additives)
+# r <- "end"
