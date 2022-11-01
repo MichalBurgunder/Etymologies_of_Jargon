@@ -80,24 +80,31 @@ populate_depths <- function(data_frame, entry, found_names=data.frame(name=data_
     # q()
     
     
-
+    # i = 63
     final_number <- -1 # denotes an entry that hasn't been checked yet
 
+    # print(length((jargon_entries)))
     for (i in 1:length((jargon_entries))) {
-
+        # print(data_frame[i, "Cleaned.Name"])
         # print(i)
         # print(data_frame[entry,][jargon_entries[i]])
         if (data_frame[entry,][jargon_entries[i]] != "") {
             # print("here")
             # jargon word has been found. Therefore, we need to go into it,
             # and find the depth of this jargon
+            # print("made it here")
             jargon_entry <- find_location_jargon(data_frame, all_data[entry,][jargon_entries[i]])
-
+            print(jargon_entry)
+            # if(data_frame[i, "Cleaned.Name"] != "BlooP" & data_frame[i, "Cleaned.Name"] != "FlooP") {
+            # # print("in here")
+            #     next
+            # }
             if(jargon_entry == -1) {
                 rbind(new_additives, all_data[jargon_entry,])
                 next
             }
 
+            print("lalla")
             # check if it is a name we have already found
             if(check_if_recursive(found_names, all_data[entry,"Cleaned.Name"]) != -1) {
                 # print("here")
@@ -109,7 +116,7 @@ populate_depths <- function(data_frame, entry, found_names=data.frame(name=data_
                 return(data_frame[entry,])
             }
 
-            # print("made it")
+            print("made it")
             # print(data_frame[jargon_entry,"Cleaned.Name"])
             # print(found_names)
             new_entry <-  data.frame(name=data_frame[jargon_entry,"Cleaned.Name"])
@@ -126,6 +133,7 @@ populate_depths <- function(data_frame, entry, found_names=data.frame(name=data_
 
     }
 
+    print("test")
     data_frame[entry,][etymology_depth] <- final_number + 1
 
  
@@ -141,9 +149,13 @@ all_data <- add_virtual_columns(all_raw_data)
 
 entry <- 63
 # print(all_data[entry,]["Cleaned.Name"])
+# print(all_data[entry,]["Cleaned.Name"])
+print("outside")
+# print(all_data)
 # q()
-# res <- populate_depths(all_data, entry, found_names=data.frame(name=all_data[entry,"Cleaned.Name"]))
-res <- compute_all_depths(all_data)
-print(all_data[c("Cleaned.Name", "ety.depth")])
+res <- populate_depths(all_data, entry, found_names=data.frame(name=all_data[entry,"Cleaned.Name"]))
+# print(all_data[c("Cleaned.Name", "ety.depth")])
+# res <- compute_all_depths(all_data)
+
 # print(new_additives)
-# r <- "end"
+r <- "end"
