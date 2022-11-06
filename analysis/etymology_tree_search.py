@@ -7,11 +7,9 @@ import numpy as np
 import os
 
 from file_management import write_into_one_csv
+from config import find_field_position, prepare_virtual_fields, clean_name
 
-global ety_depth
-global clean_name
 global element_hash_map
-global clean_name_pos
 
 def header_hashmaps(headers):
     head_i_hm = {}
@@ -21,12 +19,6 @@ def header_hashmaps(headers):
         i_head_hm[i] = headers[i]
         head_i_hm[headers[i]] = i
     return {"it": i_head_hm, "ti": head_i_hm}
-      
-def find_clean_name_position(headers):
-    for i in range(0,len(headers)):
-        if headers[i] == "Cleaned Name":
-            return i
-    raise "Cannot find 'Cleaned Name' column"
 
 
 def get_headers(path):
@@ -84,10 +76,10 @@ def get_headers_hashmap(root, paths):
     return header_hashmaps(headerss[0]), headerss[0]
     
 def prepare_data(root, paths):
+    global clean_name_pos
+     
     all_elements = []
-    element_hash_map = {}
-    header_hashmap, headers = get_headers_hashmap(root, paths)
-    clean_name_pos = find_clean_name_position(headers)
+    element_hashmap = {"ti": {}, "it": {}}
     
     path = write_into_one_csv(root, paths, "data")
     
@@ -98,16 +90,18 @@ def prepare_data(root, paths):
 
     os.remove(path)
     
+    header_hashmap, headers = get_headers_hashmap(root, paths)
+    
+    clean_name_pos = find_field_position(headers, clean_name)
+    
     for i in range(0, len(all_elements)):
-        element_hash_map[all_elements[i][clean_name_pos]] = i
+        element_hashmap["ti"][all_elements[i][clean_name_pos]] = i
+        element_hashmap["it"][i] = all_elements[i][clean_name_pos]
 
-    # add_virtual_columns(all_elements, )
-    return all_elements, element_hash_map, headers, header_hashmap
+    return all_elements, element_hashmap, headers, header_hashmap
 
 def add_virtual_columns(dataa, names, default_values):
     # all_elements, element_hash_map, headers, header_hashmap = dataa[0], dataa[1], dataa[2], dataa[3]
-    # print(dataa[2])
-    # exit()
     
     for i in range(0,len(names)):
         dataa[2].append(names[i]) # add to headers
@@ -121,38 +115,51 @@ def add_virtual_columns(dataa, names, default_values):
  
     
 # The function that computes the max depth of an entry
-def populate_depth(word, previous_jargons=[]):
+def populate_depth(data, entry, element_hashmap, header_hms, cs, previous_jargons=[]):
+    word = data[entry][clean_name_pos]
+    
     previous_jargons.append(word)
-    if word not in element_hash_map["ti"]:
-        if word not in additives:
-            additives.append(word)
+    if word not in element_hashmap["ti"]:
+        if word not in cs['additives']:
+            cs['additives'].append(word)
         return -1
     
-    entry = element_hash_map["ti"][word]
+    entry = element_hashmap["ti"][word]
     
     max_depths = [0]
-    for j in range(0, jargon_entries):
-        if lines[entry][ety_depth] != "-1": # if the entry has already been computed
-            return lines[entry][ety_depth]
+    # print(cs)
+    # exit()
+    for j in range(0, len(cs['jargon_entries'])):
+        print(header_hms['ti'][cs['ety_depth']])
+        print(len(data[entry]))
+        print(header_hms['ti'][cs['ety_depth']])
+        exit()
         
-        if lines[entry][j] == "": # if there is no jargon entry
+        if data[entry][header_hms['ti'][cs['ety_depth']]] != "-1": # if the entry has already been computed
+            return data[entry][header_hms['ti'][cs['ety_depth']]]
+        
+        if data[entry][j] == "": # if there is no jargon entry
             continue
         
-        if lines[entry][j] in previous_jargons: # if the entry is recursive
+        if data[entry][j] in previous_jargons: # if the entry is recursive
             for i in range(len(previous_jargons), 0, -1):
                 if previous_jargons[i] == word:
                     return len(previous_jargons)-i
         
         # jargon must be there, and uncomputed
-        max_depth = populate_depth(lines[entry][j], previous_jargons)
+        max_depth = populate_depth(data[entry][j], element_hashmap, header_hms, cs, previous_jargons)
         max_depths.append(max_depth)
-        
+        print('end')
+        exit()
     return np.max(max_depths)
-    
+
+
+# lines, element_hashmap, headers, header_hms = dataa[0], dataa[1], dataa[2], dataa[3]
+
 # # computes the etymology depth of any given entry
-def populate_ety_depths(dataa):
+def populate_ety_depths(dataa, cs):
     for i in range(0, len(dataa[0])):
-        populate_depth(dataa[0][i])
+        populate_depth(dataa[0], i, dataa[1], dataa[3], cs)
 
 
     
@@ -189,4 +196,3 @@ def merge_csv_headers(root, paths):
     
     os.remove(path)
     return headerss
-            

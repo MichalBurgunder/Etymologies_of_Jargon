@@ -14,4 +14,4 @@ etymologies_of_jargon.Rproj
 playground.*
 
 # python 
-__pycache__/*
+__pycache__
