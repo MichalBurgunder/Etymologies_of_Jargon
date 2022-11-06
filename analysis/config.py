@@ -31,6 +31,7 @@ def find_field_position(headers, field):
 def prepare_virtual_fields(dataa, cs):
     cs['ety_depth_pos'] = find_field_position(dataa[2], cs['ety_depth'])
     cs['clean_name_pos'] = find_field_position(dataa[2], cs['clean_name'])
+    cs['scrape_name_pos'] = find_field_position(dataa[2], cs['clean_name'])
 
 def find_jargon_entry_positions(headers, jargons):
     entry_positions = []
@@ -45,6 +46,16 @@ def find_jargon_entry_positions(headers, jargons):
         exit()
     return entry_positions
 
+def fill_clean_names(dataa, cs):
+    for i in range(0, len(dataa[0])):
+        if dataa[0][i][cs['clean_name_pos']] == '':
+            print(dataa[0][i][cs['clean_name_pos']])
+            print(dataa[0][i][cs['scrape_name_pos']])
+            dataa[0][i][cs['clean_name_pos']] = dataa[0][i][cs['scrape_name_pos']] 
+            print(dataa[0][i][cs['clean_name_pos']])
+            exit()
+    
+    
 def prepare_globals(dataa):
     global consts
     

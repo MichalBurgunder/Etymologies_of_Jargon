@@ -83,20 +83,22 @@ def prepare_data(root, paths):
     element_hashmap = {"ti": {}, "it": {}}
     
     path = None
-    if not exists(f"{root}/temp_debug.txt"):  
+    if not exists(f"{root}/temp_debug.csv"):  
         path = write_into_one_csv(root, paths, "data")
     else:
         path = f"{root}/temp_debug.txt"
     
     file = csv.reader(open(path, mode ='r'))
     
-    for line in file:
-        all_elements.append(line)
 
-    # os.remove(path)
     
     header_hashmap, headers = get_headers_hashmap(root, paths)
-    
+    sem_num = find_field_position(headers, 'Semantic number')
+
+    for line in file:
+        if line[sem_num] != '2': # not adding line semantic numbers 2 (error in scraping)
+            all_elements.append(line) 
+
     clean_name_pos = find_field_position(headers, clean_name)
     
     for i in range(0, len(all_elements)):
@@ -140,29 +142,29 @@ def populate_depth(data, entry, element_hashmap, header_hms, cs, previous_jargon
     
     max_depths = [0]
 
-    for j in range(0, len(cs['jargon_entries'])):
+    # print(cs)
+    # exit()
+    for j_pos in cs['jargon_entry_positions']:
         print(data[entry][header_hms['ti'][cs['ety_depth']]])
         if data[entry][header_hms['ti'][cs['ety_depth']]] != "-1": # if the entry has already been computed
             return data[entry][header_hms['ti'][cs['ety_depth']]]
         
-        print(data[entry][j])
-        if data[entry][j] == "": # if there is no jargon entry
+        print(data[entry][j_pos])
+        if data[entry][j_pos] == "": # if there is no jargon entry
             continue
         
-        if data[entry][j] in previous_jargons: # if the entry is recursive
+        if data[entry][j_pos] in previous_jargons: # if the entry is recursive
             for i in range(len(previous_jargons), 0, -1):
                 if previous_jargons[i] == word:
                     return len(previous_jargons)-i
         
         # jargon must be there, and uncomputed
-        col_pos = header_hms['ti'][cs['jargon_entries'][j]]
-        row_pos = element_hashmap['ti'][data[entry][col_pos]]
+        row_pos = element_hashmap['ti'][data[entry][j_pos]]
        
         recur += 1
         max_depth = populate_depth(data, row_pos, element_hashmap, header_hms, cs, previous_jargons)
         max_depths.append(max_depth)
-        print('end')
-        exit()
+
     return np.max(max_depths)
 
 
@@ -171,9 +173,10 @@ def populate_depth(data, entry, element_hashmap, header_hms, cs, previous_jargon
 # # computes the etymology depth of any given entry
 def populate_ety_depths(dataa, cs):
     for i in range(0, len(dataa[0])):
-        # print(dataa[0][i])
-        # exit()
         populate_depth(dataa[0], i, dataa[1], dataa[3], cs)
+        if i == 3:
+            print("done first 3")
+            exit()
 
 
     
