@@ -5,11 +5,13 @@ from os import system
 import time
 import numpy as np
 import os
-system('clear')
+
+from file_management import write_into_one_csv
 
 global ety_depth
 global clean_name
 global element_hash_map
+global clean_name_pos
 
 def header_hashmaps(headers):
     head_i_hm = {}
@@ -29,50 +31,39 @@ def find_clean_name_position(headers):
 
 def get_headers(path):
     with open(path) as file:
-
             return next(file)
 
 def merge_csv_headers(root, paths):
     headerss = []
     # code originating from here: https://stackoverflow.com/questions/36698839/python-3-opening-multiple-csv-files
-    with open(f"{root}/temp.txt", "wt") as fw:
-        writer = csv.writer(fw)
-        for path in paths:
-            with open(f"{root}/{path}") as file:
-                info = csv.reader(file, delimiter=',')
+    # with open(f"{root}/temp.txt", "wt") as fw:
+    #     writer = csv.writer(fw)
+    #     for path in paths:
+    #         with open(f"{root}/{path}") as file:
+    #             info = csv.reader(file, delimiter=',')
                 
-                for row in info:
-                    writer.writerow(row)
-                    break
+    #             for row in info:
+    #                 writer.writerow(row)
+    # #                 break
+    path = write_into_one_csv(root, paths, "headers", True)
     
-    file = csv.reader(open(f"{root}/temp.txt", mode ='r'))
-    for i in range(0,len(paths)):  
+    file = csv.reader(open(path, mode ='r'))
+    for i in range(0, len(paths)):  
         headerss.append(next(file))
     
-    os.remove(f"{root}/temp.txt")
+    os.remove(path)
     return headerss
 
 def merge_csv_data(root, paths):
     lines = []
-    # code originating from here: https://stackoverflow.com/questions/36698839/python-3-opening-multiple-csv-files
-    with open(f"{root}/temp.txt", "wt") as fw:
-        writer = csv.writer(fw)
-        for path in paths:
-            with open(f"{root}/{path}", ) as file:
-                info = csv.reader(file, delimiter=',')
-                next(info) # in an attempt to skip the header
-                for row in info:
-                    writer.writerow(row)
+    path = write_into_one_csv(root, paths, "data")
     
-    file = csv.reader(open(f"{root}/temp.txt", mode ='r'))
+    file = csv.reader(open(path, mode ='r'))
     for i in range(0,len(paths)):  
         lines.append(next(file))
     
-    os.remove(f"{root}/temp.txt")
-    return headerss
-
-
-
+    os.remove(path)
+    return
 
 def get_headers_hashmap(root, paths):
     headerss = merge_csv_headers(root, paths)
@@ -81,26 +72,16 @@ def get_headers_hashmap(root, paths):
     num_headers = len(headerss[0])
     if False in [len(headers) == num_headers for headers in headerss]:
         raise "Length of the headers are not the same:\n" + str(headerss)
-    
+    print()
     # we verify: each entry
     for i in range(0, num_headers):
         for j in range(1, len(headerss)):
             if headerss[0][i] != headerss[j][i]:
+                print(headerss[0][i])
+                print(headerss[j][i])
                 raise "Entries in headers are not the same"
 
     return header_hashmaps(headerss[0]), headerss[0]
-
-def write_into_one_csv(root, paths):
-    # code originating from here: https://stackoverflow.com/questions/36698839/python-3-opening-multiple-csv-files
-    with open(f"{root}/temp.txt", "wt") as fw:
-        writer = csv.writer(fw)
-        for path in paths:
-            with open(f"{root}/{path}", ) as file:
-                info = csv.reader(file, delimiter=',')
-                next(info) # in an attempt to skip the header
-                for row in info:
-                    # print("la")
-                    writer.writerow(row)
     
 def prepare_data(root, paths):
     all_elements = []
@@ -108,70 +89,37 @@ def prepare_data(root, paths):
     header_hashmap, headers = get_headers_hashmap(root, paths)
     clean_name_pos = find_clean_name_position(headers)
     
-    # merge_csv_data()
+    path = write_into_one_csv(root, paths, "data")
     
-    lines = []
-    # code originating from here: https://stackoverflow.com/questions/36698839/python-3-opening-multiple-csv-files
-    with open(f"{root}/temp.txt", "wt") as fw:
-        writer = csv.writer(fw)
-        for path in paths:
-            with open(f"{root}/{path}", ) as file:
-                info = csv.reader(file, delimiter=',')
-                next(info) # in an attempt to skip the header
-                for row in info:
-                    # print("la")
-                    writer.writerow(row)
-    
-    file = csv.reader(open(f"{root}/temp.txt", mode ='r'))
-    
+    file = csv.reader(open(path, mode ='r'))
+    all_elements = []
     for line in file:
-        lines.append(line)
-    
-    os.remove(f"{root}/temp.txt")
+        all_elements.append(line)
 
-    # for i in paths:
-    #     print(i)
-    #     file = csv.reader(open(paths[i], mode ='r'))
-    #     i = 1
-    #     for line in file:
-    #         all_elements.append(line)
-    #         element_hash_map[line[clean_name_pos]] = i
-    #         i += 1
-    exit()
+    os.remove(path)
+    
+    for i in range(0, len(all_elements)):
+        element_hash_map[all_elements[i][clean_name_pos]] = i
+
+    # add_virtual_columns(all_elements, )
     return all_elements, element_hash_map, headers, header_hashmap
 
 def add_virtual_columns(dataa, names, default_values):
     # all_elements, element_hash_map, headers, header_hashmap = dataa[0], dataa[1], dataa[2], dataa[3]
-    for i in names:
+    # print(dataa[2])
+    # exit()
     
+    for i in range(0,len(names)):
         dataa[2].append(names[i]) # add to headers
         dataa[3]["ti"][names[i]] = len(dataa[2])-1 # add to headers hashmap
         dataa[3]["it"][len(dataa[2])] = names[i] # add to headers hashmap
     
-        for j in range(0,len(dataa[0])): # add the default value to each entry
-            dataa[0][j].append(default_values[j])
+        for j in range(1, len(dataa[0])): # add the default value to each entry
+            dataa[0][j].append(default_values[i])
+    # 
+    # exit()
  
-
-# programming languages
-# paths = [
-#             '/Users/michal/Documents/thesis/etymologies_of_jargon/thesis_data/programming_languages.csv',
-#             '/Users/michal/Documents/thesis/etymologies_of_jargon/thesis_data/additives.csv'
-# #         ]
-
-# dataa = prepare_data(paths)
-
-# lines, element_hash_map, headers, header_hms = dataa[0], dataa[2], dataa[3], dataa[3]
-
-# additives = [] # here will be all the new name additives that have not been added just yet
-
-# jargon_entries = ["X1st Jargon", "X2nd Jargon", "X3rd Jargon", "X4th Jargon"] # the fields which will create our tree
-
-# ety_depth = "Etymology Depth"
-# clean_name = "Cleaned Name"
-
-# add_virtual_columns(dataa, ety_depth, "-1")
-        
-
+    
 # The function that computes the max depth of an entry
 def populate_depth(word, previous_jargons=[]):
     previous_jargons.append(word)
@@ -203,5 +151,42 @@ def populate_depth(word, previous_jargons=[]):
     
 # # computes the etymology depth of any given entry
 def populate_ety_depths(dataa):
-    for i in range(0, len(lines)):
-        populate_depth(lines[i])
+    for i in range(0, len(dataa[0])):
+        populate_depth(dataa[0][i])
+
+
+    
+# def read_from_csv(root, descriptor):
+# def get_data(root, title):
+#     if exists(f"{root}/{title}"):
+#         res = []
+#         with open(f"{root}/temp_{descriptor}", "wt") as fw:
+#             for row in fw:
+#                 res.append(row)
+#     else:
+#         data = prepare_data(root, )
+#         save_as_csv(root, data, title)
+#         return data
+    
+
+def merge_csv_headers(root, paths):
+    headerss = []
+    # code originating from here: https://stackoverflow.com/questions/36698839/python-3-opening-multiple-csv-files
+    # with open(f"{root}/temp.txt", "wt") as fw:
+    #     writer = csv.writer(fw)
+    #     for path in paths:
+    #         with open(f"{root}/{path}") as file:
+    #             info = csv.reader(file, delimiter=',')
+                
+    #             for row in info:
+    #                 writer.writerow(row)
+    # #                 break
+    path = write_into_one_csv(root, paths, "headers", True)
+    
+    file = csv.reader(open(path, mode ='r'))
+    for i in range(0, len(paths)):  
+        headerss.append(next(file))
+    
+    os.remove(path)
+    return headerss
+            
