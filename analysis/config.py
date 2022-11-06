@@ -4,20 +4,9 @@ paths = [
             'programming_languages.csv', # programming languages
             'additives.csv'
         ]
-
 additives = [] # here will be all the new name additives that have not been added just yet
-
-
-#  root, paths, ety_depth
 ety_depth = "Etymology Depth"
-# ety_depth_pos = None
 clean_name = "Cleaned Name"
-
-# virtual_fields = ["ety.depth"]
-# vf_default_values = ['-1']
-
-# clean_name_pos = None
-
 consts = None
 
 def find_field_position(headers, field):

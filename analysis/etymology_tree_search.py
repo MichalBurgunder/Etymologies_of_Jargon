@@ -28,16 +28,6 @@ def get_headers(path):
 
 def merge_csv_headers(root, paths):
     headerss = []
-    # code originating from here: https://stackoverflow.com/questions/36698839/python-3-opening-multiple-csv-files
-    # with open(f"{root}/temp.txt", "wt") as fw:
-    #     writer = csv.writer(fw)
-    #     for path in paths:
-    #         with open(f"{root}/{path}") as file:
-    #             info = csv.reader(file, delimiter=',')
-                
-    #             for row in info:
-    #                 writer.writerow(row)
-    # #                 break
     path = write_into_one_csv(root, paths, "headers", True)
     
     file = csv.reader(open(path, mode ='r'))
@@ -109,19 +99,14 @@ def prepare_data(root, paths):
 
 def add_virtual_columns(dataa, names, default_values):
     # all_elements, element_hash_map, headers, header_hashmap = dataa[0], dataa[1], dataa[2], dataa[3]
-    
     for i in range(0,len(names)):
         dataa[2].append(names[i]) # add to headers
         dataa[3]["ti"][names[i]] = len(dataa[2])-1 # add to headers hashmap
         dataa[3]["it"][len(dataa[2])] = names[i] # add to headers hashmap
     
         for j in range(0, len(dataa[0])): # add the default value to each entry
-            # print(len(dataa[0][j]))
             dataa[0][j].append(default_values[i])
-            # print(len(dataa[0][j]))
-            # exit()
-    # 
-    # exit()
+
 global recur
 recur = 0 
 # The function that computes the max depth of an entry
@@ -142,8 +127,6 @@ def populate_depth(data, entry, element_hashmap, header_hms, cs, previous_jargon
     
     max_depths = [0]
 
-    # print(cs)
-    # exit()
     for j_pos in cs['jargon_entry_positions']:
         print(data[entry][header_hms['ti'][cs['ety_depth']]])
         if data[entry][header_hms['ti'][cs['ety_depth']]] != "-1": # if the entry has already been computed
@@ -178,33 +161,9 @@ def populate_ety_depths(dataa, cs):
             print("done first 3")
             exit()
 
-
-    
-# def read_from_csv(root, descriptor):
-# def get_data(root, title):
-#     if exists(f"{root}/{title}"):
-#         res = []
-#         with open(f"{root}/temp_{descriptor}", "wt") as fw:
-#             for row in fw:
-#                 res.append(row)
-#     else:
-#         data = prepare_data(root, )
-#         save_as_csv(root, data, title)
-#         return data
-    
-
 def merge_csv_headers(root, paths):
     headerss = []
-    # code originating from here: https://stackoverflow.com/questions/36698839/python-3-opening-multiple-csv-files
-    # with open(f"{root}/temp.txt", "wt") as fw:
-    #     writer = csv.writer(fw)
-    #     for path in paths:
-    #         with open(f"{root}/{path}") as file:
-    #             info = csv.reader(file, delimiter=',')
-                
-    #             for row in info:
-    #                 writer.writerow(row)
-    # #                 break
+
     path = write_into_one_csv(root, paths, "headers", True)
     
     file = csv.reader(open(path, mode ='r'))
