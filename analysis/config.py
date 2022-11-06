@@ -38,17 +38,12 @@ def find_jargon_entry_positions(headers, jargons):
 def fill_clean_names(dataa, cs):
     for i in range(0, len(dataa[0])):
         if dataa[0][i][cs['clean_name_pos']] == '':
-            print(dataa[0][i][cs['clean_name_pos']])
-            print(dataa[0][i][cs['scrape_name_pos']])
             dataa[0][i][cs['clean_name_pos']] = dataa[0][i][cs['scrape_name_pos']] 
-            print(dataa[0][i][cs['clean_name_pos']])
-            exit()
     
     
 def prepare_globals(dataa):
     global consts
     
-    print("?")
     consts = {
         'jargon_entries': jargon_entries, # the fields which will create our tree
         'jargon_entry_positions': None,

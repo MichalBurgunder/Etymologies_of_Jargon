@@ -15,12 +15,15 @@ def __main__():
     add_virtual_columns(dataa, [ety_depth], ["-1"])
 
     cs = prepare_globals(dataa)
+    print("LALALA")
     prepare_virtual_fields(dataa, cs)
+    print("LALALA2")
     fill_clean_names(dataa, cs)
+    print("??")
     if not exists(f"{cs['root']}/temp_debug.csv"):  
+        print("inside")
         save_as_csv(cs['root'], dataa[0], "debug", dataa[2])
-        
-    exit()
+    print("end ??") 
     new_additives = populate_ety_depths(dataa, cs)
     
 __main__()

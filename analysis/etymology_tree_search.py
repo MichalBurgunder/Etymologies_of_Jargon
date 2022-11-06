@@ -55,7 +55,7 @@ def get_headers_hashmap(root, paths):
     num_headers = len(headerss[0])
     if False in [len(headers) == num_headers for headers in headerss]:
         raise "Length of the headers are not the same:\n" + str(headerss)
-    print()
+
     # we verify: each entry
     for i in range(0, num_headers):
         for j in range(1, len(headerss)):
@@ -79,8 +79,6 @@ def prepare_data(root, paths):
         path = f"{root}/temp_debug.txt"
     
     file = csv.reader(open(path, mode ='r'))
-    
-
     
     header_hashmap, headers = get_headers_hashmap(root, paths)
     sem_num = find_field_position(headers, 'Semantic number')
@@ -112,7 +110,7 @@ recur = 0
 # The function that computes the max depth of an entry
 def populate_depth(data, entry, element_hashmap, header_hms, cs, previous_jargons=[]):
     global recur
-    print(f'populate_depth with entry {data[entry]}')
+    print('populate_depth with entry ' + str(data[entry][cs['clean_name_pos']]))
     if recur == 6:
         exit()
     word = data[entry][cs['clean_name_pos']]
@@ -128,11 +126,9 @@ def populate_depth(data, entry, element_hashmap, header_hms, cs, previous_jargon
     max_depths = [0]
 
     for j_pos in cs['jargon_entry_positions']:
-        print(data[entry][header_hms['ti'][cs['ety_depth']]])
         if data[entry][header_hms['ti'][cs['ety_depth']]] != "-1": # if the entry has already been computed
             return data[entry][header_hms['ti'][cs['ety_depth']]]
         
-        print(data[entry][j_pos])
         if data[entry][j_pos] == "": # if there is no jargon entry
             continue
         
@@ -142,6 +138,9 @@ def populate_depth(data, entry, element_hashmap, header_hms, cs, previous_jargon
                     return len(previous_jargons)-i
         
         # jargon must be there, and uncomputed
+        if data[entry][j_pos] not in element_hashmap['ti']:
+            cs['additives'].append([data[entry][j_pos]])
+            continue
         row_pos = element_hashmap['ti'][data[entry][j_pos]]
        
         recur += 1
