@@ -7,7 +7,7 @@ import numpy as np
 import os
 from os.path import exists
 from utils import concatenate, copy_array
-from file_management import write_into_one_csv
+from file_management import write_into_one_csv, save_as_txt
 from config import find_field_position, clean_name
 
 global element_hash_map
@@ -181,7 +181,9 @@ def populate_ety_depths(dataa, cs):
         if i == limit:
             print(f"done first {limit}")
             print(f"additives: {cs['additives']}")
+            save_as_txt(cs['root'], cs['additives'], 'additives')
             exit()
+    save_as_txt(cs['root'], cs['additives'], 'additives')
     return 
 
 def merge_csv_headers(root, paths):

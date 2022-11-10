@@ -20,5 +20,12 @@ def save_as_csv(root, data, descriptor, headers):
     with open(f"{root}/temp_{descriptor}.csv", "wt") as fw:
         writer = csv.writer(fw)
         writer.writerow(headers)
+        print(data)
         for row in data:
+            print(row)
             writer.writerow(row)
+            
+def save_as_txt(root, data, descriptor):
+    with open(f"{root}/temp_{descriptor}.txt", "wt") as fw:
+        writer = csv.writer(fw)
+        writer.writerow(data)
