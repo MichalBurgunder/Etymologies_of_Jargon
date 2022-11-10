@@ -20,9 +20,11 @@ def header_hashmaps(headers, other_headers):
         i_head_hm[i] = headers[i]
         head_i_hm[headers[i]] = i
     
+    inc = len(headers)
     for i in range(0, len(other_headers)):
         i_head_hm[i] = other_headers[i]
-        head_i_hm[other_headers[i]] = i
+        head_i_hm[other_headers[i]] = inc + i
+        inc += 1
     return {"it": i_head_hm, "ti": head_i_hm}
 
 
@@ -57,8 +59,11 @@ def get_headers_hashmap(root, paths, virtual_fields=[]):
 
     # we verify: length
     num_headers = len(headerss[0])
-    if False in [len(headers) == num_headers for headers in headerss]:
-        raise "Length of the headers are not the same:\n" + str(headerss)
+    for i in range(1,len(headerss)):
+        if False in [len(headerss[i]) == num_headers for headers in headerss]:
+            print(len(headerss[i]))
+            print(num_headers)
+            raise Exception("Length of the headers are not the same:\n" + str(headerss))
 
     # we verify: each entry
     for i in range(0, num_headers):
@@ -120,44 +125,43 @@ recur = 0
 # The function that computes the max depth of an entry
 def populate_depth(data, entry, element_hashmap, header_hms, cs, previous_jargons=[]):
     global recur
-    print('populate_depth with entry ' + str(data[entry][cs['clean_name_pos']]))
+    print('populate_depth with entry ' + str(data[entry][cs['clean_name_pos']]) + " with depth " + str(len(previous_jargons)))
     if recur == 6:
         exit()
     word = data[entry][cs['clean_name_pos']]
 
     previous_jargons.append(word)
-    if word not in element_hashmap["ti"]:
-        if word not in cs['additives']:
-            print(f"Adding new word to additives: {word}")
-            cs['additives'].append(word)
-        return -1
     
     entry = element_hashmap["ti"][word]
     
     max_depths = [0]
 
-    for j_pos in cs['jargon_entry_positions']:
-        if data[entry][header_hms['ti'][cs['ety_depth']]] != "-1": # if the entry has already been computed
-            return data[entry][header_hms['ti'][cs['ety_depth']]]
+    if data[entry][header_hms['ti'][cs['ety_depth']]] != "-1": # if the entry has already been computed
+        print("returning here")
+        return data[entry][header_hms['ti'][cs['ety_depth']]]
         
+    for j_pos in cs['jargon_entry_positions']:
+
         if data[entry][j_pos] == "": # if there is no jargon entry
             continue
         
         if data[entry][j_pos] in previous_jargons: # if the entry is recursive
             for i in range(len(previous_jargons), 0, -1):
-                if previous_jargons[i] == word:
+                if previous_jargons[i-1] == word:
                     return len(previous_jargons)-i
         
         # jargon must be there, and uncomputed
         if data[entry][j_pos] not in element_hashmap['ti']:
-            print(data[entry][j_pos])
+            print(f"Adding new word to additives: {data[entry][j_pos]}")
             cs['additives'].append(data[entry][j_pos])
             continue
+        
         row_pos = element_hashmap['ti'][data[entry][j_pos]]
        
         recur += 1
         max_depth = populate_depth(data, row_pos, element_hashmap, header_hms, cs, previous_jargons)
         max_depths.append(max_depth)
+
 
     return np.max(max_depths)
 
@@ -166,8 +170,9 @@ def populate_depth(data, entry, element_hashmap, header_hms, cs, previous_jargon
 
 # # computes the etymology depth of any given entry
 def populate_ety_depths(dataa, cs):
-    limit = 2
-    for i in range(0, len(dataa[0])):
+    limit = 10
+    for i in range(1, len(dataa[0])):
+        
         populate_depth(dataa[0], i, dataa[1], dataa[3], cs)
         if i == limit:
             print(f"done first {limit}")

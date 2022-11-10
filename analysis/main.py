@@ -26,7 +26,7 @@ def __main__():
     ready_dataa = [dataa[0], element_hash_map, headers, header_hashmap]
 
     if not exists(f"{cs['root']}/temp_debug.csv"):  
-        print("inside")
+        # print("inside")
         save_as_csv(cs['root'], ready_dataa[0], "debug", ready_dataa[2])
     else:
         print("outside")
