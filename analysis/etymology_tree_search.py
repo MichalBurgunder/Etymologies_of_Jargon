@@ -6,19 +6,23 @@ import time
 import numpy as np
 import os
 from os.path import exists
-
+from utils import concatenate
 from file_management import write_into_one_csv
-from config import find_field_position, prepare_virtual_fields, clean_name
+from config import find_field_position, clean_name
 
 global element_hash_map
 
-def header_hashmaps(headers):
+def header_hashmaps(headers, other_headers):
     head_i_hm = {}
     i_head_hm = {}
     
-    for i in range(0,len(headers)):
+    for i in range(0, len(headers)):
         i_head_hm[i] = headers[i]
         head_i_hm[headers[i]] = i
+    
+    for i in range(0, len(other_headers)):
+        i_head_hm[i] = other_headers[i]
+        head_i_hm[other_headers[i]] = i
     return {"it": i_head_hm, "ti": head_i_hm}
 
 
@@ -48,7 +52,7 @@ def merge_csv_data(root, paths):
     os.remove(path)
     return
 
-def get_headers_hashmap(root, paths):
+def get_headers_hashmap(root, paths, virtual_fields=[]):
     headerss = merge_csv_headers(root, paths)
 
     # we verify: length
@@ -60,51 +64,57 @@ def get_headers_hashmap(root, paths):
     for i in range(0, num_headers):
         for j in range(1, len(headerss)):
             if headerss[0][i] != headerss[j][i]:
-                print(headerss[0][i])
-                print(headerss[j][i])
                 raise "Entries in headers are not the same"
 
-    return header_hashmaps(headerss[0]), headerss[0]
+    return header_hashmaps(headerss[0], virtual_fields), concatenate(headerss[0], virtual_fields)
+
+def get_element_hashmap(data, headers):    
+    clean_name_pos = find_field_position(headers, clean_name)  
+    element_hashmap = {"ti": {}, "it": {}}
     
-def prepare_data(root, paths):
+    for i in range(0, len(data)):
+        element_hashmap["ti"][data[i][clean_name_pos]] = i
+        element_hashmap["it"][i] = data[i][clean_name_pos]
+    return element_hashmap
+    
+    
+def prepare_data(root, paths, ):
     global clean_name_pos
      
     all_elements = []
-    element_hashmap = {"ti": {}, "it": {}}
     
     path = None
     if not exists(f"{root}/temp_debug.csv"):  
         path = write_into_one_csv(root, paths, "data")
     else:
-        path = f"{root}/temp_debug.txt"
+        path = f"{root}/temp_debug.csv"
     
     file = csv.reader(open(path, mode ='r'))
-    
-    header_hashmap, headers = get_headers_hashmap(root, paths)
-    sem_num = find_field_position(headers, 'Semantic number')
 
+    # print("HERE")
+    header_hashmap, headers = get_headers_hashmap(root, paths)
+    
+    sem_num = find_field_position(headers, 'Semantic number')
+    
     for line in file:
         if line[sem_num] != '2': # not adding line semantic numbers 2 (error in scraping)
             all_elements.append(line) 
 
-    clean_name_pos = find_field_position(headers, clean_name)
-    
-    for i in range(0, len(all_elements)):
-        element_hashmap["ti"][all_elements[i][clean_name_pos]] = i
-        element_hashmap["it"][i] = all_elements[i][clean_name_pos]
 
-    return all_elements, element_hashmap, headers, header_hashmap
+    return all_elements, headers, header_hashmap
 
 def add_virtual_columns(dataa, names, default_values):
     # all_elements, element_hash_map, headers, header_hashmap = dataa[0], dataa[1], dataa[2], dataa[3]
+    
     for i in range(0,len(names)):
-        dataa[2].append(names[i]) # add to headers
-        dataa[3]["ti"][names[i]] = len(dataa[2])-1 # add to headers hashmap
-        dataa[3]["it"][len(dataa[2])] = names[i] # add to headers hashmap
+        dataa[1].append(names[i]) # add to headers
+        dataa[2]["ti"][names[i]] = len(dataa[1])-1 # add to headers hashmap
+        dataa[2]["it"][len(dataa[1])] = names[i] # add to headers hashmap
     
         for j in range(0, len(dataa[0])): # add the default value to each entry
             dataa[0][j].append(default_values[i])
 
+    return names
 global recur
 recur = 0 
 # The function that computes the max depth of an entry
@@ -118,6 +128,7 @@ def populate_depth(data, entry, element_hashmap, header_hms, cs, previous_jargon
     previous_jargons.append(word)
     if word not in element_hashmap["ti"]:
         if word not in cs['additives']:
+            print(f"Adding new word to additives: {word}")
             cs['additives'].append(word)
         return -1
     
@@ -139,7 +150,8 @@ def populate_depth(data, entry, element_hashmap, header_hms, cs, previous_jargon
         
         # jargon must be there, and uncomputed
         if data[entry][j_pos] not in element_hashmap['ti']:
-            cs['additives'].append([data[entry][j_pos]])
+            print(data[entry][j_pos])
+            cs['additives'].append(data[entry][j_pos])
             continue
         row_pos = element_hashmap['ti'][data[entry][j_pos]]
        
@@ -154,11 +166,14 @@ def populate_depth(data, entry, element_hashmap, header_hms, cs, previous_jargon
 
 # # computes the etymology depth of any given entry
 def populate_ety_depths(dataa, cs):
+    limit = 2
     for i in range(0, len(dataa[0])):
         populate_depth(dataa[0], i, dataa[1], dataa[3], cs)
-        if i == 3:
-            print("done first 3")
+        if i == limit:
+            print(f"done first {limit}")
+            print(f"additives: {cs['additives']}")
             exit()
+    return 
 
 def merge_csv_headers(root, paths):
     headerss = []
@@ -171,3 +186,6 @@ def merge_csv_headers(root, paths):
     
     os.remove(path)
     return headerss
+
+# Volume of a node can refer to the authority of the node
+# Hub node: See HITS

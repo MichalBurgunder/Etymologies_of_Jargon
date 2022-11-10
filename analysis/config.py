@@ -10,17 +10,17 @@ clean_name = "Cleaned Name"
 consts = None
 
 def find_field_position(headers, field):
-    for i in range(0,len(headers)):
+    # print(headers)
+    # exit()
+    for i in range(0, len(headers)):
         if headers[i] == field:
-            print(field)
-            print(i)
             return i
     raise f"Cannot find '{field}' column"
 
 def prepare_virtual_fields(dataa, cs):
-    cs['ety_depth_pos'] = find_field_position(dataa[2], cs['ety_depth'])
-    cs['clean_name_pos'] = find_field_position(dataa[2], cs['clean_name'])
-    cs['scrape_name_pos'] = find_field_position(dataa[2], cs['clean_name'])
+    cs['ety_depth_pos'] = find_field_position(dataa[1], cs['ety_depth'])
+    cs['clean_name_pos'] = find_field_position(dataa[1], cs['clean_name'])
+    cs['scrape_name_pos'] = find_field_position(dataa[1], cs['scrape_name'])
 
 def find_jargon_entry_positions(headers, jargons):
     entry_positions = []
@@ -36,9 +36,15 @@ def find_jargon_entry_positions(headers, jargons):
     return entry_positions
 
 def fill_clean_names(dataa, cs):
+    # print(cs['scrape_name_pos'])
+    # print(cs['clean_name_pos'])
     for i in range(0, len(dataa[0])):
         if dataa[0][i][cs['clean_name_pos']] == '':
-            dataa[0][i][cs['clean_name_pos']] = dataa[0][i][cs['scrape_name_pos']] 
+            if i == 670:
+                print(dataa[0][i])
+            dataa[0][i][cs['clean_name_pos']] = dataa[0][i][cs['scrape_name_pos']]
+            if i == 670:
+                print(dataa[0][i]) 
     
     
 def prepare_globals(dataa):
@@ -57,16 +63,14 @@ def prepare_globals(dataa):
         'vf_default_values': ['-1'],
         'clean_name': "Cleaned Name",
         'clean_name_pos': None,
-        
+        'scrape_name': 'Scrape Name', 
         'ety_depth': "Etymology Depth",
         'ety_depth_pos': None,
     }
 
     # lets find the jargon entry positions
-    consts['jargon_entry_positions'] = find_jargon_entry_positions(dataa[2], consts['jargon_entries'])
+    consts['jargon_entry_positions'] = find_jargon_entry_positions(dataa[1], consts['jargon_entries'])
 
-        
-        
     prepare_virtual_fields(dataa, consts)
 
     return consts
