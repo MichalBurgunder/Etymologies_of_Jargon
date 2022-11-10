@@ -6,7 +6,7 @@ import time
 import numpy as np
 import os
 from os.path import exists
-from utils import concatenate
+from utils import concatenate, copy_array
 from file_management import write_into_one_csv
 from config import find_field_position, clean_name
 
@@ -123,7 +123,7 @@ def add_virtual_columns(dataa, names, default_values):
 global recur
 recur = 0 
 # The function that computes the max depth of an entry
-def populate_depth(data, entry, element_hashmap, header_hms, cs, previous_jargons=[]):
+def populate_depth(data, entry, element_hashmap, header_hms, cs, previous_jargons):
     global recur
     print('populate_depth with entry ' + str(data[entry][cs['clean_name_pos']]) + " with depth " + str(len(previous_jargons)))
     if recur == 6:
@@ -150,16 +150,18 @@ def populate_depth(data, entry, element_hashmap, header_hms, cs, previous_jargon
                 if previous_jargons[i-1] == word:
                     return len(previous_jargons)-i
         
-        # jargon must be there, and uncomputed
+        # jargon must be there, and uncomputed. Check if not existing, then add
         if data[entry][j_pos] not in element_hashmap['ti']:
             print(f"Adding new word to additives: {data[entry][j_pos]}")
             cs['additives'].append(data[entry][j_pos])
             continue
         
+        # existing. We find it, and populate it like this entry
         row_pos = element_hashmap['ti'][data[entry][j_pos]]
-       
+        print("ALWAYS HERE")
         recur += 1
-        max_depth = populate_depth(data, row_pos, element_hashmap, header_hms, cs, previous_jargons)
+        prev_jarg = copy_array(previous_jargons)
+        max_depth = populate_depth(data, row_pos, element_hashmap, header_hms, cs, prev_jarg)
         max_depths.append(max_depth)
 
 
@@ -173,7 +175,7 @@ def populate_ety_depths(dataa, cs):
     limit = 10
     for i in range(1, len(dataa[0])):
         
-        populate_depth(dataa[0], i, dataa[1], dataa[3], cs)
+        populate_depth(dataa[0], i, dataa[1], dataa[3], cs, [])
         if i == limit:
             print(f"done first {limit}")
             print(f"additives: {cs['additives']}")
