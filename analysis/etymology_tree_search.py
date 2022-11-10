@@ -123,9 +123,9 @@ def add_virtual_columns(dataa, names, default_values):
 global recur
 recur = 0 
 # The function that computes the max depth of an entry
-def populate_depth(data, entry, element_hashmap, header_hms, cs, previous_jargons):
+def get_max_depth(data, entry, element_hashmap, header_hms, cs, previous_jargons):
     global recur
-    print('populate_depth with entry ' + str(data[entry][cs['clean_name_pos']]) + " with depth " + str(len(previous_jargons)))
+    print('get_max_depth with entry ' + str(data[entry][cs['clean_name_pos']]) + " with depth " + str(len(previous_jargons)))
     if recur == 6:
         exit()
     word = data[entry][cs['clean_name_pos']]
@@ -161,7 +161,7 @@ def populate_depth(data, entry, element_hashmap, header_hms, cs, previous_jargon
         print("ALWAYS HERE")
         recur += 1
         prev_jarg = copy_array(previous_jargons)
-        max_depth = populate_depth(data, row_pos, element_hashmap, header_hms, cs, prev_jarg)
+        max_depth = get_max_depth(data, row_pos, element_hashmap, header_hms, cs, prev_jarg)
         max_depths.append(max_depth)
 
 
@@ -172,10 +172,12 @@ def populate_depth(data, entry, element_hashmap, header_hms, cs, previous_jargon
 
 # # computes the etymology depth of any given entry
 def populate_ety_depths(dataa, cs):
-    limit = 10
+    limit = 3
     for i in range(1, len(dataa[0])):
         
-        populate_depth(dataa[0], i, dataa[1], dataa[3], cs, [])
+        max_depth = get_max_depth(dataa[0], i, dataa[1], dataa[3], cs, [])
+        dataa[0][i][cs['ety_depth_pos']] = max_depth
+        
         if i == limit:
             print(f"done first {limit}")
             print(f"additives: {cs['additives']}")
