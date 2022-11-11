@@ -8,6 +8,8 @@ additives = [] # here will be all the new name additives that have not been adde
 ety_depth = "Etymology Depth"
 clean_name = "Cleaned Name"
 consts = None
+debug = False
+
 
 def find_field_position(headers, field):
     # print(headers)
