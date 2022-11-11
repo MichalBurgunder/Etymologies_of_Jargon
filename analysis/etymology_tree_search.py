@@ -1,17 +1,14 @@
 import csv
-from re import I
-import pandas as pd
-from os import system
-import time
 import numpy as np
 import os
 from os.path import exists
 from utils import concatenate, copy_array
-from file_management import write_into_one_csv, save_as_txt
+from file_management import write_into_one_csv, save_as_txt, save_as_csv
 from config import find_field_position, clean_name
 
 global element_hash_map
-
+limit = 10
+    
 def header_hashmaps(headers, other_headers):
     head_i_hm = {}
     i_head_hm = {}
@@ -85,8 +82,7 @@ def get_element_hashmap(data, headers):
     
 def prepare_data(root, paths, ):
     global clean_name_pos
-     
-    all_elements = []
+    global limit
     
     path = None
     if not exists(f"{root}/temp_debug.csv"):  
@@ -95,17 +91,26 @@ def prepare_data(root, paths, ):
         path = f"{root}/temp_debug.csv"
     
     file = csv.reader(open(path, mode ='r'))
-
-    # print("HERE")
     header_hashmap, headers = get_headers_hashmap(root, paths)
     
     sem_num = find_field_position(headers, 'Semantic number')
+    clean_name_pos = find_field_position(headers, 'Cleaned Name')
     
+    all_elements = []
+    name_hm = {}
+    
+    i = 0
     for line in file:
-        if line[sem_num] != '2': # not adding line semantic numbers 2 (error in scraping)
-            all_elements.append(line) 
-
-
+        if line[sem_num] != '2' and line[sem_num] != '3': # not adding line semantic numbers 2 (error in scraping) or 3 (proto additive)
+            if line[clean_name_pos] in name_hm:
+                print(f"Duplicate entry found for {line[clean_name_pos]}. Skipping...")
+            else:
+                all_elements.append(line)
+                name_hm[line[clean_name_pos]] = True
+        if i == limit:
+            return all_elements, headers, header_hashmap
+        i += 1
+        
     return all_elements, headers, header_hashmap
 
 def add_virtual_columns(dataa, names, default_values):
@@ -127,6 +132,7 @@ def get_max_depth(data, entry, element_hashmap, header_hms, cs, previous_jargons
     global recur
     print('get_max_depth with entry ' + str(data[entry][cs['clean_name_pos']]) + " with depth " + str(len(previous_jargons)))
     if recur == 6:
+        print("recursion limit reached. exiting...")
         exit()
     word = data[entry][cs['clean_name_pos']]
 
@@ -158,7 +164,6 @@ def get_max_depth(data, entry, element_hashmap, header_hms, cs, previous_jargons
         
         # existing. We find it, and populate it like this entry
         row_pos = element_hashmap['ti'][data[entry][j_pos]]
-        print("ALWAYS HERE")
         recur += 1
         prev_jarg = copy_array(previous_jargons)
         max_depth = get_max_depth(data, row_pos, element_hashmap, header_hms, cs, prev_jarg)
@@ -172,7 +177,7 @@ def get_max_depth(data, entry, element_hashmap, header_hms, cs, previous_jargons
 
 # # computes the etymology depth of any given entry
 def populate_ety_depths(dataa, cs):
-    limit = 3
+    global limit
     for i in range(1, len(dataa[0])):
         
         max_depth = get_max_depth(dataa[0], i, dataa[1], dataa[3], cs, [])
@@ -200,3 +205,11 @@ def merge_csv_headers(root, paths):
 
 # Volume of a node can refer to the authority of the node
 # Hub node: See HITS
+
+
+def prepare_depth_data(data, cs):
+    final_data = []
+    for i in range(0, len(data)):
+        final_data.append([data[i][cs["clean_name_pos"]], data[i][cs['ety_depth_pos']]])
+    
+    save_as_csv(cs['root'], final_data, "final_ety_depths", final_data[0])

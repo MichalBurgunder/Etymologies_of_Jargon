@@ -1,7 +1,7 @@
 import os
 from os.path import exists
 
-from etymology_tree_search import add_virtual_columns, populate_ety_depths, prepare_data, get_headers_hashmap, get_element_hashmap
+from etymology_tree_search import add_virtual_columns, populate_ety_depths, prepare_data, get_headers_hashmap, get_element_hashmap, prepare_depth_data
 from file_management import save_as_csv
 from config import prepare_globals, fill_clean_names, root, paths, ety_depth
 
@@ -31,9 +31,14 @@ def __main__():
     else:
         print("outside")
     
+    # print(len(dataa[0]))
+    # exit()
     populate_ety_depths(ready_dataa, cs)
     
     print("Additives: ")
     print(cs['additives'])
+    # print("All Elements: ")
+    
+    prepare_depth_data(dataa[0], cs)
     
 __main__()
