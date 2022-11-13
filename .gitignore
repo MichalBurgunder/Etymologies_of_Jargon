@@ -6,8 +6,10 @@
 .RDataTmp
 
 # custom
-thesis_data
+archive
 etymologies_of_jargon.Rproj
+temp*
+
 
 # miscellaneous
 .DS_Store
