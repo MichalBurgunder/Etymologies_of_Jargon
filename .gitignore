@@ -13,7 +13,7 @@ temp*
 
 # miscellaneous
 .DS_Store
-playground.*
+playground*.*
 
 # python 
 __pycache__
