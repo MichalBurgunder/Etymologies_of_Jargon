@@ -11,6 +11,7 @@ ety_depth = "Etymology Depth"
 clean_name = "Cleaned Name"
 consts = None
 debug = False
+element_limit = -1
 
 
 def find_field_position(headers, field):

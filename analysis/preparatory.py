@@ -1,15 +1,11 @@
 import csv
-import numpy as np
 import os
-from os.path import exists
-from utils import concatenate, copy_array
-from file_management import write_into_one_csv, save_as_txt, save_as_csv
-from config import find_field_position, clean_name, debug
+from utils import concatenate
+from file_management import write_into_one_csv
+from config import find_field_position, clean_name, debug, element_limit
 
 global element_hash_map
 global run_options
-    
-limit = 1500 if not debug else 10
     
 def header_hashmaps(headers, other_headers):
     head_i_hm = {}
@@ -92,11 +88,11 @@ def get_element_hashmap(data, headers):
     
 def prepare_data(root, paths, options={}):
     global clean_name_pos
-    global limit
+    global element_limit
     
     errors = False
     path = None
-    if not exists(f"{root}/temp_debug.csv") and debug == False:  
+    if not os.path.exists(f"{root}/temp_debug.csv") and debug == False:  
         path = write_into_one_csv(root, paths, "data")
     else:
         path = f"{root}/temp_debug.csv"
@@ -128,7 +124,7 @@ def prepare_data(root, paths, options={}):
         else:
             continue
         
-        if i == limit:
+        if i == element_limit:
             if run_options['v']:
                 print("exiting here")
             return all_elements, headers, header_hashmap
@@ -155,80 +151,8 @@ def add_virtual_columns(dataa, names, default_values):
             dataa[0][j].append(default_values[i])
 
     return names
-global recur
-recur = 0 
-# The function that computes the max depth of an entry
-def get_max_depth(data, entry, element_hashmap, header_hms, cs, previous_jargons, options={}):
-    global recur
-
-    # print('get_max_depth with entry ' + str(data[entry][cs['clean_name_pos']]) + " with depth " + str(len(previous_jargons)))
-    if recur == 6:
-        print(f"recursion limit reached at data_entry {data[entry][cs['clean_name_pos']]}. exiting...")
-        exit()
-    word = data[entry][cs['clean_name_pos']]
-
-    previous_jargons.append(word)
-    
-    entry = element_hashmap["ti"][word]
-    
-    max_depths = [0]
-
-    if data[entry][header_hms['ti'][cs['ety_depth']]] != "-1": # if the entry has already been computed
-        if options['v']:
-            print("already computed. Skipping....")
-        return data[entry][header_hms['ti'][cs['ety_depth']]]
-     
-    # for every jargon entry   
-    for j_pos in cs['jargon_entry_positions']:
-
-        # if there is no jargon entry
-        if data[entry][j_pos] == "": 
-            continue
-        
-        # if the entry is recursive
-        if data[entry][j_pos] in previous_jargons: 
-            for i in range(len(previous_jargons), 0, -1):
-                if previous_jargons[i-1] == word:
-                    return len(previous_jargons)-i
-        
-        # if not existing, add to additives
-        if data[entry][j_pos] not in element_hashmap['ti']:
-            if options['v']:
-                print(f"Adding new word to additives: {data[entry][j_pos]}")
-            cs['additives'].append(data[entry][j_pos])
-            continue
-        
-        # existing. We find it, and populate it like this entry
-        row_pos = element_hashmap['ti'][data[entry][j_pos]]
-        recur += 1
-        prev_jarg = copy_array(previous_jargons)
-        max_depth = get_max_depth(data, row_pos, element_hashmap, header_hms, cs, prev_jarg, options)
-        recur -= 1
-        max_depths.append(max_depth)
-
-
-    return np.max(max_depths) + 1
-
 
 # lines, element_hashmap, headers, header_hms = dataa[0], dataa[1], dataa[2], dataa[3]
-
-# # computes the etymology depth of any given entry
-def populate_ety_depths(dataa, cs, options={}):
-    global limit
-
-    
-    for i in range(1, len(dataa[0])):
-        if options['v']:
-            print(f"now computing {dataa[0][i][cs['clean_name_pos']]}")
-        max_depth = get_max_depth(dataa[0], i, dataa[1], dataa[3], cs, [], options)
-        dataa[0][i][cs['ety_depth_pos']] = max_depth
-        
-        if i == limit:
-            print(f"done first {limit}")
-            print(f"additives: {cs['additives']}")
-            save_as_txt(cs['root'], cs['additives'], 'additives')
-            exit()
-    return 
 
 def merge_csv_headers(root, paths):
     headerss = []
@@ -245,11 +169,3 @@ def merge_csv_headers(root, paths):
 # notes:
 # Volume of a node can refer to the authority of the node (refers to the name obfuscation, e.g. how likely one is able to guess the etymology of a word)
 # Hub node: See HITS
-
-
-def prepare_depth_data(data, cs):
-    final_data = []
-    for i in range(0, len(data)):
-        final_data.append([data[i][cs["clean_name_pos"]], data[i][cs['ety_depth_pos']]])
-    
-    save_as_csv(cs['root'], final_data, "final_ety_depths", final_data[0])
