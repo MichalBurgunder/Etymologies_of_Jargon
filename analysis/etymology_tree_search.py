@@ -4,7 +4,7 @@ import os
 from os.path import exists
 from utils import concatenate, copy_array
 from file_management import write_into_one_csv, save_as_txt, save_as_csv
-from config import find_field_position, clean_name, debug, raw_data_root
+from config import find_field_position, clean_name, debug
 
 global element_hash_map
 global run_options
@@ -138,7 +138,7 @@ def prepare_data(root, paths, options={}):
         print("Fix the errors, and run the file again.")
         exit()
     if options['c']:
-        print("Data Correct. Ready to proceed")
+        print("Data Correct (correct headers, no duplicates, names present)\nReady to proceed")
         exit()
 
     return all_elements, headers, header_hashmap
@@ -177,18 +177,21 @@ def get_max_depth(data, entry, element_hashmap, header_hms, cs, previous_jargons
         if options['v']:
             print("already computed. Skipping....")
         return data[entry][header_hms['ti'][cs['ety_depth']]]
-        
+     
+    # for every jargon entry   
     for j_pos in cs['jargon_entry_positions']:
 
-        if data[entry][j_pos] == "": # if there is no jargon entry
+        # if there is no jargon entry
+        if data[entry][j_pos] == "": 
             continue
         
-        if data[entry][j_pos] in previous_jargons: # if the entry is recursive
+        # if the entry is recursive
+        if data[entry][j_pos] in previous_jargons: 
             for i in range(len(previous_jargons), 0, -1):
                 if previous_jargons[i-1] == word:
                     return len(previous_jargons)-i
         
-        # jargon must be there, and uncomputed. Check if not existing, then add
+        # if not existing, add to additives
         if data[entry][j_pos] not in element_hashmap['ti']:
             if options['v']:
                 print(f"Adding new word to additives: {data[entry][j_pos]}")
@@ -204,7 +207,7 @@ def get_max_depth(data, entry, element_hashmap, header_hms, cs, previous_jargons
         max_depths.append(max_depth)
 
 
-    return np.max(max_depths)
+    return np.max(max_depths) + 1
 
 
 # lines, element_hashmap, headers, header_hms = dataa[0], dataa[1], dataa[2], dataa[3]
