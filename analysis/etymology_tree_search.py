@@ -4,8 +4,7 @@ import os
 from os.path import exists
 from utils import concatenate, copy_array
 from file_management import write_into_one_csv, save_as_txt, save_as_csv
-from config import find_field_position, get_run_options, clean_name, debug, raw_data_root
-import sys
+from config import find_field_position, clean_name, debug, raw_data_root
 
 global element_hash_map
 global run_options
@@ -104,7 +103,8 @@ def prepare_data(root, paths, options={}):
     i = 0
     for line in file:
         
-        if line[sem_num] != '2':# and line[sem_num] != '3': # not adding line semantic numbers 2 (error in scraping) or 3 (proto additive)
+        # not adding line semantic numbers 2 (beginning/end scrape links), 3 (duplicate), 9 (false scrape)
+        if line[sem_num] not in ['2','3','9']:
             if line[clean_name_pos] in name_hm:
                 print(f"Duplicate entry found for {line[clean_name_pos]}. Skipping...")
                 errors = True
@@ -123,6 +123,10 @@ def prepare_data(root, paths, options={}):
     if errors:
         print("Fix the errors, and run the file again.")
         exit()
+    if options['c']:
+        print("Data Correct. Ready to proceed")
+        exit()
+
     return all_elements, headers, header_hashmap
 
 def add_virtual_columns(dataa, names, default_values):

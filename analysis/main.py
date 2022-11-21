@@ -13,7 +13,6 @@ global options
 # lines, headers, header_hms = dataa[0], dataa[1], dataa[2], dataa[3]
 
 def __main__():
-
     options = get_run_options(sys.argv)
 
     # exit()

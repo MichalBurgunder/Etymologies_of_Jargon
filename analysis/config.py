@@ -74,9 +74,15 @@ def prepare_globals(dataa):
     
 
 def get_run_options(args):
-    options = {"v": False}
-    clean_args = args[0].replace('-', '', 1)
-    
+    options = {
+        "v": False,
+        "c": False
+    }
+    clean_args = args[1].replace('-', '', 1)
+
     if "v" in clean_args:
         options['v'] = True
+    if "c" in clean_args:
+        options['c'] = True
+        
     return options
