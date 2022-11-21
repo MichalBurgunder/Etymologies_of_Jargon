@@ -19,7 +19,7 @@ def write_into_one_csv(root, paths, descriptor, just_headers=False):
             with open(f"{raw_data_root}/{path}", ) as file:
                 info = csv.reader(file, delimiter=',')
                 if not just_headers:
-                    next(info) # in an attempt to skip the header
+                    next(info) # skip the header
                 for row in info:
                     writer.writerow(row)
                     if just_headers:
@@ -33,7 +33,7 @@ def save_as_csv(root, data, descriptor, headers, final=False, format_data=False,
             new_data.append([entry])
         data = new_data
         
-    with open(f"{root}/temp_{descriptor}.csv", "wt") as fw:
+    with open(f"{root}/{descriptor}.csv", "wt") as fw:
         writer = csv.writer(fw)
         # writer.writerow(headers)
         for row in data:
