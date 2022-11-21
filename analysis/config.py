@@ -2,8 +2,9 @@ jargon_entries = ["1st Jargon", "2nd Jargon", "3rd Jargon", "4th Jargon"] # the 
 root = '/Users/michal/Documents/thesis/etymologies_of_jargon/thesis_data'
 raw_data_root = '/Users/michal/Documents/thesis/etymologies_of_jargon/thesis_data/raw_data'
 paths = [
-            'Thesis_data - programming_languages.csv', # programming languages
-            'Thesis_data - additives.csv' # all additives (entries not originating from scrapes)
+            'Thesis_data - programming_languages.csv', # programming languages (from wikipedia)
+            'Thesis_data - additives.csv', # all additives (entries not originating from scrapes) (from wikipedia)
+            'Thesis_data - gnu_software.csv' # gnu software (from wikipedia)
         ]
 additives = [] # here will be all the new name additives that have not been added just yet
 ety_depth = "Etymology Depth"
