@@ -60,14 +60,24 @@ def get_headers_hashmap(root, paths, virtual_fields=[]):
     num_headers = len(headerss[0])
     for i in range(1,len(headerss)):
         if False in [len(headerss[i]) == num_headers for headers in headerss]:
-            raise Exception("Length of the headers are not the same:\n" + str(headerss))
+            print(f"Length of the headers are not the same:\nLength of first headers: {num_headers}\nLength of your headers: {len(headerss[i])}")
+            exit()
 
     # we verify: each entry
+    errors = []
     for i in range(0, num_headers):
         for j in range(1, len(headerss)):
             if headerss[0][i] != headerss[j][i]:
-                raise "Entries in headers are not the same"
+                errors.append([headerss[0][i], headerss[j][i]])
+                # print(f"Entries in headers are not the same\nOriginal header: {headerss[0][i]}\nYour header: {headerss[j][i]}")
+                
 
+    if 0 < len(errors):
+        print("Entries in headers are not the same")
+        for pair in errors:
+            print(f"Original header: {pair[0]}\nYour header: {pair[1]}\n")
+        exit()
+        
     return header_hashmaps(headerss[0], virtual_fields), concatenate(headerss[0], virtual_fields)
 
 def get_element_hashmap(data, headers):    
@@ -96,6 +106,7 @@ def prepare_data(root, paths, options={}):
     
     sem_num = find_field_position(headers, 'Semantic number')
     clean_name_pos = find_field_position(headers, 'Cleaned Name')
+    scrape_name_pos = find_field_position(headers, 'Scrape Name')
     
     all_elements = []
     name_hm = {}
@@ -103,10 +114,13 @@ def prepare_data(root, paths, options={}):
     i = 0
     for line in file:
         
-        # not adding line semantic numbers 2 (beginning/end scrape links), 3 (duplicate), 9 (false scrape)
-        if line[sem_num] not in ['2','3','9']:
+        # not adding line semantic numbers 2 (beginning/end scrape links), 3 (duplicate), 9 (false scrape), 10 (not included in anaylsis)
+        if line[sem_num] not in ['2','3','9', '10']:
             if line[clean_name_pos] in name_hm:
-                print(f"Duplicate entry found for {line[clean_name_pos]}. Skipping...")
+                if line[clean_name_pos] == '':
+                    print(f'Clean name empty (for scrape entry {line[scrape_name_pos]})')
+                else:
+                    print(f"Duplicate entry found for {line[clean_name_pos]}. Skipping...")
                 errors = True
             else:
                 all_elements.append(line)

@@ -12,7 +12,10 @@ def write_into_one_csv(root, paths, descriptor, just_headers=False):
         writer = csv.writer(fw)
         for path in paths:
             if not exists(f"{raw_data_root}/{path}"):
-                print(f"Cannot find path to file {root}/{path}. Exiting...")
+                print(f"Cannot find path to file {raw_data_root}/{path}.")
+                print("Missing a comma, maybe?")
+                print("Exiting...")
+                exit()
             with open(f"{raw_data_root}/{path}", ) as file:
                 info = csv.reader(file, delimiter=',')
                 if not just_headers:
