@@ -79,11 +79,12 @@ def get_run_options(args):
         "v": False,
         "c": False
     }
-    clean_args = args[1].replace('-', '', 1)
+    if 1 < len(args):
+        clean_args = args[1].replace('-', '', 1)
 
-    if "v" in clean_args:
-        options['v'] = True
-    if "c" in clean_args:
-        options['c'] = True
+        if "v" in clean_args:
+            options['v'] = True
+        if "c" in clean_args:
+            options['c'] = True
         
     return options
