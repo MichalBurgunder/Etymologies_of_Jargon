@@ -21,7 +21,7 @@ def get_max_depth(data, entry, element_hashmap, header_hms, cs, previous_jargons
     
     entry = element_hashmap["ti"][word]
     
-    max_depths = [0]
+    max_depths = [-1]
 
     if data[entry][header_hms['ti'][cs['ety_depth']]] != "-1": # if the entry has already been computed
         if options['v']:
@@ -83,5 +83,5 @@ def prepare_depth_data(data, cs):
     for i in range(0, len(data)):
         final_data.append([data[i][cs["clean_name_pos"]], data[i][cs['ety_depth_pos']]])
     
-    save_as_csv(cs['root'], final_data, "final_ety_depths", final_data[0])
+    save_as_csv(cs['root'], final_data, "ety_depths", final_data[0])
 
