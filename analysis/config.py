@@ -1,8 +1,9 @@
 jargon_entries = ["1st Jargon", "2nd Jargon", "3rd Jargon", "4th Jargon"] # the fields which will create our tree
 root = '/Users/michal/Documents/thesis/etymologies_of_jargon/thesis_data'
+raw_data_root = '/Users/michal/Documents/thesis/etymologies_of_jargon/thesis_data/raw_data'
 paths = [
-            'programming_languages.csv', # programming languages
-            'additives.csv'
+            'Thesis_data - programming_languages.csv', # programming languages
+            'Thesis_data - additives.csv' # all additives (entries not originating from scrapes)
         ]
 additives = [] # here will be all the new name additives that have not been added just yet
 ety_depth = "Etymology Depth"
@@ -12,8 +13,6 @@ debug = False
 
 
 def find_field_position(headers, field):
-    # print(headers)
-    # exit()
     for i in range(0, len(headers)):
         if headers[i] == field:
             return i
@@ -33,13 +32,11 @@ def find_jargon_entry_positions(headers, jargons):
                 break
 
     if len(entry_positions) != len(jargons):
-        print("cant find jargons")
+        print("Can't find jargons. Exiting...")
         exit()
     return entry_positions
 
 def fill_clean_names(dataa, cs):
-    # print(cs['scrape_name_pos'])
-    # print(cs['clean_name_pos'])
     for i in range(0, len(dataa[0])):
         if dataa[0][i][cs['clean_name_pos']] == '':
             if i == 670:
@@ -55,11 +52,9 @@ def prepare_globals(dataa):
     consts = {
         'jargon_entries': jargon_entries, # the fields which will create our tree
         'jargon_entry_positions': None,
-        'root': '/Users/michal/Documents/thesis/etymologies_of_jargon/thesis_data',
-        'paths': [
-                    'programming_languages.csv', # programming languages
-                    'additives.csv' # all additives
-                ],
+        'root': root,
+        'raw_data_root': raw_data_root,
+        'paths': paths,
         'additives': [], # here will be all the new name additives that have not been added just ye
         'virtual_fields': ["ety.depth"],
         'vf_default_values': ['-1'],
@@ -78,3 +73,10 @@ def prepare_globals(dataa):
     return consts
     
 
+def get_run_options(args):
+    options = {"v": False}
+    clean_args = args[0].replace('-', '', 1)
+    
+    if "v" in clean_args:
+        options['v'] = True
+    return options

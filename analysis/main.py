@@ -1,19 +1,24 @@
 import os
 from os.path import exists
 
-from etymology_tree_search import add_virtual_columns, populate_ety_depths, prepare_data, get_headers_hashmap, get_element_hashmap, prepare_depth_data, save_as_txt
+from etymology_tree_search import add_virtual_columns, populate_ety_depths, prepare_data, get_headers_hashmap, get_element_hashmap, prepare_depth_data
 from file_management import save_as_csv
-from config import prepare_globals, fill_clean_names, root, paths, ety_depth
+from config import prepare_globals, fill_clean_names, get_run_options, root, raw_data_root, paths, ety_depth
+import sys
 
 os.system('clear')
-
+global run_options
+global options
 # lines, element_hashmap, headers, header_hms = dataa[0], dataa[1], dataa[2], dataa[3] !!OBS!!
 # lines, headers, header_hms = dataa[0], dataa[1], dataa[2], dataa[3]
 
 def __main__():
-    
+
+    options = get_run_options(sys.argv)
+
+    # exit()
     # takes from temp_debug.csv, if exists
-    dataa = prepare_data(root, paths)
+    dataa = prepare_data(root, paths, options)
 
     new_headers = add_virtual_columns(dataa, [ety_depth], ["-1"])
 
@@ -32,12 +37,12 @@ def __main__():
     if not exists(f"{cs['root']}/temp_debug.csv"):  
         # print("inside")
         save_as_csv(cs['root'], ready_dataa[0], "debug", ready_dataa[2])
-    else:
-        print("outside")
+    # else:
+    #     print("outside")
     
-    # print(cs['additives'])
+    # print("done")
     # exit()
-    populate_ety_depths(ready_dataa, cs)
+    populate_ety_depths(ready_dataa, cs, options)
     # print(cs['additives'])
     # exit()
 
@@ -48,9 +53,10 @@ def __main__():
     print("Additives: ")
     print(new_additives)
     # exit() cs['root'], new_additives, "new_additives"
-    save_as_csv(cs['root'], new_additives, "new_additives", ["Name"], True, True)
+    save_as_csv(cs['root'], new_additives, "new_additives", ["Name"], True, True, options)
     
     # writes data to final_ety_depths.csv
     prepare_depth_data(dataa[0], cs)
-    
+
+
 __main__()
