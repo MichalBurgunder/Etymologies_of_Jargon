@@ -35,7 +35,7 @@ def save_as_csv(root, data, descriptor, headers, final=False, format_data=False,
         
     with open(f"{root}/temp_{descriptor}.csv", "wt") as fw:
         writer = csv.writer(fw)
-        writer.writerow(headers)
+        # writer.writerow(headers)
         for row in data:
             writer.writerow(row)
     if 'v' in options and options['v']:
