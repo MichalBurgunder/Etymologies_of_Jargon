@@ -41,11 +41,7 @@ def create_bar_graph(bars, log=False):
     plt.grid(True)
     plt.show()
     return
-
-
-    
-    
-    
+   
 def depths():
     nums = []
     # code originating from here: https://stackoverflow.com/questions/36698839/python-3-opening-multiple-csv-files
@@ -71,4 +67,4 @@ def depths():
     print(bars)
     return create_bar_graph(bars, True)
     
-depths()
+# depths()
