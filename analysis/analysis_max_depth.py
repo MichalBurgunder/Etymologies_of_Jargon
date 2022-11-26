@@ -5,14 +5,14 @@ from file_management import save_as_txt, save_as_csv
 from config import element_limit
 global recur
 recur = 0
-
+recur_limit = 20
 # The function that computes the max depth of an entry
 def get_max_depth(data, entry, element_hashmap, header_hms, cs, previous_jargons, options={}):
     global recur
 
     # print('get_max_depth with entry ' + str(data[entry][cs['clean_name_pos']]) + " with depth " + str(len(previous_jargons)))
-    if recur == 6:
-        print(f"recursion limit reached at data_entry {data[entry][cs['clean_name_pos']]}. exiting...")
+    if recur == recur_limit:
+        print(f"recursion limit reached ({recur_limit})at data_entry {data[entry][cs['clean_name_pos']]}. exiting...")
         exit()
     word = data[entry][cs['clean_name_pos']]
 
@@ -64,7 +64,7 @@ def get_max_depth(data, entry, element_hashmap, header_hms, cs, previous_jargons
 
 # # computes the etymology depth of any given entry
 def populate_ety_depths(dataa, cs, options={}):
-    
+    print('starting ety. depth analysis')
     for i in range(1, len(dataa[0])):
         if options['v']:
             print(f"now computing {dataa[0][i][cs['clean_name_pos']]}")
@@ -83,5 +83,5 @@ def prepare_depth_data(data, cs):
     for i in range(0, len(data)):
         final_data.append([data[i][cs["clean_name_pos"]], data[i][cs['ety_depth_pos']]])
     
-    save_as_csv(cs['root'], final_data, "ety_depths", final_data[0])
+    save_as_csv(cs['analyzed_data_root'], final_data, "ety_depths", final_data[0])
 

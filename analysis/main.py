@@ -5,7 +5,9 @@ import sys
 from analysis_max_depth import populate_ety_depths, prepare_depth_data
 from preparatory import get_headers_hashmap, get_element_hashmap, prepare_data, add_virtual_columns
 from file_management import save_as_csv
-from config import prepare_globals, fill_clean_names, get_run_options, root, raw_data_root, paths, ety_depth
+from config import prepare_globals, fill_clean_names, root, paths, ety_depth
+from utils import get_run_options
+from analysis_by_year import prepare_ety_by_year_data
 
 os.system('clear')
 
@@ -29,8 +31,8 @@ def __main__():
     
     ready_dataa = [dataa[0], element_hash_map, headers, header_hashmap]
 
-    if not exists(f"{cs['root']}/temp_debug.csv"):  
-        save_as_csv(cs['root'], ready_dataa[0], "debug", ready_dataa[2])
+    # if not exists(f"{cs['root']}/temp_debug.csv"):  
+    #     save_as_csv(cs['root'], ready_dataa[0], "debug", ready_dataa[2])
 
     populate_ety_depths(ready_dataa, cs, options)
 
@@ -38,13 +40,19 @@ def __main__():
     # deduplication of list, for better use
     new_additives = list(set(cs['additives']))
 
-    print("Additives: ")
-    print(new_additives)
+    if len(new_additives):
+        print("Additives: \n")
+        print(new_additives)
+        save_as_csv(cs['root'], new_additives, "new_additives", ["Name"], True, True, options)
+        print("\nAdd new additives to proceed with analysis\n")
+        exit()
+    print("No new additives. Proceeding to analysis...")
     # exit() cs['root'], new_additives, "new_additives"
-    save_as_csv(cs['root'], new_additives, "new_additives", ["Name"], True, True, options)
+
     
     # writes data to final_ety_depths.csv
     prepare_depth_data(dataa[0], cs)
-
+    prepare_ety_by_year_data(dataa[0], headers, cs)
+    print("All done!")
 
 __main__()

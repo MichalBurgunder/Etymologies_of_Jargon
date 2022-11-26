@@ -1,10 +1,12 @@
+from utils import find_field_position
+
 jargon_entries = ["1st Jargon", "2nd Jargon", "3rd Jargon", "4th Jargon"] # the fields which will create our tree
 root = '/Users/michal/Documents/thesis/etymologies_of_jargon/thesis_data'
 raw_data_root = '/Users/michal/Documents/thesis/etymologies_of_jargon/thesis_data/raw_data'
 paths = [
             'Thesis_data - programming_languages.csv', # programming languages (from wikipedia)
             'Thesis_data - additives.csv', # all additives (entries not originating from scrapes) (from wikipedia)
-            'Thesis_data - gnu_software.csv' # gnu software (from wikipedia)
+            # 'Thesis_data - gnu_software.csv' # gnu software (from wikipedia)
         ]
 additives = [] # here will be all the new name additives that have not been added just yet
 ety_depth = "Etymology Depth"
@@ -12,13 +14,8 @@ clean_name = "Cleaned Name"
 consts = None
 debug = False
 element_limit = -1
+analyzed_data_root = f"{root}/final_data"
 
-
-def find_field_position(headers, field):
-    for i in range(0, len(headers)):
-        if headers[i] == field:
-            return i
-    raise f"Cannot find '{field}' column"
 
 def prepare_virtual_fields(dataa, cs):
     cs['ety_depth_pos'] = find_field_position(dataa[1], cs['ety_depth'])
@@ -65,6 +62,7 @@ def prepare_globals(dataa):
         'scrape_name': 'Scrape Name', 
         'ety_depth': "Etymology Depth",
         'ety_depth_pos': None,
+        'analyzed_data_root': analyzed_data_root
     }
 
     # lets find the jargon entry positions
@@ -73,19 +71,3 @@ def prepare_globals(dataa):
     prepare_virtual_fields(dataa, consts)
 
     return consts
-    
-
-def get_run_options(args):
-    options = {
-        "v": False,
-        "c": False
-    }
-    if 1 < len(args):
-        clean_args = args[1].replace('-', '', 1)
-
-        if "v" in clean_args:
-            options['v'] = True
-        if "c" in clean_args:
-            options['c'] = True
-        
-    return options

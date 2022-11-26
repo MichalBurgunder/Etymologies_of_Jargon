@@ -93,6 +93,7 @@ def prepare_data(root, paths, options={}):
     errors = False
     path = None
     if not os.path.exists(f"{root}/temp_debug.csv") and debug == False:  
+        # writing all data in one csv, so that we can analyze them all together
         path = write_into_one_csv(root, paths, "data")
     else:
         path = f"{root}/temp_debug.csv"
@@ -103,7 +104,8 @@ def prepare_data(root, paths, options={}):
     sem_num = find_field_position(headers, 'Semantic number')
     clean_name_pos = find_field_position(headers, 'Cleaned Name')
     scrape_name_pos = find_field_position(headers, 'Scrape Name')
-    
+    scrape_identifier_pos = find_field_position(headers, 'Scrape Identifier')
+
     all_elements = []
     name_hm = {}
     
@@ -116,7 +118,7 @@ def prepare_data(root, paths, options={}):
                 if line[clean_name_pos] == '':
                     print(f'Clean name empty (for scrape entry {line[scrape_name_pos]})')
                 else:
-                    print(f"Duplicate entry found for {line[clean_name_pos]}. Skipping...")
+                    print(f"Duplicate entry found for {line[clean_name_pos]} (scrape identifier: {line[scrape_identifier_pos]}). Skipping...")
                 errors = True
             else:
                 all_elements.append(line)
