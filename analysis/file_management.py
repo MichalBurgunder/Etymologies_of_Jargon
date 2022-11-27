@@ -1,7 +1,7 @@
 
 import csv
 from os.path import exists
-from config import raw_data_root 
+from config import raw_data_root, root
 global options 
 global run_options 
 
@@ -26,16 +26,13 @@ def write_into_one_csv(root, paths, descriptor, just_headers=False):
                         break
     return f"{root}/temp_{descriptor}.csv"
 
-def save_as_csv(root, data, descriptor, headers, final=False, format_data=False, options={}):
+# format data --> place then arrays, to work with csvs
+def save_as_csv(data, descriptor, format_data=False, options={}):
     if format_data:
-        new_data = []
-        for entry in data:
-            new_data.append([entry])
-        data = new_data
+        data = [[entry] for entry in data]
         
-    with open(f"{root}/{descriptor}.csv", "wt") as fw:
+    with open(f"{root}/final_data/{descriptor}.csv", "wt") as fw:
         writer = csv.writer(fw)
-        # writer.writerow(headers)
         for row in data:
             writer.writerow(row)
     if 'v' in options and options['v']:
@@ -46,3 +43,15 @@ def save_as_txt(root, data, descriptor, final=False):
     with open(f"{root}/{d}_{descriptor}.txt", "wt") as fw:
         writer = csv.writer(fw)
         writer.writerow(data)
+
+def read_csv(file_name, field=False):
+    lines = []
+    with open(f"{root}/final_data/{file_name}.csv") as file:
+        info = csv.reader(file, delimiter=',')
+        for row in info:
+            if field != False:
+                lines.append(row[field])
+            else: 
+                 lines.append(row)
+
+    return lines

@@ -83,5 +83,5 @@ def prepare_depth_data(data, cs):
     for i in range(0, len(data)):
         final_data.append([data[i][cs["clean_name_pos"]], data[i][cs['ety_depth_pos']]])
     
-    save_as_csv(cs['analyzed_data_root'], final_data, "ety_depths", final_data[0])
+    save_as_csv(final_data, "ety_depths")
 

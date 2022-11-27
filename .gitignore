@@ -9,7 +9,8 @@
 archive
 etymologies_of_jargon.Rproj
 temp*
-
+notes*
+*.csv
 
 # miscellaneous
 .DS_Store

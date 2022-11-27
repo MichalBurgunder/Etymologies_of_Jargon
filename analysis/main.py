@@ -31,9 +31,6 @@ def __main__():
     
     ready_dataa = [dataa[0], element_hash_map, headers, header_hashmap]
 
-    # if not exists(f"{cs['root']}/temp_debug.csv"):  
-    #     save_as_csv(cs['root'], ready_dataa[0], "debug", ready_dataa[2])
-
     populate_ety_depths(ready_dataa, cs, options)
 
     
@@ -43,7 +40,7 @@ def __main__():
     if len(new_additives):
         print("Additives: \n")
         print(new_additives)
-        save_as_csv(cs['root'], new_additives, "new_additives", ["Name"], True, True, options)
+        save_as_csv(new_additives, "new_additives", True, options)
         print("\nAdd new additives to proceed with analysis\n")
         exit()
     print("No new additives. Proceeding to analysis...")

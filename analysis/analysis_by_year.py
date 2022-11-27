@@ -33,19 +33,17 @@ def get_column_hash_table():
     return hash_table
     
 def prepare_year_type_data(all_elements, headers):
-    print("starting ety. type by year anaylsis...")
+    print("starting ety. type by year analysis...")
     separation = 10
     columns = [f'{i}-{i+10}' for i in range(1900, 2030, separation)]
-    print(columns)
+
     hash_table_columns = get_column_hash_table() # sets the years, so that one can query it
     year_pos = find_field_position(headers, "Year")
     ety_type_pos = find_field_position(headers, "Ety. type")
     data = []
-    # data.append([0] * len(columns)) # I don't think that this works, no?
+
     rows_names = []
     
-    # print(hash_table_columns)
-    # exit()
     for i in range(0, len(all_elements)):
         if all_elements[i][year_pos] < 1900:
             continue
@@ -59,7 +57,6 @@ def prepare_year_type_data(all_elements, headers):
         else:
             row_pos = rows_names.index(all_elements[i][ety_type_pos])
         
-        print(f'{row_pos}, {col_pos}')
         data[row_pos][col_pos] += 1
     
     data.insert(0, columns)
@@ -72,4 +69,4 @@ def prepare_ety_by_year_data(all_elements, headers, cs):
     fill_no_etymology(all_elements, headers)
     unique_ety_types = get_all_unique_etymology_types(all_elements, headers)
     data = prepare_year_type_data(all_elements, headers)
-    save_as_csv(cs['root'], data, "ety_type_by_year", headers)
+    save_as_csv(data, "ety_type_by_year")
