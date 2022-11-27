@@ -48,12 +48,6 @@ def create_bar_graph(bars, log=False):
    
 def depths(file_name):
     nums = read_csv(file_name, field=1)
-    # code originating from here: https://stackoverflow.com/questions/36698839/python-3-opening-multiple-csv-files
-    # with open(f"{root}/final_data/{file_name}.csv", ) as file:
-    #     info = csv.reader(file, delimiter=',')
-    #     next(info) # skip the header
-    #     for row in info:
-    #         nums.append(int(row[1]))
 
     max_value = max(nums)
 
@@ -65,63 +59,68 @@ def depths(file_name):
     print(bars)
     return create_bar_graph(bars, True)
 
+def convert_to_ints(data):
+    for i in range(0,len(data)):
+        for j in range(0,len(data[i])):
+            data[i][j] = int(data[i][j])
+    return data
+            
 def ety_types(filename):
     data = read_csv(filename)
-
-    # columns = ('Freeze', 'Wind', 'Flood', 'Quake', 'Hail')
-    columns = data[0]
-    # rows = ['%d year' % x for x in (100, 50, 20, 10, 5)]
-    rows = data[-1]
-    data = data[1:len(data)-1]
-    # print(data)
-    # print(len(data))
-    # exit()
-    # values = np.arange(0, 2500, 500)
-    # value_increment = 1000
+    columns = data[0] # fetching columns
+    rows = data[-1] # fetching rows
+    data_stringed = data[1:len(data)-1] # clean data is left behind
+    data = convert_to_ints(data_stringed)
 
     # Get some pastel shades for the colors
     colors = plt.cm.BuPu(np.linspace(0, 0.5, len(rows)))
+    colors = plt.cm.tab20(np.linspace(0, 0.5, len(rows)))
+
     n_rows = len(data)
-    # print(data)
-    # exit()
-    index = np.arange(len(columns)) + 0.3
-    bar_width = 0.4
+
+    index = np.arange(len(columns))
+    bar_width = 0.8
 
     # Initialize the vertical-offset for the stacked bar chart.
-    y_offset = np.zeros(len(columns))
+    # y_offset = np.ones(len(columns))
 
     # Plot bars and create text labels for the table
     cell_text = []
     for row in range(0,n_rows):
-        plt.bar(index, data[row], bar_width, bottom=y_offset, color=colors[row])
-        print(data[row])
-        print(y_offset)
-        # y_offset = y_offset + data[row]
-        cell_text.append(['%1.1f' % (x / 1000.0) for x in y_offset])
+        # print(data[row])
+        plt.bar(index, data[row], width=bar_width, color=colors[row], align='center')
+        cell_text.append(data[row])
     # Reverse colors and text labels to display the last value at the top.
     colors = colors[::-1]
-    cell_text.reverse()
-
-    # Add a table at the bottom of the axes
-    print(columns)
-    print(len(columns))
-    print(rows)
-    print(len(rows))
+    plt.xticks(ticks=[])
+    plt.yticks(ticks=range(0,30,5), labels=range(0,30,5)) #  labels=columns
+    # plt.show()
     # exit()
+    # cell_text.reverse()
+    # print(colors)
+    # print(len(colors))
+    # Add a table at the bottom of the axes
     the_table = plt.table(cellText=cell_text,
                           rowLabels=rows,
                           rowColours=colors,
                           colLabels=columns,
-                          loc='bottom')
-
+                          loc='bottom',
+                          colWidths=(0.072,)*len(columns),
+                        #   colWidths=[0.5 for i in n_rows],
+                        colLoc='center'
+                          )
+    # [the_table.auto_set_font_size(False) for t in [tab1, tab2]]
     # Adjust layout to make room for the table:
-    plt.subplots_adjust(left=0.2, bottom=0.2)
+    plt.subplots_adjust(left=0.2, bottom=0.5)
+    # plt.subplot(figsize=(16, 12))
 
     # plt.ylabel("Loss in ${0}'s".format(value_increment))
     # plt.yticks(values * value_increment, ['%d' % val for val in values])
     # plt.xticks([])
-    plt.title('Loss by Disaster')
-
+    plt.xticks(ticks=[])
+    plt.yticks(ticks=range(0,30,5), labels=range(0,30,5)) #  labels=columns
+    plt.title('Etymology Types by Decade')
     plt.show()
+
     
 ety_types('ety_type_by_year')
