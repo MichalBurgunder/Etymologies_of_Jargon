@@ -71,15 +71,17 @@ def convert_to_ints(data):
             data[i][j] = int(data[i][j])
     return np.array(data)
         
-def order_data_by_frequency(data):
+def order_data_by_frequency(data, old_rows):
     sorted_sums = sorted([(sum(data[i]), i) for i in range(0,len(data))])
     sorted_sums.reverse()
     
     sorted_data = []
+    new_rows = []
     for i in range(0, len(data)):
         sorted_data.append(data[sorted_sums[i][1]])
+        new_rows.append(old_rows[sorted_sums[i][1]])
 
-    return sorted_data
+    return sorted_data, new_rows
     
 def ety_types(filename):
     data_csv = read_csv(filename)
@@ -87,7 +89,7 @@ def ety_types(filename):
     rows = data_csv[-1] # fetching rows
     data = data_csv[1:len(data_csv)-1]
     data = convert_to_ints(data)
-    data = order_data_by_frequency(data)
+    data, rows = order_data_by_frequency(data, rows)
 
     colors = plt.cm.tab20((4./3*np.arange(len(rows))).astype(int))
 
