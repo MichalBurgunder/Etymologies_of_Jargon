@@ -44,9 +44,9 @@ def save_as_txt(root, data, descriptor, final=False):
         writer = csv.writer(fw)
         writer.writerow(data)
 
-def read_csv(file_name, field=False):
+def read_csv(file_name, field=False, sub_directory='final_data/'):
     lines = []
-    with open(f"{root}/final_data/{file_name}.csv") as file:
+    with open(f"{root}/{sub_directory}{file_name}.csv") as file:
         info = csv.reader(file, delimiter=',')
         for row in info:
             if field != False:
