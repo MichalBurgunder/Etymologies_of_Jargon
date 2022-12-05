@@ -14,7 +14,7 @@ def get_max_depth(data, entry, element_hashmap, header_hms, cs, previous_jargons
     if recur == recur_limit:
         print(f"recursion limit reached ({recur_limit})at data_entry {data[entry][cs['clean_name_pos']]}. exiting...")
         exit()
-    word = data[entry][cs['clean_name_pos']]
+    word = data[entry][cs['clean_name_pos']].lower()
 
 
     previous_jargons.append(word)
@@ -30,11 +30,11 @@ def get_max_depth(data, entry, element_hashmap, header_hms, cs, previous_jargons
      
     # for every jargon entry   
     for j_pos in cs['jargon_entry_positions']:
-
         # if there is no jargon entry
         if data[entry][j_pos] == "": 
             continue
         
+        data[entry][j_pos] = data[entry][j_pos].lower()
         # if the entry is recursive
         if data[entry][j_pos] in previous_jargons: 
             for i in range(len(previous_jargons), 0, -1):
