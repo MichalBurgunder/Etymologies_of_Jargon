@@ -59,7 +59,7 @@ for i in range(0, len(data)):
             final_data.append([data[i][1], ''])
     except: 
         print('Error occured. Appending nothing')
-        print(data[i])
+  
         final_data.append([data[i][1], ''])
         
 save_as_csv(final_data, 'conda_links', False, {})

@@ -1,10 +1,7 @@
 
 from config import find_field_position
 from utils import number_only, fill_no_etymology
-import pandas as pd
-from config import root
 from file_management import save_as_csv
-import matplotlib.pyplot as plt
 import numpy as np    # to create dummy data
 
 def remove_special_chars_year(all_elements, headers):
@@ -65,6 +62,7 @@ def prepare_year_type_data(all_elements, headers):
     
     
 def prepare_ety_by_year_data(all_elements, headers, cs):
+    print("starting ety type by year analysis...")
     remove_special_chars_year(all_elements, headers)
     fill_no_etymology(all_elements, headers)
     unique_ety_types = get_all_unique_etymology_types(all_elements, headers)

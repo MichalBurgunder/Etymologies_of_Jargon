@@ -8,6 +8,7 @@ from file_management import save_as_csv
 from config import prepare_globals, fill_clean_names, root, paths, ety_depth
 from utils import get_run_options
 from analysis_by_year import prepare_ety_by_year_data
+from analysis_number_morphemes import prepare_ety_type_2
 
 os.system('clear')
 
@@ -19,17 +20,18 @@ def __main__():
 
     # takes from temp_debug.csv, if exists
     dataa = prepare_data(root, paths, options)
-
+    
     new_headers = add_virtual_columns(dataa, [ety_depth], ["-1"])
-
+    
     cs = prepare_globals(dataa)
     fill_clean_names(dataa, cs)
-    
+    # exit()
     header_hashmap, headers = get_headers_hashmap(root, paths, new_headers)
 
     element_hash_map = get_element_hashmap(dataa[0], headers)
     
     ready_dataa = [dataa[0], element_hash_map, headers, header_hashmap]
+
 
     populate_ety_depths(ready_dataa, cs, options)
 
@@ -46,10 +48,10 @@ def __main__():
     print("No new additives. Proceeding to analysis...")
     # exit() cs['root'], new_additives, "new_additives"
 
-    
     # writes data to final_ety_depths.csv
     prepare_depth_data(dataa[0], cs)
     prepare_ety_by_year_data(dataa[0], headers, cs)
+    prepare_ety_type_2(dataa[0], headers, cs)
     print("All done!")
 
 __main__()

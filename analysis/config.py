@@ -5,18 +5,23 @@ root = '/Users/michal/Documents/thesis/etymologies_of_jargon/thesis_data'
 raw_data_root = '/Users/michal/Documents/thesis/etymologies_of_jargon/thesis_data/raw_data'
 paths = [
             'Thesis_data - programming_languages.csv', # programming languages (from wikipedia)
-            'Thesis_data - additives.csv', # all additives (entries not originating from scrapes) (from wikipedia)
             # 'Thesis_data - gnu_software.csv' # gnu software (from wikipedia)
+            'Thesis_data - anaconda_packages.csv',
+            'Thesis_data - additives.csv', # all additives (entries not originating from scrapes) (from wikipedia)
+            # we require that additives be at the end of the array, so that during deduplication, 
+            # the additives will be marked as duplicates, and not the original entries
         ]
+
 additives = [] # here will be all the new name additives that have not been added just yet
 ety_depth = "Etymology Depth"
 clean_name = "Cleaned Name"
+scrape_identifier = "Scrape Identifier"
 consts = None
 debug = False
 element_limit = -1
 analyzed_data_root = f"{root}/final_data"
 
-
+# TODO: Need to remove whitespace when data first comes in
 def prepare_virtual_fields(dataa, cs):
     cs['ety_depth_pos'] = find_field_position(dataa[1], cs['ety_depth'])
     cs['clean_name_pos'] = find_field_position(dataa[1], cs['clean_name'])
@@ -38,11 +43,7 @@ def find_jargon_entry_positions(headers, jargons):
 def fill_clean_names(dataa, cs):
     for i in range(0, len(dataa[0])):
         if dataa[0][i][cs['clean_name_pos']] == '':
-            if i == 670:
-                print(dataa[0][i])
             dataa[0][i][cs['clean_name_pos']] = dataa[0][i][cs['scrape_name_pos']]
-            if i == 670:
-                print(dataa[0][i]) 
     
     
 def prepare_globals(dataa):

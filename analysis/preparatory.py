@@ -2,7 +2,7 @@ import csv
 import os
 from utils import concatenate
 from file_management import write_into_one_csv
-from config import find_field_position, clean_name, debug, element_limit
+from config import find_field_position, clean_name, debug, element_limit, scrape_identifier
 
 global element_hash_map
 global run_options
@@ -54,10 +54,17 @@ def get_headers_hashmap(root, paths, virtual_fields=[]):
 
     # we verify: length
     num_headers = len(headerss[0])
+
     for i in range(1,len(headerss)):
         if False in [len(headerss[i]) == num_headers for headers in headerss]:
-            print(f"Length of the headers are not the same:\nLength of first headers: {num_headers}\nLength of your headers: {len(headerss[i])}")
+            print(f"Length of the headers are not the same:\nLength of first headers: {num_headers}\nLength of headers in pos. {i}: {len(headerss[i])}")           
+            min_num = min(len(headerss[0]), len(headerss[1]))
+  
+            for j in range(0, min_num):
+                print(f'{headerss[0][j]} | {headerss[i][j]}')
             exit()
+            
+    
 
     # we verify: each entry
     errors = []
@@ -73,22 +80,38 @@ def get_headers_hashmap(root, paths, virtual_fields=[]):
         for pair in errors:
             print(f"Original header: {pair[0]}\nYour header: {pair[1]}\n")
         exit()
-        
+    
     return header_hashmaps(headerss[0], virtual_fields), concatenate(headerss[0], virtual_fields)
 
 def get_element_hashmap(data, headers):    
     clean_name_pos = find_field_position(headers, clean_name)  
+    scrape_identifier_pos = find_field_position(headers, scrape_identifier)  
     element_hashmap = {"ti": {}, "it": {}}
     
+    duplicates = []
+    
     for i in range(0, len(data)):
-        element_hashmap["ti"][data[i][clean_name_pos]] = i
-        element_hashmap["it"][i] = data[i][clean_name_pos]
+        if data[i][clean_name_pos] in element_hashmap["ti"]:
+            duplicates.append([data[i][clean_name_pos], data[i][scrape_identifier_pos]])
+        else:
+            element_hashmap["ti"][data[i][clean_name_pos]] = i
+            element_hashmap["it"][i] = data[i][clean_name_pos]
+            
+    if 0 < len(duplicates):
+        print("Duplicate entries found upon lowercasing them:\n")
+        print(f"Clean Name | Scarpe Identifier ")
+        for i in range(0, len(duplicates)):
+            print(f"{duplicates[i][0]} | {duplicates[i][1]}")
+        print("Remove duplicates from lists to proceed to analysis")
+        exit()
+
     return element_hashmap
     
     
 def prepare_data(root, paths, options={}):
     global clean_name_pos
     global element_limit
+    # print('here')
     
     errors = False
     path = None
@@ -105,18 +128,20 @@ def prepare_data(root, paths, options={}):
     clean_name_pos = find_field_position(headers, 'Cleaned Name')
     scrape_name_pos = find_field_position(headers, 'Scrape Name')
     scrape_identifier_pos = find_field_position(headers, 'Scrape Identifier')
-
+    
     all_elements = []
     name_hm = {}
     
     i = 0
+    
     for line in file:
         
+        line[clean_name_pos] = line[clean_name_pos].lower()
         # not adding line semantic numbers 2 (beginning/end scrape links), 3 (duplicate), 9 (false scrape), 10 (not included in anaylsis)
         if line[sem_num] not in ['2','3','9', '10']:
             if line[clean_name_pos] in name_hm:
                 if line[clean_name_pos] == '':
-                    print(f'Clean name empty (for scrape entry {line[scrape_name_pos]})')
+                    print(f'Clean name empty (for scrape entry {line[scrape_name_pos]}, scrape identifier {line[scrape_identifier_pos]})')
                 else:
                     print(f"Duplicate entry found for {line[clean_name_pos]} (scrape identifier: {line[scrape_identifier_pos]}). Skipping...")
                 errors = True
@@ -131,14 +156,14 @@ def prepare_data(root, paths, options={}):
                 print("exiting here")
             return all_elements, headers, header_hashmap
         i += 1
-    
+    # exit()
     if errors:
         print("Fix the errors, and run the file again.")
         exit()
     if options['c']:
         print("Data Correct (correct headers, no duplicates, names present)\nReady to proceed")
         exit()
-
+    
     return all_elements, headers, header_hashmap
 
 def add_virtual_columns(dataa, names, default_values):
