@@ -9,6 +9,7 @@ from config import prepare_globals, fill_clean_names, root, paths, ety_depth
 from utils import get_run_options
 from analysis_by_year import prepare_ety_by_year_data
 from analysis_number_morphemes import prepare_ety_type_2
+from analysis_jargon_length import prepare_jargon_length
 
 os.system('clear')
 
@@ -52,6 +53,7 @@ def __main__():
     prepare_depth_data(dataa[0], cs)
     prepare_ety_by_year_data(dataa[0], headers, cs)
     prepare_ety_type_2(dataa[0], headers, cs)
+    prepare_jargon_length(dataa[0], headers)
     print("All done!")
 
 __main__()
