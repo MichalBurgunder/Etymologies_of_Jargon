@@ -11,7 +11,11 @@ paths = [
             # we require that additives be at the end of the array, so that during deduplication, 
             # the additives will be marked as duplicates, and not the original entries
         ]
-
+to_analyze = [
+    # 'PL',
+    # 'CP',
+    # 'GNU'
+] # only fill out if you want to the output to include only specific data sets
 additives = [] # here will be all the new name additives that have not been added just yet
 ety_depth = "Etymology Depth"
 clean_name = "Cleaned Name"
@@ -26,6 +30,7 @@ def prepare_virtual_fields(dataa, cs):
     cs['ety_depth_pos'] = find_field_position(dataa[1], cs['ety_depth'])
     cs['clean_name_pos'] = find_field_position(dataa[1], cs['clean_name'])
     cs['scrape_name_pos'] = find_field_position(dataa[1], cs['scrape_name'])
+    cs['scrape_identifier_pos'] = find_field_position(dataa[1], cs['scrape_identifier_pos'])
 
 def find_jargon_entry_positions(headers, jargons):
     entry_positions = []
@@ -55,6 +60,7 @@ def prepare_globals(dataa):
         'root': root,
         'raw_data_root': raw_data_root,
         'paths': paths,
+        'to_analyze': to_analyze,
         'additives': [], # here will be all the new name additives that have not been added just ye
         'virtual_fields': ["ety.depth"],
         'vf_default_values': ['-1'],
@@ -63,7 +69,9 @@ def prepare_globals(dataa):
         'scrape_name': 'Scrape Name', 
         'ety_depth': "Etymology Depth",
         'ety_depth_pos': None,
-        'analyzed_data_root': analyzed_data_root
+        'analyzed_data_root': analyzed_data_root,
+        'scrape_identifier_pos': 'Scrape Identifier',
+        'to_analyze': to_analyze
     }
 
     # lets find the jargon entry positions

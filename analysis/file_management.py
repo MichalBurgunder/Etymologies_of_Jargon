@@ -1,7 +1,10 @@
 
 import csv
 from os.path import exists
+import random
+
 from config import raw_data_root, root
+
 global options 
 global run_options 
 
@@ -30,8 +33,8 @@ def write_into_one_csv(root, paths, descriptor, just_headers=False):
 def save_as_csv(data, descriptor, format_data=False, options={}):
     if format_data:
         data = [[entry] for entry in data]
-        
-    with open(f"{root}/final_data/{descriptor}.csv", "wt") as fw:
+    subfolder = "final_data" if "subfolder" not in options else options["subfolder"]
+    with open(f"{root}/{subfolder}/{descriptor}.csv", "wt") as fw:
         writer = csv.writer(fw)
         for row in data:
             writer.writerow(row)
@@ -55,3 +58,5 @@ def read_csv(file_name, field=False, sub_directory='final_data/'):
                  lines.append(row)
 
     return lines
+
+
