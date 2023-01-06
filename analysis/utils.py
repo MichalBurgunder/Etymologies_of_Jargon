@@ -30,11 +30,11 @@ def number_only(string):
         return -1
     return int(final)
 
-def fill_no_etymology(all_elements, headers):
-    ety_pos = find_field_position(headers, "Ety. type")
+def fill_no_etymology(all_elements, headers, fill="Missing", field="Ety. type"):
+    ety_pos = find_field_position(headers, field)
     for i in range(0,len(all_elements)):
         if all_elements[i][ety_pos] == "":
-            all_elements[i][ety_pos] = "Missing"
+            all_elements[i][ety_pos] = fill
     
 def find_field_position(headers, field):
     for i in range(0, len(headers)):

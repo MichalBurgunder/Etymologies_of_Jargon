@@ -1,8 +1,8 @@
 
+import numpy as np    # to create dummy data
 from config import find_field_position
 from utils import number_only, fill_no_etymology
 from file_management import save_as_csv
-import numpy as np    # to create dummy data
 
 def remove_special_chars_year(all_elements, headers):
     year_pos = find_field_position(headers, "Year")
@@ -10,7 +10,6 @@ def remove_special_chars_year(all_elements, headers):
         if  all_elements[i][year_pos] == '':
              all_elements[i][year_pos] = "0"
         all_elements[i][year_pos] = int(number_only(all_elements[i][year_pos]))
-    
 
 
 def get_all_unique_etymology_types(all_elements, headers):
@@ -25,6 +24,8 @@ def get_all_unique_etymology_types(all_elements, headers):
 
 def get_column_hash_table():
     hash_table = {}
+    # in order to track ety types by year, we set the numbers to go from 1900 to 2030. 
+    # this way, to get the years, we simply need to mulitiply by 10.
     for i in range(190,203,1):
         hash_table[i] = i-190
     return hash_table

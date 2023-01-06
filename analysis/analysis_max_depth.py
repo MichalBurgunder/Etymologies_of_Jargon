@@ -14,6 +14,8 @@ def get_max_depth(data, entry, element_hashmap, header_hms, cs, previous_jargons
     if recur == recur_limit:
         print(f"recursion limit reached ({recur_limit})at data_entry {data[entry][cs['clean_name_pos']]}. exiting...")
         exit()
+    
+    # we take the lower, in order to avoid capitalization disagreements
     word = data[entry][cs['clean_name_pos']].lower()
 
 
@@ -35,13 +37,14 @@ def get_max_depth(data, entry, element_hashmap, header_hms, cs, previous_jargons
             continue
         
         data[entry][j_pos] = data[entry][j_pos].lower()
-        # if the entry is recursive
+        
+        # if the entry is recursive, we track its recursion depth and return
         if data[entry][j_pos] in previous_jargons: 
             for i in range(len(previous_jargons), 0, -1):
                 if previous_jargons[i-1] == word:
                     return len(previous_jargons)-i
         
-        # if not existing, add to additives
+        # if not existing, add to additives and go to the next jargon entry
         if data[entry][j_pos] not in element_hashmap['ti']:
             if options['v']:
                 print(f"Adding new word to additives: {data[entry][j_pos]}")
@@ -71,6 +74,7 @@ def populate_ety_depths(dataa, cs, options={}):
         max_depth = get_max_depth(dataa[0], i, dataa[1], dataa[3], cs, [], options)
         dataa[0][i][cs['ety_depth_pos']] = max_depth
         
+        # for debugging purposes (element_limit == -1 allows for it to be never triggeered)
         if i == element_limit:
             print(f"done first {element_limit}")
             print(f"additives: {cs['additives']}")

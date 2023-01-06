@@ -6,7 +6,24 @@ from config import find_field_position, clean_name, debug, element_limit, scrape
 
 global element_hash_map
 global run_options
+
+# In order to allow for additives to have multiple names (one alias) we include
+# this function that maps the aliases onto the jargon in question. The function
+# simple adds these terms to the primary element_hashmap, so that they are
+# indistinguishable from norma elements
+def get_additive_second_names(data, headers, element_hashmap, duplicates):
+    scr_name_pos = find_field_position(headers, "Scrape Name")
+    scr_iden_pos = find_field_position(headers, "Scrape Identifier")
     
+    for i in range(0, len(data)):
+        if data[i][scr_iden_pos] == "ADD":
+            if data[i][scr_name_pos] not in element_hashmap:
+                element_hashmap["ti"][data[i][scr_name_pos]] = i
+                element_hashmap["it"][i] = data[i][scr_name_pos]
+            else:
+                duplicates.append(f"{data[i][scr_name_pos]} is already in the scrape names additives (duplicate)")
+    
+     
 def header_hashmaps(headers, other_headers):
     head_i_hm = {}
     i_head_hm = {}
@@ -96,7 +113,10 @@ def get_element_hashmap(data, headers):
         else:
             element_hashmap["ti"][data[i][clean_name_pos]] = i
             element_hashmap["it"][i] = data[i][clean_name_pos]
-            
+    
+    # we include additive aliases, in order to manage mistakenly adding two of the same additive jargons
+    get_additive_second_names(data, headers, element_hashmap, duplicates) 
+    
     if 0 < len(duplicates):
         print("Duplicate entries found upon lowercasing them:\n")
         print(f"Clean Name | Scarpe Identifier ")
@@ -111,10 +131,10 @@ def get_element_hashmap(data, headers):
 def prepare_data(root, paths, options={}):
     global clean_name_pos
     global element_limit
-    # print('here')
     
     errors = False
     path = None
+    # we check if a temp file exists. If not, we reload all data from scratch
     if not os.path.exists(f"{root}/temp_debug.csv") and debug == False:  
         # writing all data in one csv, so that we can analyze them all together
         path = write_into_one_csv(root, paths, "data")

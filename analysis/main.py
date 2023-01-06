@@ -10,7 +10,7 @@ from utils import get_run_options
 from analysis_by_year import prepare_ety_by_year_data
 from analysis_number_morphemes import prepare_ety_type_2
 from analysis_jargon_length import prepare_jargon_length
-
+from analysis_by_2nd_ety_type import prepare_year_type_data
 os.system('clear')
 
 # lines, element_hashmap, headers, header_hms = dataa[0], dataa[1], dataa[2], dataa[3] !!OBS!!
@@ -22,6 +22,7 @@ def __main__():
     # takes from temp_debug.csv, if exists
     dataa = prepare_data(root, paths, options)
     
+    # the new columns are specified by the second input
     new_headers = add_virtual_columns(dataa, [ety_depth], ["-1"])
     
     cs = prepare_globals(dataa)
@@ -32,7 +33,6 @@ def __main__():
     element_hash_map = get_element_hashmap(dataa[0], headers)
     
     ready_dataa = [dataa[0], element_hash_map, headers, header_hashmap]
-
 
     populate_ety_depths(ready_dataa, cs, options)
 
@@ -49,11 +49,16 @@ def __main__():
     print("No new additives. Proceeding to analysis...")
     # exit() cs['root'], new_additives, "new_additives"
 
+    # -----------------------------------
+    # ACTUAL ANALYSIS
+    # -----------------------------------
     # writes data to final_ety_depths.csv
     prepare_depth_data(dataa[0], cs)
     prepare_ety_by_year_data(dataa[0], headers, cs)
     prepare_ety_type_2(dataa[0], headers, cs)
     prepare_jargon_length(dataa[0], headers)
+    prepare_year_type_data(dataa[0], headers, "CP")
+    prepare_year_type_data(dataa[0], headers, "RG")
     print("All done!")
 
 __main__()

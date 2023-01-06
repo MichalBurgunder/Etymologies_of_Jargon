@@ -5,7 +5,7 @@ root = '/Users/michal/Documents/thesis/etymologies_of_jargon/thesis_data'
 raw_data_root = '/Users/michal/Documents/thesis/etymologies_of_jargon/thesis_data/raw_data'
 paths = [
             'Thesis_data - programming_languages.csv', # programming languages (from wikipedia)
-            # 'Thesis_data - gnu_software.csv' # gnu software (from wikipedia)
+            # 'Thesis_data - gnu_software.csv', # gnu software (from wikipedia)
             'Thesis_data - anaconda_packages.csv',
             'Thesis_data - additives.csv', # all additives (entries not originating from scrapes) (from wikipedia)
             # we require that additives be at the end of the array, so that during deduplication, 
@@ -45,10 +45,16 @@ def find_jargon_entry_positions(headers, jargons):
         exit()
     return entry_positions
 
+# fills out missing clean name column entries.
+# By default, those that are empty, are simply the scrape name
 def fill_clean_names(dataa, cs):
     for i in range(0, len(dataa[0])):
         if dataa[0][i][cs['clean_name_pos']] == '':
             dataa[0][i][cs['clean_name_pos']] = dataa[0][i][cs['scrape_name_pos']]
+            # we defualt bring it to lower here, as we are looping through all data
+        #     dataa[0][i][cs['clean_name_pos']] = dataa[0][i][cs['scrape_name_pos']].lower()
+        # else:
+        #      dataa[0][i][cs['clean_name_pos']] = dataa[0][i][cs['clean_name_pos']].lower()
     
     
 def prepare_globals(dataa):
