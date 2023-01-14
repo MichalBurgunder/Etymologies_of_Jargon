@@ -1,5 +1,6 @@
 import csv
 import os
+import copy
 from utils import concatenate
 from file_management import write_into_one_csv
 from config import find_field_position, clean_name, debug, element_limit, scrape_identifier
@@ -16,13 +17,12 @@ def get_additive_second_names(data, headers, element_hashmap, duplicates):
     scr_iden_pos = find_field_position(headers, "Scrape Identifier")
     
     for i in range(0, len(data)):
-        if data[i][scr_iden_pos] == "ADD":
+        if data[i][scr_iden_pos] == "ADD" and data[i][scr_name_pos] != "":
             if data[i][scr_name_pos] not in element_hashmap:
                 element_hashmap["ti"][data[i][scr_name_pos]] = i
                 element_hashmap["it"][i] = data[i][scr_name_pos]
             else:
                 duplicates.append(f"{data[i][scr_name_pos]} is already in the scrape names additives (duplicate)")
-    
      
 def header_hashmaps(headers, other_headers):
     head_i_hm = {}
@@ -100,9 +100,10 @@ def get_headers_hashmap(root, paths, virtual_fields=[]):
     
     return header_hashmaps(headerss[0], virtual_fields), concatenate(headerss[0], virtual_fields)
 
-def get_element_hashmap(data, headers):    
+def get_element_hashmap(data, headers, cs):    
     clean_name_pos = find_field_position(headers, clean_name)  
     scrape_identifier_pos = find_field_position(headers, scrape_identifier)  
+
     element_hashmap = {"ti": {}, "it": {}}
     
     duplicates = []
@@ -149,14 +150,27 @@ def prepare_data(root, paths, options={}):
     scrape_name_pos = find_field_position(headers, 'Scrape Name')
     scrape_identifier_pos = find_field_position(headers, 'Scrape Identifier')
     
+    to_clean_fields = [
+        clean_name_pos,
+        find_field_position(headers, '1st Jargon'),
+        find_field_position(headers, '2nd Jargon'),
+        find_field_position(headers, '3rd Jargon'),
+        find_field_position(headers, '4th Jargon Type Connection')
+    ]
     all_elements = []
     name_hm = {}
     
     i = 0
     
     for line in file:
+        # we clean the certain fields, so as not to get differently whitespaced, or capitalized jargons
+        for dirty_field_pos in to_clean_fields:
+            line[dirty_field_pos] = line[dirty_field_pos].lower().strip()
         
-        line[clean_name_pos] = line[clean_name_pos].lower()
+        # in case its an additive, let us also clean the scarpe name, which acts as an alias
+        if line[scrape_identifier_pos] == "ADD":
+             line[scrape_name_pos] = line[scrape_name_pos].lower().strip()
+             
         # not adding line semantic numbers 2 (beginning/end scrape links), 3 (duplicate), 9 (false scrape), 10 (not included in anaylsis)
         if line[sem_num] not in ['2','3','9', '10']:
             if line[clean_name_pos] in name_hm:
@@ -168,6 +182,16 @@ def prepare_data(root, paths, options={}):
             else:
                 all_elements.append(line)
                 name_hm[line[clean_name_pos]] = True
+                
+            # if it is an additive, let us also include the alias of the term, so that it is easier for us to work with the additives
+            # if line[scrape_name_pos] == "ADD" and line[scrape_name_pos] is not "":
+            #     new_line = copy.copy(line)
+                
+            #     temp = new_line[scrape_name_pos]
+            #     new_line[scrape_name_pos] = new_line[clean_name_pos]
+            #     new_line[clean_name_pos] = temp
+   
+            #     all_elements.append(new_line)
         else:
             continue
         
@@ -176,7 +200,7 @@ def prepare_data(root, paths, options={}):
                 print("exiting here")
             return all_elements, headers, header_hashmap
         i += 1
-    # exit()
+
     if errors:
         print("Fix the errors, and run the file again.")
         exit()

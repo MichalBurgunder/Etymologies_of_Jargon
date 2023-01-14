@@ -16,8 +16,8 @@ def get_max_depth(data, entry, element_hashmap, header_hms, cs, previous_jargons
         exit()
     
     # we take the lower, in order to avoid capitalization disagreements
+    # we remove excess whitespace, on either side of the word
     word = data[entry][cs['clean_name_pos']].lower()
-
 
     previous_jargons.append(word)
     
@@ -35,8 +35,6 @@ def get_max_depth(data, entry, element_hashmap, header_hms, cs, previous_jargons
         # if there is no jargon entry
         if data[entry][j_pos] == "": 
             continue
-        
-        data[entry][j_pos] = data[entry][j_pos].lower()
         
         # if the entry is recursive, we track its recursion depth and return
         if data[entry][j_pos] in previous_jargons: 

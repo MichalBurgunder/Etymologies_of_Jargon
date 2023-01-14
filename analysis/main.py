@@ -30,7 +30,7 @@ def __main__():
     # exit()
     header_hashmap, headers = get_headers_hashmap(root, paths, new_headers)
 
-    element_hash_map = get_element_hashmap(dataa[0], headers)
+    element_hash_map = get_element_hashmap(dataa[0], headers, cs)
     
     ready_dataa = [dataa[0], element_hash_map, headers, header_hashmap]
 

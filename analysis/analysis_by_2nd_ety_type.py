@@ -6,13 +6,14 @@ from utils import number_only, fill_no_etymology
 from file_management import save_as_csv
 
 
-def count_field_types_by_scrape(data, pos, scr_ident):
+def count_field_types_by_scrape(data, pos, scr_name_pos, scr_ident):
     all_types = {}
     for i in range(0,len(data)):
-        if data[i][pos] not in all_types:
-            all_types[data[i][pos]] = 1
-        else: 
-            all_types[data[i][pos]] += 1
+        if data[i][scr_name_pos] == scr_ident:
+            if data[i][pos] not in all_types:
+                all_types[data[i][pos]] = 1
+            else: 
+                all_types[data[i][pos]] += 1
     
     return all_types
 
@@ -20,7 +21,9 @@ def prepare_year_type_data(all_elements, headers, scr_ident="CP"):
     print("starting 2nd ety. type analysis...")
     fill_no_etymology(all_elements, headers, fill="Unknown", field="2nd Ety. type")
     ety_type_pos = find_field_position(headers, "2nd Ety. type")
-    hash_table = count_field_types_by_scrape(all_elements, ety_type_pos, scr_ident) # sets the years, so that one can query it
+    scr_name_pos = find_field_position(headers, "Scrape Name")
+    
+    hash_table = count_field_types_by_scrape(all_elements, ety_type_pos, scr_name_pos, scr_ident) # sets the years, so that one can query it
 
     x = []
     y = []
