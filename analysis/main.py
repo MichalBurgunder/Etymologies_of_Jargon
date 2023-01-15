@@ -27,8 +27,8 @@ def __main__():
     
     cs = prepare_globals(dataa)
     fill_clean_names(dataa, cs)
-    # exit()
-    header_hashmap, headers = get_headers_hashmap(root, paths, new_headers)
+
+    headers, header_hashmap = dataa[1], dataa[2]
 
     element_hash_map = get_element_hashmap(dataa[0], headers, cs)
     
@@ -47,7 +47,6 @@ def __main__():
         print("\nAdd new additives to proceed with analysis\n")
         exit()
     print("No new additives. Proceeding to analysis...")
-    # exit() cs['root'], new_additives, "new_additives"
 
     # -----------------------------------
     # ACTUAL ANALYSIS

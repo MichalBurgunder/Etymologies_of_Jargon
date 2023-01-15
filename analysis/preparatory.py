@@ -34,7 +34,7 @@ def header_hashmaps(headers, other_headers):
     
     inc = len(headers)
     for i in range(0, len(other_headers)):
-        i_head_hm[i] = other_headers[i]
+        i_head_hm[inc + i] = other_headers[i]
         head_i_hm[other_headers[i]] = inc + i
         inc += 1
     return {"it": i_head_hm, "ti": head_i_hm}
@@ -74,7 +74,9 @@ def get_headers_hashmap(root, paths, virtual_fields=[]):
 
     for i in range(1,len(headerss)):
         if False in [len(headerss[i]) == num_headers for headers in headerss]:
-            print(f"Length of the headers are not the same:\nLength of first headers: {num_headers}\nLength of headers in pos. {i}: {len(headerss[i])}")           
+            print(f'''Length of the headers are not the same:\n
+                  Length of first headers: {num_headers}\n
+                  Length of headers in pos. {i}: {len(headerss[i])}''')           
             min_num = min(len(headerss[0]), len(headerss[1]))
   
             for j in range(0, min_num):
@@ -89,9 +91,9 @@ def get_headers_hashmap(root, paths, virtual_fields=[]):
         for j in range(1, len(headerss)):
             if headerss[0][i] != headerss[j][i]:
                 errors.append([headerss[0][i], headerss[j][i]])
-                # print(f"Entries in headers are not the same\nOriginal header: {headerss[0][i]}\nYour header: {headerss[j][i]}")
                 
 
+    # we check for errors. If none, we create the hashmaps 
     if 0 < len(errors):
         print("Entries in headers are not the same")
         for pair in errors:
@@ -143,7 +145,8 @@ def prepare_data(root, paths, options={}):
         path = f"{root}/temp_debug.csv"
     
     file = csv.reader(open(path, mode ='r'))
-    header_hashmap, headers = get_headers_hashmap(root, paths)
+    # we add a virtual field, so that we may get the actual name back afterwards
+    header_hashmap, headers = get_headers_hashmap(root, paths, ["Original Clean Name"]) 
     
     sem_num = find_field_position(headers, 'Semantic number')
     clean_name_pos = find_field_position(headers, 'Cleaned Name')
@@ -163,6 +166,7 @@ def prepare_data(root, paths, options={}):
     i = 0
     
     for line in file:
+        clean_name_original = copy.copy(line[clean_name_pos])
         # we clean the certain fields, so as not to get differently whitespaced, or capitalized jargons
         for dirty_field_pos in to_clean_fields:
             line[dirty_field_pos] = line[dirty_field_pos].lower().strip()
@@ -180,18 +184,13 @@ def prepare_data(root, paths, options={}):
                     print(f"Duplicate entry found for {line[clean_name_pos]} (scrape identifier: {line[scrape_identifier_pos]}). Skipping...")
                 errors = True
             else:
+                
+                # adding the line to the data to be processed
                 all_elements.append(line)
+                # we add the additional field
+                all_elements[len(all_elements)-1].append(clean_name_original)
                 name_hm[line[clean_name_pos]] = True
                 
-            # if it is an additive, let us also include the alias of the term, so that it is easier for us to work with the additives
-            # if line[scrape_name_pos] == "ADD" and line[scrape_name_pos] is not "":
-            #     new_line = copy.copy(line)
-                
-            #     temp = new_line[scrape_name_pos]
-            #     new_line[scrape_name_pos] = new_line[clean_name_pos]
-            #     new_line[clean_name_pos] = temp
-   
-            #     all_elements.append(new_line)
         else:
             continue
         
