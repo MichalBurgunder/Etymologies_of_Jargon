@@ -3,6 +3,10 @@ from utils import  find_field_position
 from file_management import save_as_csv
 
 def prepare_jargon_length(data, headers):
+    """
+    Collects all data necessary to anaylze and graph the length of jargons. 
+    It saves the data into a name_length.csv
+    """
     print("starting jargon length analysis...")
     clean_name_pos = find_field_position(headers, 'Cleaned Name')
 

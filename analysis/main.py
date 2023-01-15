@@ -1,5 +1,4 @@
 import os
-from os.path import exists
 import sys
 
 from analysis_max_depth import populate_ety_depths, prepare_depth_data
@@ -36,16 +35,6 @@ def __main__():
 
     populate_ety_depths(ready_dataa, cs, options)
 
-    
-    # deduplication of list, for better use
-    new_additives = list(set(cs['additives']))
-
-    if len(new_additives):
-        print("Additives: \n")
-        print(new_additives)
-        save_as_csv(new_additives, "new_additives", True, options)
-        print("\nAdd new additives to proceed with analysis\n")
-        exit()
     print("No new additives. Proceeding to analysis...")
 
     # -----------------------------------
@@ -53,7 +42,7 @@ def __main__():
     # -----------------------------------
     # writes data to final_ety_depths.csv
     prepare_depth_data(dataa[0], cs)
-    prepare_ety_by_year_data(dataa[0], headers, cs)
+    prepare_ety_by_year_data(dataa[0], headers)
     prepare_ety_type_2(dataa[0], headers, cs)
     prepare_jargon_length(dataa[0], headers)
     prepare_year_type_data(dataa[0], headers, "CP")

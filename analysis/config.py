@@ -30,13 +30,14 @@ additives = [] # here will be all the new name additives that have not been adde
 ety_depth = "Etymology Depth"
 clean_name = "Cleaned Name"
 scrape_identifier = "Scrape Identifier"
-consts = None
-debug = False
-element_limit = -1
+consts = None # placeholder to define the scope
+debug = False # in the end, this doesn't do much
+element_limit = -1 # -1 means no limit as to how much data we should process
 analyzed_data_root = f"{root}/final_data"
 
-# TODO: Need to remove whitespace when data first comes in
+
 def prepare_virtual_fields(dataa, cs):
+    
     cs['ety_depth_pos'] = find_field_position(dataa[1], cs['ety_depth'])
     cs['clean_name_pos'] = find_field_position(dataa[1], cs['clean_name'])
     cs['scrape_name_pos'] = find_field_position(dataa[1], cs['scrape_name'])

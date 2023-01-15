@@ -8,11 +8,14 @@ from config import find_field_position, clean_name, debug, element_limit, scrape
 global element_hash_map
 global run_options
 
-# In order to allow for additives to have multiple names (one alias) we include
-# this function that maps the aliases onto the jargon in question. The function
-# simple adds these terms to the primary element_hashmap, so that they are
-# indistinguishable from norma elements
+
 def get_additive_second_names(data, headers, element_hashmap, duplicates):
+    """
+    In order to allow for additives to have multiple names (one alias) we include
+    this function that maps the aliases onto the jargon in question. The function
+    simple adds these terms to the primary element_hashmap, so that they are
+    indistinguishable from norma elements
+    """
     scr_name_pos = find_field_position(headers, "Scrape Name")
     scr_iden_pos = find_field_position(headers, "Scrape Identifier")
     

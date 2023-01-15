@@ -2,6 +2,10 @@ from utils import  find_field_position
 from file_management import save_as_csv
 
 def prepare_ety_type_2(data, headers, cs):
+    """
+    Summarizes all of the 2nd Ety type data into easily anaylzable/graphable data, 
+    which it saves to ety_type_2.csv
+    """
     print("starting ety type 2 analysis...")
     ety_type_2_pos = find_field_position(headers, "2nd Ety. type")
     
@@ -23,7 +27,7 @@ def prepare_ety_type_2(data, headers, cs):
     
     # we transform the data into a csv
     final_data = []
-    for entry in et2_hm:
+    for  entry in et2_hm:
         final_data.append([entry, et2_hm[entry]])
         
     save_as_csv(final_data, "ety_type_2")

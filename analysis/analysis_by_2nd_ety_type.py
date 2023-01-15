@@ -7,6 +7,9 @@ from file_management import save_as_csv
 
 
 def count_field_types_by_scrape(data, pos, scr_name_pos, scr_ident):
+    """
+    Counts the number of occurances of ety types within the data we are analyzing.
+    """
     all_types = {}
     for i in range(0,len(data)):
         if data[i][scr_name_pos] == scr_ident:
@@ -18,6 +21,9 @@ def count_field_types_by_scrape(data, pos, scr_name_pos, scr_ident):
     return all_types
 
 def prepare_year_type_data(all_elements, headers, scr_ident="CP"):
+    """
+    Prepares all of the data into a CSV, so that it can easily be analyzed, or turned into a graph
+    """
     print("starting 2nd ety. type analysis...")
     fill_no_etymology(all_elements, headers, fill="Unknown", field="2nd Ety. type")
     ety_type_pos = find_field_position(headers, "2nd Ety. type")

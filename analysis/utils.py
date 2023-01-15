@@ -2,11 +2,17 @@ import re
 import numpy as np
 
 def concatenate(a1, a2):
+    """
+    Copies all of the elements of array a2, into a1
+    """
     for e in a2:
         a1.append(e)
     return a1
 
 def copy_array(arr):
+    """
+    Copies an array, without worry about passing a reference
+    """
     new = []
     for el in arr:
         new.append(el)
@@ -15,6 +21,11 @@ def copy_array(arr):
 special_chars = ["<", ">", "~", "?", "=", "s"]
 
 def number_only(string):
+    """
+    Given that the years are documented in ranges, this function removes
+    any special characters that might be included in the data source,
+    and takes a best guess on what year might be meant
+    """
     if re.search("^[0-9]{4}-[0-9]{4}$", string):
         # a range is given. we compute the middle
         return int(np.round((int(string[0:4]) + int(string[5:9]))/2)) 
@@ -31,12 +42,20 @@ def number_only(string):
     return int(final)
 
 def fill_no_etymology(all_elements, headers, fill="Missing", field="Ety. type"):
+    """
+    For all those data that do not have the "Etymology" field filled out, we
+    insert a custom text into this field.
+    """
     ety_pos = find_field_position(headers, field)
     for i in range(0,len(all_elements)):
         if all_elements[i][ety_pos] == "":
             all_elements[i][ety_pos] = fill
     
 def find_field_position(headers, field):
+    """
+    Searches through the available headers and returns the array
+    position at which a given string can be found.
+    """
     for i in range(0, len(headers)):
         if headers[i] == field:
             return i
@@ -44,6 +63,10 @@ def find_field_position(headers, field):
     exit()
 
 def get_run_options(args):
+    """
+    Takes all of the manually typed in options in the CLI, and formally
+    documents them for further use in the program.
+    """
     options = {
         "v": False,
         "c": False
@@ -63,6 +86,9 @@ def get_run_options(args):
     return options
 
 def print_errors(errors):
+    """
+    Simply prints out the errors that are fed into it.
+    """
     res = ""
     for err in errors:
         res += err + "\n"

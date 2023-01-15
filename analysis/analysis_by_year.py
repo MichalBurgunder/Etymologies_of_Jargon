@@ -5,6 +5,10 @@ from utils import number_only, fill_no_etymology, print_errors
 from file_management import save_as_csv
 
 def remove_special_chars_year(all_elements, headers):
+    """
+    For the "Year" field, it makes sure that the field will always be an integer.
+    If it isn't it tries to give a best estimate of what year was meant.
+    """
     year_pos = find_field_position(headers, "Year")
     si_pos = find_field_position(headers, "Scrape Identifier")
     cn_pos = find_field_position(headers, "Cleaned Name")
@@ -25,6 +29,9 @@ def remove_special_chars_year(all_elements, headers):
 
 
 def get_all_unique_etymology_types(all_elements, headers):
+    """
+    Get's all the different strings that are present in the "Ety. type" field of our data.
+    """
     etytype_pos = find_field_position(headers, "Ety. type")
     ety_types = {}
     ety_types_arr = []
@@ -35,6 +42,9 @@ def get_all_unique_etymology_types(all_elements, headers):
     return ety_types_arr
 
 def get_column_hash_table():
+    """
+    A preprocessing step that gives back an appropriate hash table with which we can count instances of a given string.
+    """
     hash_table = {}
     # in order to track ety types by year, we set the numbers to go from 1900 to 2030. 
     # this way, to get the years, we simply need to mulitiply by 10.
@@ -43,6 +53,9 @@ def get_column_hash_table():
     return hash_table
     
 def prepare_year_type_data(all_elements, headers):
+    """
+    Prepares all of the data necessary to analyze and graph the etymological types by year.
+    """
     print("starting ety. type by year analysis...")
     separation = 10
     columns = [f'{i}-{i+10}' for i in range(1900, 2030, separation)]
@@ -74,7 +87,10 @@ def prepare_year_type_data(all_elements, headers):
     return data
     
     
-def prepare_ety_by_year_data(all_elements, headers, cs):
+def prepare_ety_by_year_data(all_elements, headers):
+    """
+    Extracts from the processed data all "subdata" necessary to analyze ety types by year, and saves this data as a CSV.
+    """
     print("starting ety type by year analysis...")
     remove_special_chars_year(all_elements, headers)
     fill_no_etymology(all_elements, headers)

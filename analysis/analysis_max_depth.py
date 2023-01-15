@@ -9,6 +9,10 @@ recur = 0
 recur_limit = 20
 # The function that computes the max depth of an entry
 def get_max_depth(data, entry, element_hashmap, header_hms, cs, previous_jargons, options={}):
+    """
+    Computes the maximum etymological depth of elements to be analyzed.
+    For recursive calls, it only ever computes the depth up to a unique jargon term.
+    """
     global recur
 
     # print('get_max_depth with entry ' + str(data[entry][cs['clean_name_pos']]) + " with depth " + str(len(previous_jargons)))
@@ -33,17 +37,18 @@ def get_max_depth(data, entry, element_hashmap, header_hms, cs, previous_jargons
      
     # for every jargon entry   
     for j_pos in cs['jargon_entry_positions']:
-        # if there is no jargon entry
+        # if there is no jargon entry, we ignore
         if data[entry][j_pos] == "": 
             continue
         
-        # if the entry is recursive, we track its recursion depth and return
+        # TODO: Why do we return here? Shouldn't it continue checking the other jargons?
+        # if the entry is recursive (i.e. it's a term that we've already arrived at), we track its recursion depth and return
         if data[entry][j_pos] in previous_jargons: 
             for i in range(len(previous_jargons), 0, -1):
                 if previous_jargons[i-1] == word:
                     return len(previous_jargons)-i
-        
-        # if not existing, add to additives and go to the next jargon entry
+        # TODO: what exactly does this block of code do?
+        # if not existing, add to additives (to fix outside of the program) and go to the next jargon entry
         if data[entry][j_pos] not in element_hashmap['ti']:
             if options['v']:
                 print(f"Adding new word to additives: {data[entry][j_pos]}")
@@ -64,7 +69,7 @@ def get_max_depth(data, entry, element_hashmap, header_hms, cs, previous_jargons
 
 def verify_jargon_connection_entries(dataa, cs):
     '''
-    verifies that the jargon connection type fields are all present in the enumeration.
+    Verifies that the jargon connection type fields are all present in the enumeration.
     Otherwise, we'd have to include these for the next batch of data. 
     ''' 
     jct_poss = []
@@ -96,6 +101,13 @@ def verify_jargon_connection_entries(dataa, cs):
 
 # # computes the etymology depth of any given entry
 def populate_ety_depths(dataa, cs, options={}):
+    """
+    Goes through all inputted jargons and computes the maximum depth of any single
+    jargon entry. Additives that have not been included in the data, are saves in
+    cs["additives"], so that the user will have the include these in the data next
+    time they run the program. Note that because it is essential that these be
+    included, the program will exit if even 1 additive that should be present, isn't.
+    """
     print('starting ety. depth analysis')
     
     verify_jargon_connection_entries(dataa, cs)
@@ -106,15 +118,30 @@ def populate_ety_depths(dataa, cs, options={}):
         max_depth = get_max_depth(dataa[0], i, dataa[1], dataa[3], cs, [], options)
         dataa[0][i][cs['ety_depth_pos']] = max_depth
         
-        # for debugging purposes (element_limit == -1 allows for it to be never triggeered)
+        # for debugging purposes
         if i == element_limit:
             print(f"done first {element_limit}")
             print(f"additives: {cs['additives']}")
             save_as_txt(cs['root'], cs['additives'], 'additives')
             exit()
+    
+        # deduplication of list, for better use
+    new_additives = list(set(cs['additives']))
+
+    if len(new_additives):
+        print("Additives: \n")
+        print(new_additives)
+        save_as_csv(new_additives, "new_additives", True, options)
+        print("\nAdd new additives to proceed with analysis\n")
+        exit()
+
     return 
 
 def prepare_depth_data(data, cs):
+    """
+    Assuming that the ety depth data has already been documented, we now
+    save the data in a easily readable format for further analysis and graphing, 
+    """
     final_data = []
     for i in range(0, len(data)):
         # we differentiate between a full analysis, and an analysis of only a set of data
