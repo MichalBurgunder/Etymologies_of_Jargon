@@ -138,11 +138,12 @@ def prepare_data(root, paths, options={}):
     errors = False
     path = None
     # we check if a temp file exists. If not, we reload all data from scratch
-    if not os.path.exists(f"{root}/temp_debug.csv") and debug == False:  
+    # if not os.path.exists(f"{root}/temp_data.csv") and debug == False:  
         # writing all data in one csv, so that we can analyze them all together
-        path = write_into_one_csv(root, paths, "data")
-    else:
-        path = f"{root}/temp_debug.csv"
+    path = write_into_one_csv(root, paths, "data")
+    # else:
+        # we only use this route for hard to debug errors
+    # path = f"{root}/temp_data.csv"
     
     file = csv.reader(open(path, mode ='r'))
     # we add a virtual field, so that we may get the actual name back afterwards
@@ -158,7 +159,7 @@ def prepare_data(root, paths, options={}):
         find_field_position(headers, '1st Jargon'),
         find_field_position(headers, '2nd Jargon'),
         find_field_position(headers, '3rd Jargon'),
-        find_field_position(headers, '4th Jargon Type Connection')
+        find_field_position(headers, '4th Jargon')
     ]
     all_elements = []
     name_hm = {}
@@ -207,6 +208,7 @@ def prepare_data(root, paths, options={}):
         print("Data Correct (correct headers, no duplicates, names present)\nReady to proceed")
         exit()
     
+
     return all_elements, headers, header_hashmap
 
 def add_virtual_columns(dataa, names, default_values):
