@@ -1,11 +1,21 @@
 from utils import find_field_position
 
-jargon_entries = ["1st Jargon", "2nd Jargon", "3rd Jargon", "4th Jargon"] # the fields which will create our tree
+jargon_entries = ["1st Jargon", "2nd Jargon", "3rd Jargon", "4th Jargon"] # the fields which will create our etymological tree
+jargon_entries_connection_types_titles = [the_string + " Connection Type" for the_string in jargon_entries] # the descriptions of the connection between jargons 
+jargon_entries_connection_types_types = [
+        "Attribution",
+        "Theme",
+        "Version",
+        "Reference",
+        "Abbr. Reference",
+        "Exact Reference",
+        "Implicit"
+    ] # an enum of what jargon connection types we accept
 root = '/Users/michal/Documents/thesis/etymologies_of_jargon/thesis_data'
 raw_data_root = '/Users/michal/Documents/thesis/etymologies_of_jargon/thesis_data/raw_data'
 paths = [
             'Thesis_data - programming_languages.csv', # programming languages (from wikipedia)
-            # 'Thesis_data - gnu_software.csv', # gnu software (from wikipedia)
+            'Thesis_data - gnu_software.csv', # gnu software (from wikipedia)
             'Thesis_data - anaconda_packages.csv',
             'Thesis_data - additives.csv', # all additives (entries not originating from scrapes) (from wikipedia)
             # we require that additives be at the end of the array, so that during deduplication, 

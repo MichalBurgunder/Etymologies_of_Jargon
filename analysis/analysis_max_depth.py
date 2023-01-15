@@ -2,7 +2,8 @@
 import numpy as np
 from utils import copy_array
 from file_management import save_as_txt, save_as_csv
-from config import element_limit
+from config import element_limit, jargon_entries_connection_types_titles, jargon_entries_connection_types_types
+from utils import find_field_position
 global recur
 recur = 0
 recur_limit = 20
@@ -61,11 +62,44 @@ def get_max_depth(data, entry, element_hashmap, header_hms, cs, previous_jargons
     return np.max(max_depths) + 1
 
 
+def verify_jargon_connection_entries(dataa, cs):
+    '''
+    verifies that the jargon connection type fields are all present in the enumeration.
+    Otherwise, we'd have to include these for the next batch of data. 
+    ''' 
+    jct_poss = []
+    jct_hash = {}
+    for i in range(0, len(jargon_entries_connection_types_titles)):
+        pos = find_field_position(dataa[2], jargon_entries_connection_types_titles[i])
+        jct_poss.append(pos)
+        jct_hash[pos] = jargon_entries_connection_types_titles[i]
+    
+    errors = []
+    for i in range(0, len(dataa[0])):
+        for j in range(0, len(jct_poss)):
+            jpos = jct_poss[j]
+            # print(jpos)
+            dataa[0][i][jpos] = dataa[0][i][jpos].strip()
+            if dataa[0][i][jpos-1] != "" and dataa[0][i][jpos] not in jargon_entries_connection_types_types:
+                errors.append(f'''Cleaned Name: {dataa[0][i][cs['clean_name_pos']]},\nData Set: {dataa[0][i][cs['scrape_identifier_pos']]},\n{jct_hash[jpos]}: "{dataa[0][i][jpos]}"\n''')
+                
+    if len(errors) != 0:
+        print("Jargon connection types aren't consistent with the enumeration.")
+        print("Errors: \n")
+        for err in errors:
+            print(err)
+        print(f"Number of errors: {len(errors)}\nFix the errors, replace the old data and retry, to proceed with analysis")
+        exit()
+    return
+
 # lines, element_hashmap, headers, header_hms = dataa[0], dataa[1], dataa[2], dataa[3]
 
 # # computes the etymology depth of any given entry
 def populate_ety_depths(dataa, cs, options={}):
     print('starting ety. depth analysis')
+    
+    verify_jargon_connection_entries(dataa, cs)
+    
     for i in range(1, len(dataa[0])):
         if options['v']:
             print(f"now computing {dataa[0][i][cs['clean_name_pos']]}")
