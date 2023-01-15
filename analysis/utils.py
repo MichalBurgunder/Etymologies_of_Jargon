@@ -61,3 +61,9 @@ def get_run_options(args):
             options['c'] = True
         
     return options
+
+def print_errors(errors):
+    res = ""
+    for err in errors:
+        res += err + "\n"
+    print(res)

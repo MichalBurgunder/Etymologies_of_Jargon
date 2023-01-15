@@ -1,15 +1,27 @@
 
 import numpy as np    # to create dummy data
 from config import find_field_position
-from utils import number_only, fill_no_etymology
+from utils import number_only, fill_no_etymology, print_errors
 from file_management import save_as_csv
 
 def remove_special_chars_year(all_elements, headers):
     year_pos = find_field_position(headers, "Year")
+    si_pos = find_field_position(headers, "Scrape Identifier")
+    cn_pos = find_field_position(headers, "Cleaned Name")
+    
+    errors = []
+    
     for i in range(0,len(all_elements)):
         if  all_elements[i][year_pos] == '':
              all_elements[i][year_pos] = "0"
-        all_elements[i][year_pos] = int(number_only(all_elements[i][year_pos]))
+        try:
+            the_num = int(number_only(all_elements[i][year_pos]))
+            all_elements[i][year_pos] = the_num
+        except:
+            errors.append(f"Warning: Entry {all_elements[i][cn_pos]} (Scrape Identifier: {all_elements[i][si_pos]}) has an invalid year")
+    if len(errors):
+        print_errors(errors)
+        exit()
 
 
 def get_all_unique_etymology_types(all_elements, headers):

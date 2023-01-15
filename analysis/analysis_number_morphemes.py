@@ -3,7 +3,7 @@ from file_management import save_as_csv
 
 def prepare_ety_type_2(data, headers, cs):
     print("starting ety type 2 analysis...")
-    ety_type_2_pos = find_field_position(headers, "Ety. type 2")
+    ety_type_2_pos = find_field_position(headers, "2nd Ety. type")
     
     et2_hm = {
         'Missing': 0
