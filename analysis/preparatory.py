@@ -140,6 +140,8 @@ def prepare_data(root, paths, options={}):
     
     errors = False
     path = None
+    
+    header_hashmap, headers = get_headers_hashmap(root, paths, ["Original Clean Name"]) 
     # we check if a temp file exists. If not, we reload all data from scratch
     # if not os.path.exists(f"{root}/temp_data.csv") and debug == False:  
         # writing all data in one csv, so that we can analyze them all together
@@ -150,7 +152,6 @@ def prepare_data(root, paths, options={}):
     
     file = csv.reader(open(path, mode ='r'))
     # we add a virtual field, so that we may get the actual name back afterwards
-    header_hashmap, headers = get_headers_hashmap(root, paths, ["Original Clean Name"]) 
     
     sem_num = find_field_position(headers, 'Semantic number')
     clean_name_pos = find_field_position(headers, 'Cleaned Name')
