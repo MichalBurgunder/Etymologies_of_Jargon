@@ -18,7 +18,6 @@ def sample_from_csv(file_name, resulting_file_name):
             # lets automatically also clean the data
             word = ""
             for j in range(0,len(df.iloc[i, 0])):
-                # print(df.iloc[i, 0][j])
                 if df.iloc[i, 0][j] != "(":
                     word += df.iloc[i, 0][j]
                 else:  

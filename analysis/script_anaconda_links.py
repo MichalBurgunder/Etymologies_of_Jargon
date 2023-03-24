@@ -54,7 +54,7 @@ final_data = [] # we store the data to be saved here
 
 regex = 'https://github.com/[a-zA-Z_-]{0,100}/[a-zA-Z_0-9]{0,100}' # checks for github links
 
-waits = 0 # determines how many times we should "wait" for the API to become available. Comment out the code reference this variable below to let it run until it's done.
+waits = 0 # determines how many times we should "wait" for the API to become available. Comment out the code references of this variable below to let it run until it's done.
 for i in range(0, len(data)):
     try:
         if i % 20 == 0:
