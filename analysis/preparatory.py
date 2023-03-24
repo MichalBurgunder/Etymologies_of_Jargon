@@ -87,6 +87,10 @@ def get_headers_hashmap(root, paths, virtual_fields=[]):
             exit()
             
     
+    # we strip each header of whitespace, to get appropriate headers
+    for i in range(0, num_headers):
+        for j in range(1, len(headerss)):
+            headerss[j][i] =  headerss[j][i].strip()
 
     # we verify: each entry
     errors = []
@@ -176,20 +180,19 @@ def prepare_data(root, paths, options={}):
         for dirty_field_pos in to_clean_fields:
             line[dirty_field_pos] = line[dirty_field_pos].lower().strip()
         
-        # in case its an additive, let us also clean the scarpe name, which acts as an alias
+        # in case its an additive, let us also clean the scrape name, which acts as an alias
         if line[scrape_identifier_pos] == "ADD":
              line[scrape_name_pos] = line[scrape_name_pos].lower().strip()
              
-        # not adding line semantic numbers 2 (beginning/end scrape links), 3 (duplicate), 9 (false scrape), 10 (not included in anaylsis)
+        # not adding line semantic numbers 2 (beginning/end scrape links), 3 (duplicate), 9 (false scrape), 10 (not included in analysis)
         if line[sem_num] not in ['2','3','9', '10']:
-            if line[clean_name_pos] in name_hm:
-                if line[clean_name_pos] == '':
-                    print(f'Clean name empty (for scrape entry {line[scrape_name_pos]}, scrape identifier {line[scrape_identifier_pos]})')
-                else:
-                    print(f"Duplicate entry found for {line[clean_name_pos]} (scrape identifier: {line[scrape_identifier_pos]}). Skipping...")
+            if line[clean_name_pos] == '':
+                print(f'Clean name empty (for scrape entry {line[scrape_name_pos]}, scrape identifier {line[scrape_identifier_pos]})')
+                errors = True
+            elif line[clean_name_pos] in name_hm:
+                print(f"Duplicate entry found for {line[clean_name_pos]} (scrape identifier: {line[scrape_identifier_pos]}). Skipping...")
                 errors = True
             else:
-                
                 # adding the line to the data to be processed
                 all_elements.append(line)
                 # we add the additional field
