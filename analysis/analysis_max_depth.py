@@ -22,13 +22,13 @@ def get_max_depth(data, entry, element_hashmap, header_hms, cs, previous_jargons
     
     # we take the lower, in order to avoid capitalization disagreements
     # we remove excess whitespace, on either side of the word
-    word = data[entry][cs['clean_name_pos']].lower()
+    word = data[entry][cs['clean_name_pos']].lower().strip()
 
     previous_jargons.append(word)
     
     entry = element_hashmap["ti"][word]
     
-    max_depths = [-1]
+    max_depths = [-1] # as array, to pass by reference
 
     if data[entry][header_hms['ti'][cs['ety_depth']]] != "-1": # if the entry has already been computed
         if options['v']:
@@ -59,7 +59,12 @@ def get_max_depth(data, entry, element_hashmap, header_hms, cs, previous_jargons
         row_pos = element_hashmap['ti'][data[entry][j_pos]]
         recur += 1
         prev_jarg = copy_array(previous_jargons)
+        
+        # we compute the max depth of this particular entry
         max_depth = get_max_depth(data, row_pos, element_hashmap, header_hms, cs, prev_jarg, options)
+        # we save the intermediary value for the jargon entry, so that we don't have to compute it multiple times
+        data[row_pos][cs['ety_depth_pos']] = max_depth
+
         recur -= 1
         max_depths.append(max_depth)
 
@@ -83,7 +88,6 @@ def verify_jargon_connection_entries(dataa, cs):
     for i in range(0, len(dataa[0])):
         for j in range(0, len(jct_poss)):
             jpos = jct_poss[j]
-            # print(jpos)
             dataa[0][i][jpos] = dataa[0][i][jpos].strip()
             if dataa[0][i][jpos-1] != "" and dataa[0][i][jpos] not in jargon_entries_connection_types_types:
                 errors.append(f'''Cleaned Name: {dataa[0][i][cs['clean_name_pos']]},\nData Set: {dataa[0][i][cs['scrape_identifier_pos']]},\n{jct_hash[jpos]}: "{dataa[0][i][jpos]}"\n''')
@@ -111,7 +115,8 @@ def populate_ety_depths(dataa, cs, options={}):
     print('starting ety. depth analysis')
     
     verify_jargon_connection_entries(dataa, cs)
-    
+    # import time
+    # be = time.time()
     for i in range(1, len(dataa[0])):
         if options['v']:
             print(f"now computing {dataa[0][i][cs['clean_name_pos']]}")
@@ -125,6 +130,8 @@ def populate_ety_depths(dataa, cs, options={}):
             save_as_txt(cs['root'], cs['additives'], 'additives')
             exit()
     
+    # en = time.time()
+    # print(en-be)
         # deduplication of list, for better use
     new_additives = list(set(cs['additives']))
 
