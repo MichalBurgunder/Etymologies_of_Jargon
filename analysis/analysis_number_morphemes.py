@@ -3,7 +3,7 @@ from file_management import save_as_csv
 
 def prepare_ety_type_2(data, headers, cs):
     """
-    Summarizes all of the 2nd Ety type data into easily anaylzable/graphable data, 
+    Summarizes all of the 2nd Ety type data into easily analyzable/graphable data, 
     which it saves to ety_type_2.csv
     """
     print("starting ety type 2 analysis...")

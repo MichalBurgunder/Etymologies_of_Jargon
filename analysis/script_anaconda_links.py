@@ -47,7 +47,7 @@ def get_strings(url):
             return text[:i], text[i+1:]
 
 
-# we require a list of links to every package we would like to anaylze
+# we require a list of links to every package we would like to analyze
 data = read_csv('links_anaconda_packages', False, '')
 
 final_data = [] # we store the data to be saved here
