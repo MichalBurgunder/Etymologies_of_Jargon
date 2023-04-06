@@ -1,5 +1,6 @@
 import os
 import sys
+# import time
 
 from analysis_max_depth import populate_ety_depths, prepare_depth_data
 from preparatory import get_headers_hashmap, get_element_hashmap, prepare_data, add_virtual_columns
@@ -10,12 +11,15 @@ from analysis_by_year import prepare_ety_by_year_data
 from analysis_number_morphemes import prepare_ety_type_2
 from analysis_jargon_length import prepare_jargon_length
 from analysis_by_2nd_ety_type import prepare_year_type_data
+from analysis_cultural_heritage import prepare_cultural_heritage_data
+
 os.system('clear')
 
 # lines, element_hashmap, headers, header_hms = dataa[0], dataa[1], dataa[2], dataa[3] !!OBS!!
 # lines, headers, header_hms = dataa[0], dataa[1], dataa[2], dataa[3]
 
 def __main__():
+    # be = time.time()
     options = get_run_options(sys.argv)
 
     # takes from temp_debug.csv, if exists
@@ -25,7 +29,7 @@ def __main__():
     new_headers = add_virtual_columns(dataa, [ety_depth], ["-1"])
     
     cs = prepare_globals(dataa)
-    fill_clean_names(dataa, cs)
+    # fill_clean_names(dataa, cs)
 
     headers, header_hashmap = dataa[1], dataa[2]
 
@@ -47,6 +51,9 @@ def __main__():
     prepare_jargon_length(dataa[0], headers)
     prepare_year_type_data(dataa[0], headers, "CP")
     prepare_year_type_data(dataa[0], headers, "RG")
+    prepare_cultural_heritage_data(dataa[0])
     print("All done!")
+    # en = time.time()
+    # print(en - be)
 
 __main__()
