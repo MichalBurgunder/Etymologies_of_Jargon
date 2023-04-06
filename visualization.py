@@ -16,7 +16,7 @@ from analysis.file_management import read_csv
 # os.system('clear')
 
 
-root = '/Users/michal/Documents/thesis/etymologies_of_jargon/thesis_data'
+root = '/Users/michal/Documents/thesis/etymologies_of_jargon/results'
 
 
 def create_bar_graph(bars, log=False):
@@ -114,7 +114,7 @@ def ety_types(filename):
 
     
     plt.xticks(ticks=[])
-    plt.yticks(ticks=range(0,30,5), labels=range(0,30,5)) #  labels=columns
+    # plt.yticks(ticks=range(0,35,6), labels=range(0,35,6)) #  labels=columns
 
     # Add a table at the bottom of the axes
     the_table = plt.table(cellText=cell_text,
@@ -138,9 +138,9 @@ def ety_types(filename):
     # plt.yticks(values * value_increment, ['%d' % val for val in values])
     # plt.xticks([])
     plt.xticks(ticks=[])
-    plt.yticks(ticks=range(0,30,5), labels=range(0,30,5)) #  labels=columns
+    plt.yticks(ticks=range(0,190,20), labels=range(0,190,20)) #  labels=columns
     plt.title('Etymology Types by Decade')
     plt.show()
 
     
-ety_types('ety_type_by_year')
+ety_types('ety_type_2_by_year')
