@@ -96,3 +96,7 @@ def print_errors(errors):
     for err in errors:
         res += err + "\n"
     print(res)
+    
+
+def clean_scrape_name(name):
+    return 'ALL' if name == '' else name

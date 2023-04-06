@@ -43,9 +43,10 @@ def __main__():
     # -----------------------------------
     
     # prepare_ety_by_year_data(dataa[0], headers, "PL", 1)
-    prepare_ety_by_year_data(dataa[0], headers, "PL", 2)
-    print("done")
-    exit()
+    # prepare_ety_by_year_data(dataa[0], headers, "PL", 2)
+    # prepare_jargon_length(dataa[0], headers)
+    # print("done")
+    # exit()
     # -----------------------------------
     # ACTUAL ANALYSIS
     # -----------------------------------
@@ -62,7 +63,10 @@ def __main__():
     
     # basic jargon length
     prepare_jargon_length(dataa[0], headers)
-    prepare_jargon_length(dataa[0], headers)
+    prepare_jargon_length(dataa[0], headers, "PL")
+    prepare_jargon_length(dataa[0], headers, "CP")
+    prepare_jargon_length(dataa[0], headers, "RG")
+    prepare_jargon_length(dataa[0], headers, "PM")
     
     # number of morphemes, whole set, only specific sets
     number_of_morphemes(dataa[0], headers)

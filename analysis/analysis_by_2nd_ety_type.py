@@ -2,7 +2,7 @@
 import numpy as np    # to create dummy data
 # from analysis_by_2nd_ety_type import get_all_unique_etymology_types
 from config import find_field_position
-from utils import number_only, fill_no_etymology
+from utils import number_only, fill_no_etymology, clean_scrape_name
 from file_management import save_as_csv
 
 
@@ -38,6 +38,6 @@ def prepare_2nd_ety_type_data(all_elements, headers, scr_ident=""):
         y.append(value)
     data = [x, y]
 
-    cleaned_ident = "ALL" if scr_ident == '' else scr_ident
+    cleaned_ident = clean_scrape_name(scr_ident)
     save_as_csv(data, "ety_type_2_frequencies_" + cleaned_ident)
     return data
