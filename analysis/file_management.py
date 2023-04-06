@@ -41,7 +41,7 @@ def save_as_csv(data, descriptor, format_data=False, options={}):
     """
     if format_data:
         data = [[entry] for entry in data]
-    subfolder = "final_data" if "subfolder" not in options else options["subfolder"]
+    subfolder = "results" if "subfolder" not in options else options["subfolder"]
     with open(f"{root}/{subfolder}/{descriptor}.csv", "wt") as fw:
         writer = csv.writer(fw)
         for row in data:

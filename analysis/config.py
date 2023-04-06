@@ -11,7 +11,7 @@ jargon_entries_connection_types_types = [
         "Exact Reference",
         "Implicit"
     ] # an enum of what jargon connection types we accept
-root = '/Users/michal/Documents/thesis/etymologies_of_jargon/thesis_data'
+root = '/Users/michal/Documents/thesis/etymologies_of_jargon'
 raw_data_root = '/Users/michal/Documents/thesis/etymologies_of_jargon/thesis_data/raw_data'
 paths = [
             'Thesis_data - programming_languages.csv', # programming languages (from wikipedia)

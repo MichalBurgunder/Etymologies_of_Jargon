@@ -1,34 +1,23 @@
 from utils import  find_field_position
 from file_management import save_as_csv
 
-def prepare_ety_type_2(data, headers, cs):
-    """
-    Summarizes all of the 2nd Ety type data into easily analyzable/graphable data, 
-    which it saves to ety_type_2.csv
-    """
-    print("starting ety type 2 analysis...")
-    ety_type_2_pos = find_field_position(headers, "2nd Ety. type")
-    
-    et2_hm = {
-        'Missing': 0
-    }
 
+def number_of_morphemes(data, headers, scrape_ident=''):
+    no_morph_pos = find_field_position(headers, "Nr. of Morphemes")
+    scrape_ident_pos = find_field_position(headers, "Scrape Identifier")
+    
+    hash_table = {}
+    
     for i in range(0, len(data)):
-        if len(cs['to_analyze']) != 0 and data[i][cs['scrape_identifier_pos']] not in cs['to_analyze']:
-            continue
-        if data[i][ety_type_2_pos] == '':
-            et2_hm['Missing'] += 1
-            continue
-        if f'{data[i][cs["scrape_identifier_pos"]]}_{data[i][ety_type_2_pos]}' not in et2_hm:
-            et2_hm[f'{data[i][cs["scrape_identifier_pos"]]}_{data[i][ety_type_2_pos]}'] = 0
+        if scrape_ident == '' or data[i][scrape_ident_pos] == scrape_ident:
+            if data[i][no_morph_pos] not in hash_table:
+                hash_table[data[i][no_morph_pos]] = 1
+            else:
+                hash_table[data[i][no_morph_pos]] += 1
             
-        et2_hm[f'{data[i][cs["scrape_identifier_pos"]]}_{data[i][ety_type_2_pos]}'] += 1
+    number = hash_table.keys()
+    frequency = hash_table.values()
     
-    
-    # we transform the data into a csv
-    final_data = []
-    for  entry in et2_hm:
-        final_data.append([entry, et2_hm[entry]])
-        
-    save_as_csv(final_data, "ety_type_2")
-    return 
+    postfix = scrape_ident if scrape_ident != '' else "ALL"
+    save_as_csv([number, frequency], "number_morphemes_" + postfix)
+    return

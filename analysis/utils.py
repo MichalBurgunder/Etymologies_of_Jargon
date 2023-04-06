@@ -41,15 +41,18 @@ def number_only(string):
         return -1
     return int(final)
 
-def fill_no_etymology(all_elements, headers, fill="Missing", field="Ety. type"):
+def fill_no_etymology(all_elements, headers, scrape_ident='', fill="Missing", field="Ety. type"):
     """
     For all those data that do not have the "Etymology" field filled out, we
     insert a custom text into this field.
     """
     ety_pos = find_field_position(headers, field)
+    scrape_ident_pos = find_field_position(headers, 'Scrape Identifier')
     for i in range(0,len(all_elements)):
-        if all_elements[i][ety_pos] == "":
+        if all_elements[i][ety_pos] == "" and (all_elements[i][scrape_ident_pos] == scrape_ident or scrape_ident == ''):
             all_elements[i][ety_pos] = fill
+            
+    return
     
 def find_field_position(headers, field):
     """
