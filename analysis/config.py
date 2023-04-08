@@ -39,6 +39,12 @@ debug = False # in the end, this doesn't do much
 element_limit = -1 # -1 means no limit as to how much data we should process
 analyzed_data_root = f"{root}/final_data"
 illegal_cultural_heritage_subclasses = ["Logo"]
+file_names = {
+    "morpheme": "number_morphemes_",
+    "ety_type_2": "ety_type_2_frequencies_",
+    "name_length": "name_length",
+    "cultural_heritage": "cultural_heritage",
+}
 
 def prepare_virtual_fields(dataa, cs):
     

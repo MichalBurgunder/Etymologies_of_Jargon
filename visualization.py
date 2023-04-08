@@ -6,12 +6,9 @@ import sys
 import random      
 sys.path.append('/Users/michal/Documents/thesis/etymologies_of_jargon/analysis')
 
-import matplotlib as mpl
-from matplotlib.colors import ListedColormap, LinearSegmentedColormap
-
-
 
 from analysis.file_management import read_csv
+from analysis.config import file_names
 # from analysis import config
 # os.system('clear')
 
@@ -19,15 +16,12 @@ from analysis.file_management import read_csv
 root = '/Users/michal/Documents/thesis/etymologies_of_jargon/results'
 
 
-def create_bar_graph(bars, log=False):
-    xs = list(range(0, len(bars)))
-    ys = list(bars)
-    
+def create_bar_graph(ys, xs, info, log=False):
     fig = plt.figure()
     
-    plt.xlabel("Occurances")
-    plt.ylabel("No. of Etymology Depths")
-    plt.title("Number of Etymologies of Specific Depth")
+    plt.xlabel(info["xlabel"])
+    plt.ylabel(info["ylabel"])
+    plt.title(info["title"])
     
     # the bar plot
     if not log:
@@ -62,8 +56,13 @@ def depths(file_name):
         bars.append(nums.count(i))
     
     # now we simply pyplot
-    print(bars)
-    return create_bar_graph(bars, True)
+    # print(bars)
+    info = {
+        "xlabel": "Occurances",
+        "ylabel": "No. of Etymology Depths",
+        "title": "Number of Etymologies of Specific Depth"
+    }
+    return create_bar_graph(list(bars), list(range(0, len(bars))), info, True)
 
 def convert_to_ints(data):
     for i in range(0,len(data)):
@@ -142,5 +141,48 @@ def ety_types(filename):
     plt.title('Etymology Types by Decade')
     plt.show()
 
-    
-ety_types('ety_type_2_by_year')
+key_to_long_title = {
+   "PL": "Programming Languages",
+   "CP": "Anaconda Packages",
+   "RG": "Ruby Gems",
+   "PM": "Package Managers",
+   "ALL": "All Analyzed Software",
+}
+
+short_to_file = {
+   "PL": "Programming Languages",
+   "CP": "Anaconda Packages",
+   "RG": "Ruby Gems",
+   "PM": "Package Managers"
+}
+
+def get_morpheme_data(set, show=False):
+    data = read_csv(file_names["morpheme"]+set)
+    return [[int(data[i][j]) for j in range(0, len(data[0]))] for i in range(0,2)]
+
+
+def bar_graphs_morphemes(set):
+    import matplotlib.pyplot as plt
+    data = get_morpheme_data(set)
+    plt.xlabel("Number of Morphemes")
+    plt.ylabel("Frequency")
+    plt.title(key_to_long_title[set])
+
+    plt.bar(data[0], data[1], color ='navy')
+    plt.savefig(f"figures/bar_graph_morphemes_{set}.png")
+    plt.clf()
+    return
+# -------------------------------
+# ------- VISUALIZATION ---------
+# -------------------------------
+
+
+# ety types per decade
+# ety_types('ety_type_2_by_year')
+
+# number morphemes per set
+bar_graphs_morphemes("ALL")
+bar_graphs_morphemes("PL")
+bar_graphs_morphemes("CP")
+bar_graphs_morphemes("RG")
+bar_graphs_morphemes("PM")
