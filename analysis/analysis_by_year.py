@@ -19,7 +19,7 @@ def remove_special_chars_year(all_elements, headers):
         if  all_elements[i][year_pos] == '':
              all_elements[i][year_pos] = "0"
         try:
-            the_num = int(number_only(all_elements[i][year_pos]))
+            the_num = int(number_only(str(all_elements[i][year_pos])))
             all_elements[i][year_pos] = the_num
         except:
             errors.append(f"Warning: Entry {all_elements[i][cn_pos]} (Scrape Identifier: {all_elements[i][si_pos]}) has an invalid year")

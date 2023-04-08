@@ -45,6 +45,10 @@ def __main__():
     # prepare_ety_by_year_data(dataa[0], headers, "PL", 1)
     # prepare_ety_by_year_data(dataa[0], headers, "PL", 2)
     # prepare_jargon_length(dataa[0], headers)
+    # prepare_ety_by_year_data(dataa[0], headers, "PL", 2)
+    
+    # prepare_2nd_ety_type_data(dataa[0], headers) # ?
+
     # print("done")
     # exit()
     # -----------------------------------
@@ -59,7 +63,7 @@ def __main__():
     prepare_ety_by_year_data(dataa[0], headers, "PL", 1)
     prepare_ety_by_year_data(dataa[0], headers, "PL", 2)
     
-    prepare_2nd_ety_type_data(dataa[0], headers)
+    # prepare_2nd_ety_type_data(dataa[0], headers) # ? Not sure if this is useful...
     
     # basic jargon length
     prepare_jargon_length(dataa[0], headers)
@@ -73,7 +77,6 @@ def __main__():
     number_of_morphemes(dataa[0], headers, "PL")
     number_of_morphemes(dataa[0], headers, "RB")
     number_of_morphemes(dataa[0], headers, "CP")
-    number_of_morphemes(dataa[0], headers, "GNU")
     number_of_morphemes(dataa[0], headers, "PM")
     
     
@@ -81,8 +84,9 @@ def __main__():
     prepare_2nd_ety_type_data(dataa[0], headers, "PL")
     prepare_2nd_ety_type_data(dataa[0], headers, "CP")
     prepare_2nd_ety_type_data(dataa[0], headers, "RG")
+    prepare_2nd_ety_type_data(dataa[0], headers, "PM")
     
-    prepare_cultural_heritage_data(dataa[0])
+    prepare_cultural_heritage_data(dataa[0], headers)
     print("All done!")
     # en = time.time()
     # print(en - be)
