@@ -21,7 +21,7 @@ def write_into_one_csv(root, paths, descriptor, just_headers=False):
         for path in paths:
             if not exists(f"{raw_data_root}/{path}"):
                 print(f"Cannot find path to file {raw_data_root}/{path}.")
-                print("Missing a comma, maybe?")
+                print("Missing a comma, maybe? Check if the file extension is present")
                 print("Exiting...")
                 exit()
             with open(f"{raw_data_root}/{path}", ) as file:

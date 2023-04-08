@@ -17,15 +17,19 @@ paths = [
             'Thesis_data - programming_languages.csv', # programming languages (from wikipedia)
             'Thesis_data - gnu_software.csv', # gnu software (from wikipedia)
             'Thesis_data - anaconda_packages.csv',
+            'Thesis_data - sampled_gems.csv', # ruby gems (sampled with 'gem' command)
+            'Thesis_data - package_managers.csv', # package managers (from wikipedia)
             'Thesis_data - additives.csv', # all additives (entries not originating from scrapes) (from wikipedia)
             # we require that additives be at the end of the array, so that during deduplication, 
             # the additives will be marked as duplicates, and not the original entries
+            # if the additive seems to be a duplicate, one can find the other entry by moving the additive file name to the top
         ]
 to_analyze = [
     # 'PL',
     # 'CP',
     # 'GNU'
 ] # only fill out if you want to the output to include only specific data sets
+
 additives = [] # here will be all the new name additives that have not been added just yet
 ety_depth = "Etymology Depth"
 clean_name = "Cleaned Name"

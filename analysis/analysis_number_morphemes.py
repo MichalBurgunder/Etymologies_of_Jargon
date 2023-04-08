@@ -6,18 +6,23 @@ def number_of_morphemes(data, headers, scrape_ident=''):
     no_morph_pos = find_field_position(headers, "Nr. of Morphemes")
     scrape_ident_pos = find_field_position(headers, "Scrape Identifier")
     
-    hash_table = {}
-    
+    final_data = [[i for i in range(1,10)], [0 for i in range(1,10)]]
+    print(final_data)
+    errors = []
     for i in range(0, len(data)):
-        if scrape_ident == '' or data[i][scrape_ident_pos] == scrape_ident:
-            if data[i][no_morph_pos] not in hash_table:
-                hash_table[data[i][no_morph_pos]] = 1
-            else:
-                hash_table[data[i][no_morph_pos]] += 1
-            
-    number = hash_table.keys()
-    frequency = hash_table.values()
+        if data[i][scrape_ident_pos] == scrape_ident or scrape_ident == 'ALL':
+            try :
+                if int(data[i][no_morph_pos]) < 10:
+                    final_data[1][int(data[i][no_morph_pos])-1] += 1
+            except:
+                errors.append(f"Warning: Morpheme entry \"{data[i][no_morph_pos]}\", scrape identifier {data[i][scrape_ident_pos]} must be an integer less than 10")
+    
+    if len(errors):
+        for err in errors:
+            print(err)
+        print("Fix these errors before continuing.")
+        exit()
     
     postfix = scrape_ident if scrape_ident != '' else "ALL"
-    save_as_csv([number, frequency], "number_morphemes_" + postfix)
+    save_as_csv(final_data, "number_morphemes_" + postfix)
     return
