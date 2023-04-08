@@ -3,7 +3,9 @@ import os
 import numpy as np
 import matplotlib.pyplot as plt
 import sys  
-import random      
+import random 
+import os     
+os.system('clear')
 sys.path.append('/Users/michal/Documents/thesis/etymologies_of_jargon/analysis')
 
 
@@ -147,23 +149,18 @@ key_to_long_title = {
    "RG": "Ruby Gems",
    "PM": "Package Managers",
    "ALL": "All Analyzed Software",
+   "CH": "Cultural Heritage"
 }
 
-short_to_file = {
-   "PL": "Programming Languages",
-   "CP": "Anaconda Packages",
-   "RG": "Ruby Gems",
-   "PM": "Package Managers"
-}
-
-def get_morpheme_data(set, show=False):
-    data = read_csv(file_names["morpheme"]+set)
-    return [[int(data[i][j]) for j in range(0, len(data[0]))] for i in range(0,2)]
+def get_bargraph_data(set, path=False):
+    path = file_names["morpheme"]+set if not path else path
+    data = read_csv(path)
+    return [data[0], [int(data[1][j]) for j in range(0, len(data[0]))] ]
 
 
-def bar_graphs_morphemes(set):
+def bar_graphs_morphemes(set, special):
     import matplotlib.pyplot as plt
-    data = get_morpheme_data(set)
+    data = get_bargraph_data(set, special)
     plt.xlabel("Number of Morphemes")
     plt.ylabel("Frequency")
     plt.title(key_to_long_title[set])
@@ -176,13 +173,29 @@ def bar_graphs_morphemes(set):
 # ------- VISUALIZATION ---------
 # -------------------------------
 
-
+def bar_graphs_ch():
+    data = get_bargraph_data("CH", 'cultural_heritage')
+    plt.xlabel("Number of Morphemes")
+    plt.ylabel("Frequency")
+    plt.title("Names with Cultural Heritage")
+    
+    plt.xticks(rotation=30)
+    # plt.subplots_adjust(bottom=0.2)
+    plt.subplots_adjust(bottom=0.2, labelsize=6)
+    plt.bar(data[0], data[1], color ='navy')
+    # plt.show()
+    plt.savefig(f"figures/bar_graph_cultural_heritage.png")
+    plt.clf()
+    return
 # ety types per decade
 # ety_types('ety_type_2_by_year')
 
 # number morphemes per set
-bar_graphs_morphemes("ALL")
-bar_graphs_morphemes("PL")
-bar_graphs_morphemes("CP")
-bar_graphs_morphemes("RG")
-bar_graphs_morphemes("PM")
+# bar_graphs_morphemes("ALL")
+# bar_graphs_morphemes("PL")
+# bar_graphs_morphemes("CP")
+# bar_graphs_morphemes("RG")
+# bar_graphs_morphemes("PM")
+
+# cultural heritage
+bar_graphs_ch() # "CH", 'cultural_heritage'
