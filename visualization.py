@@ -142,6 +142,19 @@ def ety_types(filename):
     plt.yticks(ticks=range(0,190,20), labels=range(0,190,20)) #  labels=columns
     plt.title('Etymology Types by Decade')
     plt.show()
+    plt.savefig(f"figures/bar_graph_2nd_ety_types_by_decade.png")
+    plt.clf()
+    the_table = plt.table(cellText=cell_text,
+                          rowLabels=rows,
+                          rowColours=colors,
+                          colLabels=columns,
+                          loc='bottom',
+                          colWidths=(0.073,)*len(columns),
+                        #   colWidths=[0.5 for i in n_rows],
+                        colLoc='center'
+                          )
+    plt.show()
+    
 
 key_to_long_title = {
    "PL": "Programming Languages",
@@ -158,37 +171,51 @@ def get_bargraph_data(set, path=False):
     return [data[0], [int(data[1][j]) for j in range(0, len(data[0]))] ]
 
 
-def bar_graphs_morphemes(set, special):
+def bar_graphs_morphemes(set):
     import matplotlib.pyplot as plt
-    data = get_bargraph_data(set, special)
+    data = get_bargraph_data(set)
     plt.xlabel("Number of Morphemes")
     plt.ylabel("Frequency")
     plt.title(key_to_long_title[set])
-
+    plt.xticks([i for i in range(0, 9)])
     plt.bar(data[0], data[1], color ='navy')
     plt.savefig(f"figures/bar_graph_morphemes_{set}.png")
     plt.clf()
     return
+
+def new_line_for_space(data):
+    for i in range(0, len(data[0])):
+        while(True):
+            if " " in data[0][i]:
+                data[0][i] = data[0][i].replace(" ", "\n")
+            else:
+                break
+    return data
 # -------------------------------
 # ------- VISUALIZATION ---------
 # -------------------------------
 
 def bar_graphs_ch():
     data = get_bargraph_data("CH", 'cultural_heritage')
+    print(data)
+    data = new_line_for_space(data)
+    print(data)
+
     plt.xlabel("Number of Morphemes")
     plt.ylabel("Frequency")
     plt.title("Names with Cultural Heritage")
     
-    plt.xticks(rotation=30)
+    plt.xticks(rotation=59)
     # plt.subplots_adjust(bottom=0.2)
-    plt.subplots_adjust(bottom=0.2, labelsize=6)
+    plt.subplots_adjust(bottom=0.3)
     plt.bar(data[0], data[1], color ='navy')
     # plt.show()
     plt.savefig(f"figures/bar_graph_cultural_heritage.png")
     plt.clf()
     return
 # ety types per decade
-# ety_types('ety_type_2_by_year')
+# ety_types('ety_type_1_by_decade')
+# ety_types('ety_type_2_by_decade')
 
 # number morphemes per set
 # bar_graphs_morphemes("ALL")
@@ -199,3 +226,5 @@ def bar_graphs_ch():
 
 # cultural heritage
 bar_graphs_ch() # "CH", 'cultural_heritage'
+
+# ety types 2 frequencies
