@@ -83,10 +83,15 @@ def order_data_by_frequency(data, old_rows):
         new_rows.append(old_rows[sorted_sums[i][1]])
 
     return sorted_data, new_rows
-    
+
+def linify(data):
+    return [data[i].replace('-','-\n')for i in range(0, len(data))]
+        # data[i] = 
+
 def ety_types(filename):
     data_csv = read_csv(filename)
-    columns = data_csv[0] # fetching columns
+    columns = linify(data_csv[0]) # fetching columns
+    # columns = 
     rows = data_csv[-1] # fetching rows
     data = data_csv[1:len(data_csv)-1]
     data = convert_to_ints(data)
@@ -109,51 +114,51 @@ def ety_types(filename):
     bottoms = None
     for row in range(0,n_rows):
         bottoms = [0]*len(columns) if row == 0 else bottoms + data[row-1]
-        plt.bar(index, data[row], width=bar_width, bottom=bottoms, color=colors[row], align='center')
+        plt.bar(columns, data[row], width=bar_width, bottom=bottoms, color=colors[row], align='center')
         cell_text.append(data[row])
         
 
     
-    plt.xticks(ticks=[])
+    # plt.xticks(ticks=[])
     # plt.yticks(ticks=range(0,35,6), labels=range(0,35,6)) #  labels=columns
 
     # Add a table at the bottom of the axes
-    the_table = plt.table(cellText=cell_text,
-                          rowLabels=rows,
-                          rowColours=colors,
-                          colLabels=columns,
-                          loc='bottom',
-                          colWidths=(0.073,)*len(columns),
-                        #   colWidths=[0.5 for i in n_rows],
-                        colLoc='center'
-                          )
-    # the_table.
+    # the_table = plt.table(cellText=cell_text,
+    #                       rowLabels=rows,
+    #                       rowColours=colors,
+    #                       colLabels=columns,
+    #                       loc='bottom',
+    #                       colWidths=(0.073,)*len(columns),
+    #                     #   colWidths=[0.5 for i in n_rows],
+    #                     colLoc='center'
+    #                       )
+    # # the_table.
     # fig, ax = plt.subplots(num=None, figsize=(16, 12), dpi=80, facecolor='w', edgecolor='k')
     # [the_table.auto_set_font_size(False) for t in [tab1, tab2]]
     # Adjust layout to make room for the table:
     plt.subplots_adjust(left=0.2, bottom=0.5)
-   
+    plt.legend(rows, loc='upper right')
     # plt.subplot(figsize=(16, 12))
 
     # plt.ylabel("Loss in ${0}'s".format(value_increment))
     # plt.yticks(values * value_increment, ['%d' % val for val in values])
     # plt.xticks([])
-    plt.xticks(ticks=[])
+    # plt.set_xticklabels(ticks=columns)
     plt.yticks(ticks=range(0,190,20), labels=range(0,190,20)) #  labels=columns
     plt.title('Etymology Types by Decade')
     plt.show()
     plt.savefig(f"figures/bar_graph_2nd_ety_types_by_decade.png")
     plt.clf()
-    the_table = plt.table(cellText=cell_text,
-                          rowLabels=rows,
-                          rowColours=colors,
-                          colLabels=columns,
-                          loc='bottom',
-                          colWidths=(0.073,)*len(columns),
-                        #   colWidths=[0.5 for i in n_rows],
-                        colLoc='center'
-                          )
-    plt.show()
+    # the_table = plt.table(cellText=cell_text,
+    #                       rowLabels=rows,
+    #                       rowColours=colors,
+    #                       colLabels=columns,
+    #                       loc='bottom',
+    #                       colWidths=(0.073,)*len(columns),
+    #                     #   colWidths=[0.5 for i in n_rows],
+    #                     colLoc='center'
+    #                       )
+    # plt.show()
     
 
 key_to_long_title = {
@@ -213,9 +218,10 @@ def bar_graphs_ch():
     plt.savefig(f"figures/bar_graph_cultural_heritage.png")
     plt.clf()
     return
+
 # ety types per decade
 # ety_types('ety_type_1_by_decade')
-# ety_types('ety_type_2_by_decade')
+ety_types('ety_type_2_by_decade')
 
 # number morphemes per set
 # bar_graphs_morphemes("ALL")
@@ -225,6 +231,6 @@ def bar_graphs_ch():
 # bar_graphs_morphemes("PM")
 
 # cultural heritage
-bar_graphs_ch() # "CH", 'cultural_heritage'
+# bar_graphs_ch() # "CH", 'cultural_heritage'
 
 # ety types 2 frequencies
