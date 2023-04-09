@@ -85,36 +85,52 @@ def order_data_by_frequency(data, old_rows):
     return sorted_data, new_rows
 
 def linify(data):
+    '''
+    Adds a line line for label headings so that they are easily readable
+    '''
     return [data[i].replace('-','-\n')for i in range(0, len(data))]
-        # data[i] = 
 
-def ety_types(filename):
+def normalize_data(data):
+    '''
+    Normalizes the data to a standard of 100, so that ety types can be compared over the decades
+    '''
+    sums = np.array(data, dtype=np.double).sum(axis=0)
+
+    for i in range(0, len(data)):
+        for j in range(0, len(data[0])):
+            if sums[j] != 0:
+                data[i][j] = data[i][j]/sums[j]*100
+    
+    return np.array(data)
+
+def ety_types(filename, normalized=False):
     data_csv = read_csv(filename)
     columns = linify(data_csv[0]) # fetching columns
-    # columns = 
     rows = data_csv[-1] # fetching rows
-    data = data_csv[1:len(data_csv)-1]
+    dtype_data = np.double if normalized else np.int16
+    data = np.array(data_csv[1:len(data_csv)-1],dtype=dtype_data)
     data = convert_to_ints(data)
     data, rows = order_data_by_frequency(data, rows)
 
+    if normalized:
+        data = normalize_data(data)
+    
+    # sums = np.array(data).sum(axis=0)
+    # print(np.array(data))
+    # exit()
     colors = plt.cm.tab20((4./3*np.arange(len(rows))).astype(int))
 
     n_rows = len(data)
-
-    index = np.arange(len(columns))
-    bar_width = 0.8
-
-    # Initialize the vertical-offset for the stacked bar chart.
-    # y_offset = np.ones(len(columns))
-   
-
+    
     fig, ax = plt.subplots(num=None, figsize=(16, 12), dpi=80, facecolor='w', edgecolor='k')
+    
     # Plot bars and create text labels for the table
     cell_text = []
     bottoms = None
     for row in range(0,n_rows):
         bottoms = [0]*len(columns) if row == 0 else bottoms + data[row-1]
-        plt.bar(columns, data[row], width=bar_width, bottom=bottoms, color=colors[row], align='center')
+        # plt.bar(columns, data[row], width=bar_width, bottom=bottoms, color=colors[row], align='center')
+        plt.bar(columns, data[row], color=colors[row],  bottom=bottoms, align='center')
         cell_text.append(data[row])
         
 
@@ -132,22 +148,26 @@ def ety_types(filename):
     #                     #   colWidths=[0.5 for i in n_rows],
     #                     colLoc='center'
     #                       )
-    # # the_table.
-    # fig, ax = plt.subplots(num=None, figsize=(16, 12), dpi=80, facecolor='w', edgecolor='k')
-    # [the_table.auto_set_font_size(False) for t in [tab1, tab2]]
+
     # Adjust layout to make room for the table:
     plt.subplots_adjust(left=0.2, bottom=0.5)
-    plt.legend(rows, loc='upper right')
+    plt.legend(rows, loc='upper left')
     # plt.subplot(figsize=(16, 12))
 
     # plt.ylabel("Loss in ${0}'s".format(value_increment))
     # plt.yticks(values * value_increment, ['%d' % val for val in values])
     # plt.xticks([])
     # plt.set_xticklabels(ticks=columns)
-    plt.yticks(ticks=range(0,190,20), labels=range(0,190,20)) #  labels=columns
-    plt.title('Etymology Types by Decade')
+    normalization_extension_title = ' - Normalized' if normalized else ''
+    normalization_extension_fig_name = '_normalized' if normalized else ''
+    ticks_graph = range(0,120,10) if normalized else range(0,190,20)
+    labels_graph = range(0,120,10) if normalized else range(0,190,20)
+    
+    # plt.yticks(ticks=range(0,100,10), labels=range(0,190,20)) #  labels=columns
+    plt.yticks(ticks=ticks_graph, labels=labels_graph) #  labels=columns
+    plt.title(f'Etymology Types by Decade{normalization_extension_title}')
     plt.show()
-    plt.savefig(f"figures/bar_graph_2nd_ety_types_by_decade.png")
+    plt.savefig(f"figures/bar_graph_2nd_ety_types_by_decade{normalization_extension_fig_name}.png")
     plt.clf()
     # the_table = plt.table(cellText=cell_text,
     #                       rowLabels=rows,
@@ -196,6 +216,11 @@ def new_line_for_space(data):
             else:
                 break
     return data
+
+def standardized_ety_types(filename):
+    
+    return
+    
 # -------------------------------
 # ------- VISUALIZATION ---------
 # -------------------------------
@@ -221,7 +246,8 @@ def bar_graphs_ch():
 
 # ety types per decade
 # ety_types('ety_type_1_by_decade')
-ety_types('ety_type_2_by_decade')
+# ety_types('ety_type_2_by_decade')
+ety_types('ety_type_2_by_decade', normalized=True)
 
 # number morphemes per set
 # bar_graphs_morphemes("ALL")
