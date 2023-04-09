@@ -23,9 +23,10 @@ def prepare_cultural_heritage_data(data, headers):
                 # followup on animal subclass analysis
                 # TODO?
 
-    final_data = []
+    final_data = [[], []]
     for entry in hash_table_ch:
-        final_data.append([entry, hash_table_ch[entry]])
+        final_data[0].append(entry)
+        final_data[1].append(hash_table_ch[entry])
         
     save_as_csv(final_data, "cultural_heritage")
     return

@@ -43,7 +43,7 @@ file_names = {
     "morpheme": "number_morphemes_",
     "ety_type_2": "ety_type_2_frequencies_",
     "name_length": "name_length",
-    "cultural_heritage": "cultural_heritage",
+    "CH": "cultural_heritage",
 }
 
 def prepare_virtual_fields(dataa, cs):
