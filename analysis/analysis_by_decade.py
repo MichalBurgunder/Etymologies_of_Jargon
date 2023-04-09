@@ -90,11 +90,11 @@ def prepare_year_type_data(all_elements, headers, scrape_ident, ety_type):
         data[row_pos][col_pos] += 1
     
     data.insert(0, columns)
-    data.append(rows_names)
+    data.append(rws_names)
     return data
     
     
-def prepare_ety_by_year_data(all_elements, headers, scrape_ident='', type=1):
+def prepare_ety_by_decade_data(all_elements, headers, scrape_ident='', type=1):
     """
     Extracts from the processed data all "subdata" necessary to analyze ety types by year, and saves this data as a CSV.
     """
@@ -103,5 +103,5 @@ def prepare_ety_by_year_data(all_elements, headers, scrape_ident='', type=1):
     remove_special_chars_year(all_elements, headers)
     fill_no_etymology(all_elements, headers, field=ety_type)
     unique_ety_types = get_all_unique_etymology_types(all_elements, headers, scrape_ident, ety_type)
-    data = prepare_year_type_data(all_elements, headers, scrape_ident, ety_type)
-    save_as_csv(data, f"ety_type_{type}_by_year")
+    data = prepare_year_type_data(all_elemenots, headers, scrape_ident, ety_type)
+    save_as_csv(data, f"ety_type_{type}_by_decade")
