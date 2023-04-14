@@ -191,7 +191,7 @@ key_to_long_title = {
 }
 
 def get_bargraph_data(set, path=False):
-    path = file_names["morpheme"]+set if not path else path
+    path = file_names["morpheme"]+set if not path else file_names[path]+set
     data = read_csv(path)
     return [data[0], [int(data[1][j]) for j in range(0, len(data[0]))] ]
 
@@ -264,23 +264,20 @@ def bar_graphs_ch():
     plt.clf()
     return
 
-def bar_graphs_character_length(set):
-    import matplotlib.pyplot as plt
-    data = get_bargraph_data(set)
-    plt.xlabel("Number of Morphemes")
-    plt.ylabel("Frequency")
-    plt.title(key_to_long_title[set])
-    plt.xticks([i for i in range(0, 9)])
-    plt.bar(data[0], data[1], color ='navy')
-    plt.savefig(f"figures/bar_graph_morphemes_{set}.png")
-    plt.clf()
-    return
 
 def bar_graphs_characters(set):
+    # import matplotlib.pyplot as plt
     data = get_bargraph_data(set, "name_length")
     
+    plt.xlabel("Number of Characters")
+    plt.ylabel("Frequency")
+    plt.title(key_to_long_title[set])
+    plt.xticks([i for i in range(0, 34)])
+    plt.bar(data[0], data[1], color ='navy')
+    plt.savefig(f"figures/bar_graph_len_characters_{set}.png")
+    plt.clf()
+    return
     
-    return 
 # -------------------------------
 # ------- VISUALIZATION ---------
 # -------------------------------
@@ -291,7 +288,11 @@ def bar_graphs_characters(set):
 # ety_types('ety_type_2_by_decade', normalized=True)
 
 # number of characters per set
-bar_graphs_characters('ALL')
+bar_graphs_characters("ALL")
+bar_graphs_characters("PL")
+bar_graphs_characters("CP")
+bar_graphs_characters("RG")
+bar_graphs_characters("PM")
 
 # number morphemes per set
 # bar_graphs_morphemes("ALL")
@@ -301,11 +302,11 @@ bar_graphs_characters('ALL')
 # bar_graphs_morphemes("PM")
 
 # statistical data on mophemes per set
-stats_on_numbers("All")
-stats_on_numbers("PL")
-stats_on_numbers("CP")
-stats_on_numbers("RG")
-stats_on_numbers("PM")
+# stats_on_numbers("All")
+# stats_on_numbers("PL")
+# stats_on_numbers("CP")
+# stats_on_numbers("RG")
+# stats_on_numbers("PM")
 
 # cultural heritage
 # bar_graphs_ch() # "CH", 'cultural_heritage'
