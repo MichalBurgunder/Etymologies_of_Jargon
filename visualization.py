@@ -220,10 +220,30 @@ def new_line_for_space(data):
 def standardized_ety_types(filename):
     
     return
+
+def get_mean_special(data):
+    morph_sum = 0
+    for i in range(0, len(data[1])):
+        morph_sum += (i+1) * data[1][i]
+    return morph_sum/sum(data[1]) 
+
+def get_variance_special(data, mean):
+    variance = 0
+    for i in range(0, len(data[0])):
+        variance += (((i+1)-mean))**2*data[1][i]
+    return variance/sum(data[1])
+
+def stats_on_numbers(set):
+    data = get_bargraph_data(set)
     
-# -------------------------------
-# ------- VISUALIZATION ---------
-# -------------------------------
+    mean = get_mean_special(data)
+    variance = get_variance_special(data, mean)
+
+    print(f"{set} Mean: {np.round(mean, 2)}")
+    print(f"{set} Variance: {np.round(variance, 2)}")
+    print()
+    return [mean, variance]
+
 
 def bar_graphs_ch():
     data = get_bargraph_data("CH", 'cultural_heritage')
@@ -244,10 +264,34 @@ def bar_graphs_ch():
     plt.clf()
     return
 
+def bar_graphs_character_length(set):
+    import matplotlib.pyplot as plt
+    data = get_bargraph_data(set)
+    plt.xlabel("Number of Morphemes")
+    plt.ylabel("Frequency")
+    plt.title(key_to_long_title[set])
+    plt.xticks([i for i in range(0, 9)])
+    plt.bar(data[0], data[1], color ='navy')
+    plt.savefig(f"figures/bar_graph_morphemes_{set}.png")
+    plt.clf()
+    return
+
+def bar_graphs_characters(set):
+    data = get_bargraph_data(set, "name_length")
+    
+    
+    return 
+# -------------------------------
+# ------- VISUALIZATION ---------
+# -------------------------------
+
 # ety types per decade
 # ety_types('ety_type_1_by_decade')
 # ety_types('ety_type_2_by_decade')
-ety_types('ety_type_2_by_decade', normalized=True)
+# ety_types('ety_type_2_by_decade', normalized=True)
+
+# number of characters per set
+bar_graphs_characters('ALL')
 
 # number morphemes per set
 # bar_graphs_morphemes("ALL")
@@ -255,6 +299,13 @@ ety_types('ety_type_2_by_decade', normalized=True)
 # bar_graphs_morphemes("CP")
 # bar_graphs_morphemes("RG")
 # bar_graphs_morphemes("PM")
+
+# statistical data on mophemes per set
+stats_on_numbers("All")
+stats_on_numbers("PL")
+stats_on_numbers("CP")
+stats_on_numbers("RG")
+stats_on_numbers("PM")
 
 # cultural heritage
 # bar_graphs_ch() # "CH", 'cultural_heritage'
