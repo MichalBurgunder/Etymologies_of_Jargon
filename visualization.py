@@ -190,15 +190,15 @@ key_to_long_title = {
    "CH": "Cultural Heritage"
 }
 
-def get_bargraph_data(set, path=False):
-    path = file_names["morpheme"]+set if not path else file_names[path]+set
+def get_bargraph_data(set, path):
+    path = file_names[path]+set
     data = read_csv(path)
     return [data[0], [int(data[1][j]) for j in range(0, len(data[0]))] ]
 
 
 def bar_graphs_morphemes(set):
     import matplotlib.pyplot as plt
-    data = get_bargraph_data(set)
+    data = get_bargraph_data(set, "morpheme")
     plt.xlabel("Number of Morphemes")
     plt.ylabel("Frequency")
     plt.title(key_to_long_title[set])
@@ -233,14 +233,46 @@ def get_variance_special(data, mean):
         variance += (((i+1)-mean))**2*data[1][i]
     return variance/sum(data[1])
 
-def stats_on_numbers(set):
-    data = get_bargraph_data(set)
+def get_median_special(data):
+    median_threshold = np.ceil(sum(data[1])/2)
+    running_sum = 0
+    for i in range(0, len(data[0])):
+        running_sum += data[1][i]
+        if running_sum >= median_threshold:
+            return data[0][i]
+    raise Exception("Median could not be found. Programming error.")
+
+def get_max_min_special(data):
+    minmax = [0, 0]
+
+    # finding min
+    for i in range(0, len(data[0])):
+        if data[1][i] != 0:
+            minmax[0] = data[0][i]
+            break
+    
+    # finding min
+    for i in range(len(data[0])-1, 0, -1):
+        if data[1][i] != 0:
+            minmax[1] = data[0][i]
+            break
+            
+    return minmax[0], minmax[1]
+        
+def stats_on_numbers(set, path, name):
+    data = get_bargraph_data(set, path)
     
     mean = get_mean_special(data)
+    median = get_median_special(data) # TODO: check if this is correct
     variance = get_variance_special(data, mean)
+    min_value = max_value = get_max_min_special(data)
 
+    print(f"{name} {set}")
     print(f"{set} Mean: {np.round(mean, 2)}")
+    print(f"{set} Median: {median}")
     print(f"{set} Variance: {np.round(variance, 2)}")
+    print(f"{set} Max Value: {max_value[1]}")
+    print(f"{set} Min Value: {min_value[0]}")
     print()
     return [mean, variance]
 
@@ -266,14 +298,16 @@ def bar_graphs_ch():
 
 
 def bar_graphs_characters(set):
-    # import matplotlib.pyplot as plt
     data = get_bargraph_data(set, "name_length")
     
+    plt.figure(figsize=(10,5))
     plt.xlabel("Number of Characters")
     plt.ylabel("Frequency")
-    plt.title(key_to_long_title[set])
-    plt.xticks([i for i in range(0, 34)])
+    plt.title(f"Character Length {key_to_long_title[set]}")
+    plt.xticks([i for i in range(0, 35)])
+    
     plt.bar(data[0], data[1], color ='navy')
+    # plt.show()
     plt.savefig(f"figures/bar_graph_len_characters_{set}.png")
     plt.clf()
     return
@@ -287,13 +321,6 @@ def bar_graphs_characters(set):
 # ety_types('ety_type_2_by_decade')
 # ety_types('ety_type_2_by_decade', normalized=True)
 
-# number of characters per set
-bar_graphs_characters("ALL")
-bar_graphs_characters("PL")
-bar_graphs_characters("CP")
-bar_graphs_characters("RG")
-bar_graphs_characters("PM")
-
 # number morphemes per set
 # bar_graphs_morphemes("ALL")
 # bar_graphs_morphemes("PL")
@@ -301,14 +328,29 @@ bar_graphs_characters("PM")
 # bar_graphs_morphemes("RG")
 # bar_graphs_morphemes("PM")
 
+
+# number of characters per set
+# bar_graphs_characters("ALL")
+# bar_graphs_characters("PL")
+# bar_graphs_characters("CP")
+# bar_graphs_characters("RG")
+# bar_graphs_characters("PM")
+
+
 # statistical data on mophemes per set
-# stats_on_numbers("All")
-# stats_on_numbers("PL")
-# stats_on_numbers("CP")
-# stats_on_numbers("RG")
-# stats_on_numbers("PM")
+# stats_on_numbers("All", "morpheme", "Number of Morphemes")
+# stats_on_numbers("PL", "morpheme", "Number of Morphemes")
+# stats_on_numbers("CP", "morpheme", "Number of Morphemes")
+# stats_on_numbers("RG", "morpheme", "Number of Morphemes")
+# stats_on_numbers("PM", "morpheme", "Number of Morphemes")
+
+
+# stats_on_numbers("All", "name_length", "Number of Characters")
+# stats_on_numbers("PL", "name_length", "Number of Characters")
+# stats_on_numbers("CP", "name_length", "Number of Characters")
+# stats_on_numbers("RG", "name_length", "Number of Characters")
+# stats_on_numbers("PM", "name_length", "Number of Characters")
+
 
 # cultural heritage
 # bar_graphs_ch() # "CH", 'cultural_heritage'
-
-# ety types 2 frequencies
