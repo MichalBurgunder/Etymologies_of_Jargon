@@ -198,15 +198,17 @@ def get_bargraph_data(set, path):
 
 
 def bar_graphs_morphemes(set):
-    import matplotlib.pyplot as plt
     data = get_bargraph_data(set, "morpheme")
+    
+    plt.figure(figsize=(4,10))
     plt.xlabel("Number of Morphemes")
     plt.ylabel("Frequency")
     plt.title(key_to_long_title[set])
-    plt.xticks([i for i in range(0, 9)])
+    plt.xticks([i for i in range(0, 5)])
     plt.bar(data[0], data[1], color ='navy')
-    plt.savefig(f"figures/bar_graph_morphemes_{set}.png")
+    plt.savefig(f"figures/bar_graph_morphemes_{set}.png", bbox_inches='tight')
     plt.clf()
+    
     return
 
 def new_line_for_space(data):
@@ -266,19 +268,19 @@ def stats_on_numbers(set_name, path, name):
     mean = get_mean_special(data)
     median = get_median_special(data) # TODO: check if this is correct
     variance = get_variance_special(data, mean)
-    std = np.around(math.sqrt(variance), 1) # irrelevant whether we do variance or std first
+    std = np.around(math.sqrt(variance), 2) # irrelevant whether we do variance or std first
     min_max_values = get_max_min_special(data)
 
-    print(f"{name} {set_name}")
-    print(f"{set_name} Mean: {np.round(mean, 2)}")
-    print(f"{set_name} Median: {median}")
-    print(f"{set_name} Variance: {np.round(variance, 2)}")
-    print(f"{set_name} Standard Deviation: {np.round(math.sqrt(variance), 1)}")
-    print(f"{set_name} Max Value: {min_max_values[1]}")
-    print(f"{set_name} Min Value: {min_max_values[0]}")
-    print()
     # print("Data Set & Mean & Median & Standard Deviation & Variance & Min Value & Max Value \\\\")
-    return [set_name, mean, median, std, variance, min_max_values[0], min_max_values[1]]
+    return [
+            set_name,
+            np.round(mean, 2),
+            int(median),
+            '{:.2f}'.format(np.round(std, 2)),
+            '{:.2f}'.format(np.round(variance, 2)),
+            int(min_max_values[0]),
+            int(min_max_values[1])
+        ]
 
 
 def bar_graphs_ch():
@@ -316,17 +318,17 @@ def bar_graphs_characters(set):
     plt.clf()
     return
 
-def print_name_length_stats(stat_dataa, set_names):
+def length_stats_latex(stat_dataa, set_names):
     """
-    
+    Allows for super fast intergration of a vector of statistical data into a Latex table
     """
     print("Data Set & Mean & Median & Standard Deviation & Variance & Min Value & Max Value \\\\")
+    print("\hline")
     for i in range(0, len(stat_dataa)):
         the_string = f"{set_names[i]} & "
-        # the_string = ""
         for j in range(1, len(stat_dataa[0])):
-            the_string += f"{np.round(float(stat_dataa[i][j]), 2)}  & "
-        print(the_string[0:len(the_string)-3] + "\\\\") # space, ampersand, space
+            the_string += f"{stat_dataa[i][j]}  & "
+        print(the_string[0:len(the_string)-3] + "\\\\\n\\hline") # space, ampersand, space
         
     return
 
@@ -347,18 +349,18 @@ def version_numbering(set):
 # bar_graphs_characters("RG")
 # bar_graphs_characters("PM")
 
-noc_all = stats_on_numbers("All", "name_length", "Number of Characters")
-noc_pl = stats_on_numbers("PL", "name_length", "Number of Characters")
-noc_cp = stats_on_numbers("CP", "name_length", "Number of Characters")
-noc_rg = stats_on_numbers("RG", "name_length", "Number of Characters")
-noc_pm = stats_on_numbers("PM", "name_length", "Number of Characters")
-print_name_length_stats([noc_all, noc_pl, noc_cp, noc_rg, noc_pm], ["All", "PL", "CP", "RG", "PM"])
+# noc_all = stats_on_numbers("All", "name_length", "Number of Characters")
+# noc_pl = stats_on_numbers("PL", "name_length", "Number of Characters")
+# noc_cp = stats_on_numbers("CP", "name_length", "Number of Characters")
+# noc_rg = stats_on_numbers("RG", "name_length", "Number of Characters")
+# noc_pm = stats_on_numbers("PM", "name_length", "Number of Characters")
+# length_stats_latex([noc_all, noc_pl, noc_cp, noc_rg, noc_pm], ["All", "PL", "CP", "RG", "PM"])
 
 
 # NUMBER OF MORPHEMES
 
 # number morphemes per set
-# bar_graphs_morphemes("ALL")
+bar_graphs_morphemes("ALL")
 # bar_graphs_morphemes("PL")
 # bar_graphs_morphemes("CP")
 # bar_graphs_morphemes("RG")
