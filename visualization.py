@@ -1,5 +1,6 @@
 import csv
 import os
+import math
 import numpy as np
 import matplotlib.pyplot as plt
 import sys  
@@ -259,22 +260,25 @@ def get_max_min_special(data):
             
     return minmax[0], minmax[1]
         
-def stats_on_numbers(set, path, name):
-    data = get_bargraph_data(set, path)
+def stats_on_numbers(set_name, path, name):
+    data = get_bargraph_data(set_name, path)
     
     mean = get_mean_special(data)
     median = get_median_special(data) # TODO: check if this is correct
     variance = get_variance_special(data, mean)
-    min_value = max_value = get_max_min_special(data)
+    std = np.around(math.sqrt(variance), 1) # irrelevant whether we do variance or std first
+    min_max_values = get_max_min_special(data)
 
-    print(f"{name} {set}")
-    print(f"{set} Mean: {np.round(mean, 2)}")
-    print(f"{set} Median: {median}")
-    print(f"{set} Variance: {np.round(variance, 2)}")
-    print(f"{set} Max Value: {max_value[1]}")
-    print(f"{set} Min Value: {min_value[0]}")
+    print(f"{name} {set_name}")
+    print(f"{set_name} Mean: {np.round(mean, 2)}")
+    print(f"{set_name} Median: {median}")
+    print(f"{set_name} Variance: {np.round(variance, 2)}")
+    print(f"{set_name} Standard Deviation: {np.round(math.sqrt(variance), 1)}")
+    print(f"{set_name} Max Value: {min_max_values[1]}")
+    print(f"{set_name} Min Value: {min_max_values[0]}")
     print()
-    return [mean, variance]
+    # print("Data Set & Mean & Median & Standard Deviation & Variance & Min Value & Max Value \\\\")
+    return [set_name, mean, median, std, variance, min_max_values[0], min_max_values[1]]
 
 
 def bar_graphs_ch():
@@ -300,7 +304,7 @@ def bar_graphs_ch():
 def bar_graphs_characters(set):
     data = get_bargraph_data(set, "name_length")
     
-    plt.figure(figsize=(10,5))
+    plt.figure(figsize=(10,3))
     plt.xlabel("Number of Characters")
     plt.ylabel("Frequency")
     plt.title(f"Character Length {key_to_long_title[set]}")
@@ -308,26 +312,33 @@ def bar_graphs_characters(set):
     
     plt.bar(data[0], data[1], color ='navy')
     # plt.show()
-    plt.savefig(f"figures/bar_graph_len_characters_{set}.png")
+    plt.savefig(f"figures/bar_graph_len_characters_{set}.png", bbox_inches='tight')
     plt.clf()
     return
+
+def print_name_length_stats(stat_dataa, set_names):
+    """
     
+    """
+    print("Data Set & Mean & Median & Standard Deviation & Variance & Min Value & Max Value \\\\")
+    for i in range(0, len(stat_dataa)):
+        the_string = f"{set_names[i]} & "
+        # the_string = ""
+        for j in range(1, len(stat_dataa[0])):
+            the_string += f"{np.round(float(stat_dataa[i][j]), 2)}  & "
+        print(the_string[0:len(the_string)-3] + "\\\\") # space, ampersand, space
+        
+    return
+
+def version_numbering(set):
+    
+    return
 # -------------------------------
 # ------- VISUALIZATION ---------
 # -------------------------------
 
-# ety types per decade
-# ety_types('ety_type_1_by_decade')
-# ety_types('ety_type_2_by_decade')
-# ety_types('ety_type_2_by_decade', normalized=True)
 
-# number morphemes per set
-# bar_graphs_morphemes("ALL")
-# bar_graphs_morphemes("PL")
-# bar_graphs_morphemes("CP")
-# bar_graphs_morphemes("RG")
-# bar_graphs_morphemes("PM")
-
+# NUMBER OF CHARACTERS
 
 # number of characters per set
 # bar_graphs_characters("ALL")
@@ -335,6 +346,23 @@ def bar_graphs_characters(set):
 # bar_graphs_characters("CP")
 # bar_graphs_characters("RG")
 # bar_graphs_characters("PM")
+
+noc_all = stats_on_numbers("All", "name_length", "Number of Characters")
+noc_pl = stats_on_numbers("PL", "name_length", "Number of Characters")
+noc_cp = stats_on_numbers("CP", "name_length", "Number of Characters")
+noc_rg = stats_on_numbers("RG", "name_length", "Number of Characters")
+noc_pm = stats_on_numbers("PM", "name_length", "Number of Characters")
+print_name_length_stats([noc_all, noc_pl, noc_cp, noc_rg, noc_pm], ["All", "PL", "CP", "RG", "PM"])
+
+
+# NUMBER OF MORPHEMES
+
+# number morphemes per set
+# bar_graphs_morphemes("ALL")
+# bar_graphs_morphemes("PL")
+# bar_graphs_morphemes("CP")
+# bar_graphs_morphemes("RG")
+# bar_graphs_morphemes("PM")
 
 
 # statistical data on mophemes per set
@@ -345,12 +373,14 @@ def bar_graphs_characters(set):
 # stats_on_numbers("PM", "morpheme", "Number of Morphemes")
 
 
-# stats_on_numbers("All", "name_length", "Number of Characters")
-# stats_on_numbers("PL", "name_length", "Number of Characters")
-# stats_on_numbers("CP", "name_length", "Number of Characters")
-# stats_on_numbers("RG", "name_length", "Number of Characters")
-# stats_on_numbers("PM", "name_length", "Number of Characters")
 
+# ety types per decade
+# ety_types('ety_type_1_by_decade')
+# ety_types('ety_type_2_by_decade')
+# ety_types('ety_type_2_by_decade', normalized=True)
 
 # cultural heritage
 # bar_graphs_ch() # "CH", 'cultural_heritage'
+
+# version numbering
+# version_numbering("All")
