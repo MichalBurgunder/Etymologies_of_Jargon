@@ -82,15 +82,15 @@ def order_data_by_frequency(data, old_rows):
     return sorted_data, new_rows
 
 def linify(data):
-    '''
+    """
     Adds a line line for label headings so that they are easily readable
-    '''
+    """
     return [data[i].replace('-','-\n')for i in range(0, len(data))]
 
 def normalize_data(data):
-    '''
+    """
     Normalizes the data to a standard of 100, so that ety types can be compared over the decades
-    '''
+    """
     sums = np.array(data, dtype=np.double).sum(axis=0)
 
     for i in range(0, len(data)):

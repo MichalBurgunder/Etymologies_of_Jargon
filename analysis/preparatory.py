@@ -77,9 +77,9 @@ def get_headers_hashmap(root, paths, virtual_fields=[]):
 
     for i in range(1,len(headerss)):
         if False in [len(headerss[i]) == num_headers for headers in headerss]:
-            print(f'''Length of the headers are not the same:\n
+            print(f"""Length of the headers are not the same:\n
                   Length of first headers: {num_headers}\n
-                  Length of headers in pos. {i}: {len(headerss[i])}''')           
+                  Length of headers in pos. {i}: {len(headerss[i])}""")           
             min_num = min(len(headerss[0]), len(headerss[1]))
   
             for j in range(0, min_num):

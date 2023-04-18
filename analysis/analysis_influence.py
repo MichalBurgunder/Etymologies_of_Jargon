@@ -2,9 +2,9 @@ import numpy as np
 # import 
 
 def pagerank(M, num_iterations: int = 100, d: float = 0.85):
-    '''
+    """
     copied from wikipedia https://en.wikipedia.org/wiki/PageRank
-    '''
+    """
     N = M.shape[1]
     v = np.ones(N) / N
     M_hat = (d * M + (1 - d) / N)

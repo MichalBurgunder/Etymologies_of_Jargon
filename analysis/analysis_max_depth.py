@@ -73,10 +73,10 @@ def get_max_depth(data, entry, element_hashmap, header_hms, cs, previous_jargons
 
 
 def verify_jargon_connection_entries(dataa, cs):
-    '''
+    """
     Verifies that the jargon connection type fields are all present in the enumeration.
     Otherwise, we'd have to include these for the next batch of data. 
-    ''' 
+    """ 
     jct_poss = []
     jct_hash = {}
     for i in range(0, len(jargon_entries_connection_types_titles)):
@@ -90,7 +90,7 @@ def verify_jargon_connection_entries(dataa, cs):
             jpos = jct_poss[j]
             dataa[0][i][jpos] = dataa[0][i][jpos].strip()
             if dataa[0][i][jpos-1] != "" and dataa[0][i][jpos] not in jargon_entries_connection_types_types:
-                errors.append(f'''Cleaned Name: {dataa[0][i][cs['clean_name_pos']]},\nData Set: {dataa[0][i][cs['scrape_identifier_pos']]},\n{jct_hash[jpos]}: "{dataa[0][i][jpos]}"\n''')
+                errors.append(f"""Cleaned Name: {dataa[0][i][cs['clean_name_pos']]},\nData Set: {dataa[0][i][cs['scrape_identifier_pos']]},\n{jct_hash[jpos]}: "{dataa[0][i][jpos]}"\n""")
                 
     if len(errors) != 0:
         print("Jargon connection types aren't consistent with the enumeration.")

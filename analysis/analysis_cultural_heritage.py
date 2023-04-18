@@ -4,9 +4,9 @@ from config import find_field_position, illegal_cultural_heritage_subclasses
 from file_management import save_as_csv
 
 def prepare_cultural_heritage_data(data, headers):
-    '''
+    """
     Counts the frequency of different Cultural Heritage enumerations within a given dataset 
-    '''
+    """
     hash_table_ch = {}
     ch_pos = find_field_position(headers, "Cultural Heritage (CH)")
     ch_subclass_pos = find_field_position(headers, "CH Subclass")
