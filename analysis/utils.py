@@ -30,8 +30,9 @@ def number_only(string):
         # a range is given. we compute the middle
         return int(np.round((int(string[0:4]) + int(string[5:9]))/2)) 
     if len(string) >= 5 and string[4] == 's':
-        # also a range, but we simply take the middle 
+        # also a range (e.g. "1980s"), but we simply take the middle 
         return int(string[0:4])+5
+    # not a range, but a bound, or approximation. We simply take the year given
     final = ""
     for char in string:
         if char not in special_chars:

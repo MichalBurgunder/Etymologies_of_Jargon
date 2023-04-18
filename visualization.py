@@ -6,18 +6,14 @@ import matplotlib.pyplot as plt
 import sys  
 import random 
 import os     
-os.system('clear')
+
 sys.path.append('/Users/michal/Documents/thesis/etymologies_of_jargon/analysis')
-
-
-from analysis.file_management import read_csv
+from analysis.file_management import read_csv, save_as_csv
 from analysis.config import file_names
-# from analysis import config
-# os.system('clear')
 
+os.system('clear')
 
 root = '/Users/michal/Documents/thesis/etymologies_of_jargon/results'
-
 
 def create_bar_graph(ys, xs, info, log=False):
     fig = plt.figure()
@@ -115,7 +111,7 @@ def ety_types(filename, normalized=False):
 
     if normalized:
         data = normalize_data(data)
-    
+        save_as_csv(np.round(data, 1), "temp_normalized_ety_types")
     # sums = np.array(data).sum(axis=0)
     # print(np.array(data))
     # exit()
@@ -134,22 +130,6 @@ def ety_types(filename, normalized=False):
         plt.bar(columns, data[row], color=colors[row],  bottom=bottoms, align='center')
         cell_text.append(data[row])
         
-
-    
-    # plt.xticks(ticks=[])
-    # plt.yticks(ticks=range(0,35,6), labels=range(0,35,6)) #  labels=columns
-
-    # Add a table at the bottom of the axes
-    # the_table = plt.table(cellText=cell_text,
-    #                       rowLabels=rows,
-    #                       rowColours=colors,
-    #                       colLabels=columns,
-    #                       loc='bottom',
-    #                       colWidths=(0.073,)*len(columns),
-    #                     #   colWidths=[0.5 for i in n_rows],
-    #                     colLoc='center'
-    #                       )
-
     # Adjust layout to make room for the table:
     plt.subplots_adjust(left=0.2, bottom=0.5)
     plt.legend(rows, loc='upper left')
@@ -161,14 +141,15 @@ def ety_types(filename, normalized=False):
     # plt.set_xticklabels(ticks=columns)
     normalization_extension_title = ' - Normalized' if normalized else ''
     normalization_extension_fig_name = '_normalized' if normalized else ''
-    ticks_graph = range(0,120,10) if normalized else range(0,190,20)
-    labels_graph = range(0,120,10) if normalized else range(0,190,20)
+    ety_version_title = "1st" if "1" in filename else "2nd" # to differetiate the two ety type fields
+    ticks_graph = range(0,120,10) if normalized else range(0,170,20)
+    labels_graph = range(0,120,10) if normalized else range(0,170,20)
     
     # plt.yticks(ticks=range(0,100,10), labels=range(0,190,20)) #  labels=columns
     plt.yticks(ticks=ticks_graph, labels=labels_graph) #  labels=columns
-    plt.title(f'Etymology Types by Decade{normalization_extension_title}')
-    plt.show()
-    plt.savefig(f"figures/bar_graph_2nd_ety_types_by_decade{normalization_extension_fig_name}.png")
+    plt.title(f'{ety_version_title} Etymology Types by Decade{normalization_extension_title}')
+    # plt.show()
+    plt.savefig(f"figures/bar_graph_{ety_version_title}_ety_types_by_decade{normalization_extension_fig_name}.png", bbox_inches='tight')
     plt.clf()
     # the_table = plt.table(cellText=cell_text,
     #                       rowLabels=rows,
@@ -191,25 +172,36 @@ key_to_long_title = {
    "CH": "Cultural Heritage"
 }
 
-def get_bargraph_data(set, path):
-    path = file_names[path]+set
+def get_bargraph_data(data_set, path):
+    """
+    Extracts the data of a specified .csv file (path), from a specific data set (set)
+    """
+    path = file_names[path]+data_set
     data = read_csv(path)
     return [data[0], [int(data[1][j]) for j in range(0, len(data[0]))] ]
 
-
 def bar_graphs_morphemes(set):
+    """
+    Creates a bar graph for number of morphemes for a given data set. 
+    """
     data = get_bargraph_data(set, "morpheme")
-    
-    plt.figure(figsize=(4,10))
+    plt.rcParams['figure.figsize'] = [4, 7]
+    plt.figure(figsize=(4,7))
     plt.xlabel("Number of Morphemes")
     plt.ylabel("Frequency")
-    plt.title(key_to_long_title[set])
+    plt.title(f"Number of Morphemes for\n{key_to_long_title[set]}")
     plt.xticks([i for i in range(0, 5)])
-    plt.bar(data[0], data[1], color ='navy')
+    plt.bar(data[0][0:5], data[1][0:5], color ='navy')
     plt.savefig(f"figures/bar_graph_morphemes_{set}.png", bbox_inches='tight')
     plt.clf()
     
     return
+
+def pls_top_for_morphemes():
+
+    
+    
+    return 
 
 def new_line_for_space(data):
     for i in range(0, len(data[0])):
@@ -225,18 +217,28 @@ def standardized_ety_types(filename):
     return
 
 def get_mean_special(data):
+    """
+    Computes the mean of a given data set
+    """
     morph_sum = 0
     for i in range(0, len(data[1])):
         morph_sum += (i+1) * data[1][i]
     return morph_sum/sum(data[1]) 
 
 def get_variance_special(data, mean):
+    """
+    computes the variance of an array of numbers
+    TODO: verify this
+    """
     variance = 0
     for i in range(0, len(data[0])):
         variance += (((i+1)-mean))**2*data[1][i]
     return variance/sum(data[1])
 
 def get_median_special(data):
+    """
+    Finds the median of an array of frequencies of numbers
+    """
     median_threshold = np.ceil(sum(data[1])/2)
     running_sum = 0
     for i in range(0, len(data[0])):
@@ -246,6 +248,9 @@ def get_median_special(data):
     raise Exception("Median could not be found. Programming error.")
 
 def get_max_min_special(data):
+    """
+    Extracts the minimum and maximum values of a given array
+    """
     minmax = [0, 0]
 
     # finding min
@@ -263,6 +268,10 @@ def get_max_min_special(data):
     return minmax[0], minmax[1]
         
 def stats_on_numbers(set_name, path, name):
+    """
+    Given a path to a file, generates a couple of basic
+    statistical measures on the numbers present in that file
+    """
     data = get_bargraph_data(set_name, path)
     
     mean = get_mean_special(data)
@@ -271,7 +280,7 @@ def stats_on_numbers(set_name, path, name):
     std = np.around(math.sqrt(variance), 2) # irrelevant whether we do variance or std first
     min_max_values = get_max_min_special(data)
 
-    # print("Data Set & Mean & Median & Standard Deviation & Variance & Min Value & Max Value \\\\")
+    print("Data Set & Mean & Median & Standard Deviation & Variance & Min Value & Max Value \\\\")
     return [
             set_name,
             np.round(mean, 2),
@@ -284,6 +293,9 @@ def stats_on_numbers(set_name, path, name):
 
 
 def bar_graphs_ch():
+    """
+    Generates a bar graph for the "Culutral Heritage" analysis
+    """
     data = get_bargraph_data("CH", 'cultural_heritage')
     print(data)
     data = new_line_for_space(data)
@@ -318,7 +330,7 @@ def bar_graphs_characters(set):
     plt.clf()
     return
 
-def length_stats_latex(stat_dataa, set_names):
+def print_length_stats_latex(stat_dataa, set_names):
     """
     Allows for super fast intergration of a vector of statistical data into a Latex table
     """
@@ -332,6 +344,9 @@ def length_stats_latex(stat_dataa, set_names):
         
     return
 
+def bar_graphs_characters_by_year():
+    data = get_bargraph_data("PL", path)
+    return
 def version_numbering(set):
     
     return
@@ -349,18 +364,19 @@ def version_numbering(set):
 # bar_graphs_characters("RG")
 # bar_graphs_characters("PM")
 
+bar_graphs_characters_by_year()
+
 # noc_all = stats_on_numbers("All", "name_length", "Number of Characters")
 # noc_pl = stats_on_numbers("PL", "name_length", "Number of Characters")
 # noc_cp = stats_on_numbers("CP", "name_length", "Number of Characters")
 # noc_rg = stats_on_numbers("RG", "name_length", "Number of Characters")
 # noc_pm = stats_on_numbers("PM", "name_length", "Number of Characters")
-# length_stats_latex([noc_all, noc_pl, noc_cp, noc_rg, noc_pm], ["All", "PL", "CP", "RG", "PM"])
 
 
 # NUMBER OF MORPHEMES
 
 # number morphemes per set
-bar_graphs_morphemes("ALL")
+# bar_graphs_morphemes("ALL")
 # bar_graphs_morphemes("PL")
 # bar_graphs_morphemes("CP")
 # bar_graphs_morphemes("RG")
@@ -368,18 +384,19 @@ bar_graphs_morphemes("ALL")
 
 
 # statistical data on mophemes per set
-# stats_on_numbers("All", "morpheme", "Number of Morphemes")
-# stats_on_numbers("PL", "morpheme", "Number of Morphemes")
-# stats_on_numbers("CP", "morpheme", "Number of Morphemes")
-# stats_on_numbers("RG", "morpheme", "Number of Morphemes")
-# stats_on_numbers("PM", "morpheme", "Number of Morphemes")
-
+# nom_all = stats_on_numbers("All", "morpheme", "Number of Morphemes")
+# nom_pl = stats_on_numbers("PL", "morpheme", "Number of Morphemes")
+# nom_cp = stats_on_numbers("CP", "morpheme", "Number of Morphemes")
+# nom_rg =  stats_on_numbers("RG", "morpheme", "Number of Morphemes")
+# nom_pm = stats_on_numbers("PM", "morpheme", "Number of Morphemes")
+# nom_top = stats_on_numbers("TOP", "morpheme", "Number of Morphemes")
+# print_length_stats_latex([nom_all, nom_pl, nom_cp, nom_rg, nom_pm, nom_top], ["All", "PL", "CP", "RG", "PM", "TOP"])
 
 
 # ety types per decade
-# ety_types('ety_type_1_by_decade')
-# ety_types('ety_type_2_by_decade')
-# ety_types('ety_type_2_by_decade', normalized=True)
+ety_types('ety_type_1_by_decade')
+ety_types('ety_type_2_by_decade')
+ety_types('ety_type_2_by_decade', normalized=True)
 
 # cultural heritage
 # bar_graphs_ch() # "CH", 'cultural_heritage'
