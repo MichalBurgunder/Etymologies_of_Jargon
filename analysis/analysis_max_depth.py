@@ -144,19 +144,20 @@ def populate_ety_depths(dataa, cs, options={}):
 
     return 
 
-def prepare_depth_data(data, cs):
+def prepare_depth_data(data, cs, headers):
     """
     Assuming that the ety depth data has already been documented, we now
     save the data in a easily readable format for further analysis and graphing, 
     """
+    scrape_iden_pos = find_field_position(headers, "Scrape Identifier")
     final_data = []
     for i in range(0, len(data)):
         # we differentiate between a full analysis, and an analysis of only a set of data
         if len(cs['to_analyze']) != 0:
             if data[i][cs["scrape_identifier_pos"]] in cs['to_analyze']:
-                final_data.append([data[i][cs["clean_name_pos"]], data[i][cs['ety_depth_pos']]])
+                final_data.append([data[i][cs["clean_name_pos"]], data[i][cs['ety_depth_pos']], data[i][scrape_iden_pos]])
         else:
-            final_data.append([data[i][cs["clean_name_pos"]], data[i][cs['ety_depth_pos']]])
+            final_data.append([data[i][cs["clean_name_pos"]], data[i][cs['ety_depth_pos']], data[i][scrape_iden_pos]])
     
     save_as_csv(final_data, "ety_depths")
 

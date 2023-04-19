@@ -51,16 +51,17 @@ def __main__():
 
     # print("done")
     # exit()
+    
     # -----------------------------------
     # ACTUAL ANALYSIS
     # -----------------------------------
     # writes data to final_ety_depths.csv
 
     # depths per entry
-    # prepare_depth_data(dataa[0], cs)
+    prepare_depth_data(dataa[0], cs, headers)
     
     # ety types by year
-    prepare_ety_by_decade_data(dataa[0], headers, "PL", 1)
+    # prepare_ety_by_decade_data(dataa[0], headers, "PL", 1)
     # prepare_ety_by_decade_data(dataa[0], headers, "PL", 2)
     
     # prepare_2nd_ety_type_data(dataa[0], headers) # ? Not sure if this is useful...

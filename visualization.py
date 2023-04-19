@@ -16,6 +16,11 @@ os.system('clear')
 root = '/Users/michal/Documents/thesis/etymologies_of_jargon/results'
 
 def create_bar_graph(ys, xs, info, log=False):
+    """
+    Creates a simple bar graphs, given the appropriate inputs.
+    'info' is a dictionary consisting of 'xlabel', 'ylabel' and 'title'.
+    Skipping any of these parameters will cause an error
+    """
     fig = plt.figure()
     
     plt.xlabel(info["xlabel"])
@@ -31,25 +36,33 @@ def create_bar_graph(ys, xs, info, log=False):
     
     # linear
     plt.subplot(221)
-    plt.plot(xs, ys, color ='navy',)
+    plt.bar(xs, ys, color ='navy',)
     plt.yscale('linear')
     plt.title('linear')
-    plt.grid(True)
+    # plt.grid(True)
 
     # log
     plt.subplot(222)
     plt.plot(xs, ys)
     plt.yscale('log')
     plt.title('log')
-    plt.grid(True)
-    plt.show()
+    # plt.grid(True)
+    # plt.show()
+    plt.savefig(f"figures/bar_graph_ety_depths_{info['set']}.png", bbox_inches='tight')
     return
    
-def depths(file_name):
-    nums = read_csv(file_name, field=1)
-
+def number_of_depths(file_name, data_set='ALL'):
+    """
+    Creates a bar graph/histogram with all the etymological depths of a specific file
+    """
+    rows = read_csv(file_name)
+    nums = [] # position of where the depth is located
+    for row in rows:
+        # print(row)
+        if data_set == 'ALL' or row[2] == data_set:
+            nums.append(int(row[1]))
+    
     max_value = max(nums)
-
     bars = []
     for i in range(0, max_value+1+1): # +1 to add the last one, +1 to signify the end
         bars.append(nums.count(i))
@@ -57,9 +70,10 @@ def depths(file_name):
     # now we simply pyplot
     # print(bars)
     info = {
-        "xlabel": "Occurances",
+        "xlabel": "Occurences",
         "ylabel": "No. of Etymology Depths",
-        "title": "Number of Etymologies of Specific Depth"
+        "title": "Number of Etymologies of Specific Depth",
+        "set": data_set
     }
     return create_bar_graph(list(bars), list(range(0, len(bars))), info, True)
 
@@ -347,6 +361,7 @@ def print_length_stats_latex(stat_dataa, set_names):
 def bar_graphs_characters_by_year():
     data = get_bargraph_data("PL", path)
     return
+
 def version_numbering(set):
     
     return
@@ -364,7 +379,7 @@ def version_numbering(set):
 # bar_graphs_characters("RG")
 # bar_graphs_characters("PM")
 
-bar_graphs_characters_by_year()
+# bar_graphs_characters_by_year()
 
 # noc_all = stats_on_numbers("All", "name_length", "Number of Characters")
 # noc_pl = stats_on_numbers("PL", "name_length", "Number of Characters")
@@ -392,11 +407,17 @@ bar_graphs_characters_by_year()
 # nom_top = stats_on_numbers("TOP", "morpheme", "Number of Morphemes")
 # print_length_stats_latex([nom_all, nom_pl, nom_cp, nom_rg, nom_pm, nom_top], ["All", "PL", "CP", "RG", "PM", "TOP"])
 
+# etymological depths
+number_of_depths("ety_depths") # defaults to all
+number_of_depths("ety_depths", "PL")
+number_of_depths("ety_depths", "CP")
+number_of_depths("ety_depths", "RG")
+number_of_depths("ety_depths", "PM")
 
 # ety types per decade
-ety_types('ety_type_1_by_decade')
-ety_types('ety_type_2_by_decade')
-ety_types('ety_type_2_by_decade', normalized=True)
+# ety_types('ety_type_1_by_decade')
+# ety_types('ety_type_2_by_decade')
+# ety_types('ety_type_2_by_decade', normalized=True)
 
 # cultural heritage
 # bar_graphs_ch() # "CH", 'cultural_heritage'
