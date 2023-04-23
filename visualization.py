@@ -17,17 +17,42 @@ os.system('clear')
 
 root = '/Users/michal/Documents/thesis/etymologies_of_jargon/results'
 
+def create_bar_graph_log_subplots(ys, xs, info):
+    
+    fig, (ax1, ax2) = plt.subplots(1, 2, figsize=(9.5, 2))
+    
+    # bar graph
+    ax1.bar(xs, ys, color='navy')
+    ax1.set_yscale('linear')
+    ax1.set_title('counts')
+    ax1.set_xlabel("Depths")
+    ax1.set_ylabel("Frequency")
+    ax1.set_xticks(range(0, len(xs)))
+    
+    # log line, with scatter
+    ax2.scatter(xs, ys, color='navy')
+    ax2.plot(xs, ys, color='navy')
+    ax2.set_yscale('log')
+    ax2.set_title('counts log scale')
+    ax2.set_xlabel("Depths")
+    ax2.set_ylabel("Frequency")
+
+    fig.suptitle(f"Max. Etymological Depth {info['data_set']}")
+    fig.savefig(f"figures/bar_graph_max_ety_depth_{info['data_set']}.png", bbox_inches='tight')
+
+    return
+
 def create_bar_graph(ys, xs, info, log=False):
     """
     Creates a simple bar graphs, given the appropriate inputs.
     'info' is a dictionary consisting of 'xlabel', 'ylabel' and 'title'.
     Skipping any of these parameters will cause an error
     """
-    fig = plt.figure()
+    # fig = plt.figure()
     
-    plt.xlabel(info["xlabel"])
-    plt.ylabel(info["ylabel"])
-    plt.title(info["title"])
+    # plt.xlabel(info["xlabel"])
+    # plt.ylabel(info["ylabel"])
+    # plt.title(info["title"])
     
     # the bar plot
     if not log:
@@ -51,6 +76,7 @@ def create_bar_graph(ys, xs, info, log=False):
     # plt.grid(True)
     # plt.show()
     plt.savefig(f"figures/bar_graph_ety_depths_{info['set']}.png", bbox_inches='tight')
+    plt.clf()
     return
    
 def number_of_depths(file_name, data_set='ALL'):
@@ -59,29 +85,24 @@ def number_of_depths(file_name, data_set='ALL'):
     """
     rows = read_csv(file_name)
     nums = [] # position of where the depth is located
+    max_value = 0
     for row in rows:
-        # print(row)
+        max_value = max(max_value, int(row[1]))
         if data_set == 'ALL' or row[2] == data_set:
             nums.append(int(row[1]))
     
-    max_value = max(nums)
-    bars = []
-    for i in range(0, max_value+1+1): # +1 to add the last one, +1 to signify the end
-        bars.append(nums.count(i))
-    
-    # now we simply pyplot
-    # print(bars)
+    bars = [nums.count(i) for i in range(0, max_value+1+1)] # +1 to add the last one, +1 to signify the end
+
     info = {
         "xlabel": "Occurences",
         "ylabel": "No. of Etymology Depths",
-        "title": "Number of Etymologies of Specific Depth",
-        "set": data_set
+        "data_set": data_set
     }
-    return create_bar_graph(list(bars), list(range(0, len(bars))), info, True)
+    return create_bar_graph_log_subplots(list(bars), list(range(0, len(bars))), info)
 
 def convert_to_ints(data):
     """
-    Converts an array of strnigified integers to integers
+    Converts an array of stringified integers to integers
     """
     for i in range(0,len(data)):
         for j in range(0,len(data[i])):
@@ -337,7 +358,7 @@ def bar_graphs_ch():
     data = get_bargraph_data("", "CH")
     data = new_line_for_space(data)
 
-    plt.xlabel("Number of Instances")
+    plt.xlabel("Categories of Cultural Heritage")
     plt.ylabel("Frequency")
     plt.title("Names with Cultural Heritage")
     plt.xticks(rotation=59)
@@ -502,11 +523,11 @@ def ety_types_bar_graph():
 # print_length_stats_latex([nom_all, nom_pl, nom_cp, nom_rg, nom_pm, nom_top], ["All", "PL", "CP", "RG", "PM", "TOP"])
 
 # etymological depths
-# number_of_depths("ety_depths") # defaults to all
-# number_of_depths("ety_depths", "PL")
-# number_of_depths("ety_depths", "CP")
-# number_of_depths("ety_depths", "RG")
-# number_of_depths("ety_depths", "PM")
+number_of_depths("ety_depths") # defaults to all
+number_of_depths("ety_depths", "PL")
+number_of_depths("ety_depths", "CP")
+number_of_depths("ety_depths", "RG")
+number_of_depths("ety_depths", "PM")
 
 # ety types per decade
 # ety_types('ety_type_1_by_decade')
@@ -519,7 +540,7 @@ def ety_types_bar_graph():
 # ety_types_table_pl('ety_type_2_by_decade')
 
 # cultural heritage
-bar_graphs_ch() # "CH", 'cultural_heritage'
+# bar_graphs_ch() # "CH", 'cultural_heritage'
 
 # version numbering
 # version_numbering("All")
