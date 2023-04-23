@@ -13,6 +13,8 @@ from analysis_jargon_length import prepare_jargon_length
 from analysis_by_2nd_ety_type import prepare_2nd_ety_type_data
 from analysis_cultural_heritage import prepare_cultural_heritage_frequency_total, prepare_cultural_heritage_frequency_by_data_set
 from analysis_ety_types_by_set import prepare_ety_type_counts
+
+from search_data import possible_search
 os.system('clear')
 
 # lines, element_hashmap, headers, header_hms = dataa[0], dataa[1], dataa[2], dataa[3] !!OBS!!
@@ -33,7 +35,7 @@ def __main__():
 
     # takes from temp_debug.csv, if exists
     dataa = prepare_data(root, paths, options)
-    
+
     # the new columns are specified by the second input
     new_headers = add_virtual_columns(dataa, [ety_depth], ["-1"])
     
@@ -42,6 +44,9 @@ def __main__():
 
     headers, header_hashmap = dataa[1], dataa[2]
 
+    # in case we are doing an ad hoc search of the data
+    possible_search(dataa[0], headers)    
+    
     element_hash_map = get_element_hashmap(dataa[0], headers, cs)
     
     ready_dataa = [dataa[0], element_hash_map, headers, header_hashmap]
@@ -97,7 +102,7 @@ def __main__():
     # prepare_2nd_ety_type_data(dataa[0], headers, "PM")
     
     prepare_cultural_heritage_frequency_total(dataa[0], headers)
-    prepare_cultural_heritage_frequency_by_data_set(dataa[0], headers, ["GNU", "ADD", "Fix"])
+    # prepare_cultural_heritage_frequency_by_data_set(dataa[0], headers, ["GNU", "ADD", "Fix"])
     # preapre data of ety types per data set
     # prepare_ety_type_counts(dataa[0], headers, ["PL", "CP", "RG", "PM"])
     
