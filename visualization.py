@@ -6,10 +6,12 @@ import matplotlib.pyplot as plt
 import sys  
 import random 
 import os     
+import random 
 
 sys.path.append('/Users/michal/Documents/thesis/etymologies_of_jargon/analysis')
 from analysis.file_management import read_csv, save_as_csv
 from analysis.config import file_names
+from analysis.utils import concatenate
 
 os.system('clear')
 
@@ -78,12 +80,20 @@ def number_of_depths(file_name, data_set='ALL'):
     return create_bar_graph(list(bars), list(range(0, len(bars))), info, True)
 
 def convert_to_ints(data):
+    """
+    Converts an array of strnigified integers to integers
+    """
     for i in range(0,len(data)):
         for j in range(0,len(data[i])):
             data[i][j] = int(data[i][j])
     return np.array(data)
         
 def order_data_by_frequency(data, old_rows):
+    """
+    Orders an array of arrays by the sum of the (inner) array.
+    Used to display the stacked barchart, with the most significant
+    bars displayed at the bottom
+    """
     sorted_sums = sorted([(sum(data[i]), i) for i in range(0,len(data))])
     sorted_sums.reverse()
     
@@ -126,22 +136,23 @@ def ety_types(filename, normalized=False):
     if normalized:
         data = normalize_data(data)
         save_as_csv(np.round(data, 1), "temp_normalized_ety_types")
-    # sums = np.array(data).sum(axis=0)
-    # print(np.array(data))
-    # exit()
+
     colors = plt.cm.tab20((4./3*np.arange(len(rows))).astype(int))
 
     n_rows = len(data)
     
-    fig, ax = plt.subplots(num=None, figsize=(16, 12), dpi=80, facecolor='w', edgecolor='k')
+    fig, ax = plt.subplots(num=None, figsize=(12, 12), dpi=80, facecolor='w', edgecolor='k')
     
-    # Plot bars and create text labels for the table
+    # plot the bars + text labels
     cell_text = []
     bottoms = None
     for row in range(0,n_rows):
         bottoms = [0]*len(columns) if row == 0 else bottoms + data[row-1]
         # plt.bar(columns, data[row], width=bar_width, bottom=bottoms, color=colors[row], align='center')
+        print(columns)
+        print(data[row])
         plt.bar(columns, data[row], color=colors[row],  bottom=bottoms, align='center')
+        # exit()
         cell_text.append(data[row])
         
     # Adjust layout to make room for the table:
@@ -199,8 +210,8 @@ def bar_graphs_morphemes(set):
     Creates a bar graph for number of morphemes for a given data set. 
     """
     data = get_bargraph_data(set, "morpheme")
-    plt.rcParams['figure.figsize'] = [4, 7]
-    plt.figure(figsize=(4,7))
+    # plt.rcParams['figure.figsize'] = [5, 7]
+    plt.figure(figsize=(5,7))
     plt.xlabel("Number of Morphemes")
     plt.ylabel("Frequency")
     plt.title(f"Number of Morphemes for\n{key_to_long_title[set]}")
@@ -218,6 +229,9 @@ def pls_top_for_morphemes():
     return 
 
 def new_line_for_space(data):
+    """
+    TODO
+    """
     for i in range(0, len(data[0])):
         while(True):
             if " " in data[0][i]:
@@ -261,9 +275,16 @@ def get_median_special(data):
             return data[0][i]
     raise Exception("Median could not be found. Programming error.")
 
+def get_max_min(the_array):
+    """
+    gets the minimum and maximum values of an array
+    """            
+    return [np,min(the_array), np.max(the_array)]
+
 def get_max_min_special(data):
     """
     Extracts the minimum and maximum values of a given array
+    Assumption: 0 is the minimum value
     """
     minmax = [0, 0]
 
@@ -273,7 +294,7 @@ def get_max_min_special(data):
             minmax[0] = data[0][i]
             break
     
-    # finding min
+    # finding max
     for i in range(len(data[0])-1, 0, -1):
         if data[1][i] != 0:
             minmax[1] = data[0][i]
@@ -281,18 +302,21 @@ def get_max_min_special(data):
             
     return minmax[0], minmax[1]
         
-def stats_on_numbers(set_name, path, name):
+def stats_on_numbers(set_name, path, array_data=[]):
     """
     Given a path to a file, generates a couple of basic
     statistical measures on the numbers present in that file
     """
-    data = get_bargraph_data(set_name, path)
-    
-    mean = get_mean_special(data)
-    median = get_median_special(data) # TODO: check if this is correct
-    variance = get_variance_special(data, mean)
-    std = np.around(math.sqrt(variance), 2) # irrelevant whether we do variance or std first
-    min_max_values = get_max_min_special(data)
+    if len(array_data) != 0:
+        exit()
+    else:
+        data = get_bargraph_data(set_name, path)
+
+        mean = get_mean_special(data)
+        median = get_median_special(data) # TODO: check if this is correct
+        variance = get_variance_special(data, mean)
+        std = np.around(math.sqrt(variance), 2) # irrelevant whether we do variance or std first
+        min_max_values = get_max_min_special(data)
 
     print("Data Set & Mean & Median & Standard Deviation & Variance & Min Value & Max Value \\\\")
     return [
@@ -310,26 +334,26 @@ def bar_graphs_ch():
     """
     Generates a bar graph for the "Culutral Heritage" analysis
     """
-    data = get_bargraph_data("CH", 'cultural_heritage')
-    print(data)
+    data = get_bargraph_data("", "CH")
     data = new_line_for_space(data)
-    print(data)
 
-    plt.xlabel("Number of Morphemes")
+    plt.xlabel("Number of Instances")
     plt.ylabel("Frequency")
     plt.title("Names with Cultural Heritage")
-    
     plt.xticks(rotation=59)
-    # plt.subplots_adjust(bottom=0.2)
     plt.subplots_adjust(bottom=0.3)
     plt.bar(data[0], data[1], color ='navy')
-    # plt.show()
     plt.savefig(f"figures/bar_graph_cultural_heritage.png")
     plt.clf()
+    
     return
 
 
 def bar_graphs_characters(set):
+    """
+    Creates bar graphs for the number of characters of names,
+    for a given data set
+    """
     data = get_bargraph_data(set, "name_length")
     
     plt.figure(figsize=(10,3))
@@ -362,8 +386,78 @@ def bar_graphs_characters_by_year():
     data = get_bargraph_data("PL", path)
     return
 
-def version_numbering(set):
+def version_numbering(data_set):
     
+    return
+
+
+    
+    
+def ety_types_table_pl(filename):
+    """
+    Creates a STD vs "Missing" category plot. This is mainly to
+    show that the ety types are becoming more heterogenous over time.
+    """
+    data_csv = read_csv(filename)
+    decades, data, categories = data_csv[0], np.array(data_csv[1:len(data_csv)-1], dtype=int), data_csv[-1]
+    
+    pos_missing = np.array([string == "Missing" for string in categories].index(True))
+    sums_column = data.sum(axis=0)
+
+    standardized_data = normalize_data(data)
+    table_data = [[], []]
+    
+    for i in range(0, len(data[0])): 
+        table_data[0].append(np.round(np.std(standardized_data[:,i]), 2))
+        table_data[1].append(np.round(data[pos_missing][i]/sums_column[i] if sums_column[i] != 0 else 0, 2))
+    
+    
+    fig, ax = plt.subplots(figsize=(12, 6), dpi=80)
+    # blue is the standard deviation
+    ax.plot(linify(decades), table_data[0], color='b')
+    ax.set_ylabel('Standard Deviation')
+    ax.legend(["Standard Deviation"], loc='upper left')
+    
+    # red is the standard deviation
+    ax2 = ax.twinx() 
+    ax2.set_ylabel("Percentage 'Missing'")
+    ax2.plot(linify(decades), table_data[1], color='r')
+    
+    plt.legend(["Percentage 'Missing'"], loc='upper right')
+    plt.title("Standard Deviation & Percentage 'Missing'")
+    plt.savefig(f"figures/bar_graph_2nd_ety_types_pl_std_vs_percentage_missing.png", bbox_inches='tight')
+    plt.clf()
+    
+    return
+
+def ety_types_bar_graph():
+    """
+    Creates a normalized stacked bar graph that compares the ratios of
+    ety types between different data sets. 
+    """
+    data_csv = read_csv('ety_types_by_data_set')
+    data_set_names = data_csv[0]
+    ety_types_list = data_csv[1]
+    raw_data = np.array(data_csv[2:], dtype=float)
+    plt.figure(figsize=(10,5))
+
+    print(ety_types_list)
+    print(raw_data)
+    colors = plt.cm.tab20((4./3*np.arange(len(ety_types_list))).astype(int))[::-1]
+    
+    raw_data_normalized = normalize_data(raw_data.T).T
+
+    for row in range(0,len(ety_types_list)):
+        bottoms = [0]*len(data_set_names) if row == 0 else bottoms + raw_data_normalized[:,row-1]
+        plt.bar(data_set_names, raw_data_normalized[:,row], color=colors[row],  bottom=bottoms, align='center')
+
+    plt.subplots_adjust(right=0.7)
+    plt.legend(ety_types_list, loc='center left', bbox_to_anchor=(1.2, 0.5))
+    plt.title("2nd Ety. Types per Data Set")
+    plt.xlabel("Data Sets")
+    plt.ylabel("Relative Percentage of 2nd Ety. Types")
+    plt.savefig(f"figures/bar_graph_2nd_ety_types_data_sets.png", bbox_inches='tight')
+
     return
 # -------------------------------
 # ------- VISUALIZATION ---------
@@ -408,19 +502,24 @@ def version_numbering(set):
 # print_length_stats_latex([nom_all, nom_pl, nom_cp, nom_rg, nom_pm, nom_top], ["All", "PL", "CP", "RG", "PM", "TOP"])
 
 # etymological depths
-number_of_depths("ety_depths") # defaults to all
-number_of_depths("ety_depths", "PL")
-number_of_depths("ety_depths", "CP")
-number_of_depths("ety_depths", "RG")
-number_of_depths("ety_depths", "PM")
+# number_of_depths("ety_depths") # defaults to all
+# number_of_depths("ety_depths", "PL")
+# number_of_depths("ety_depths", "CP")
+# number_of_depths("ety_depths", "RG")
+# number_of_depths("ety_depths", "PM")
 
 # ety types per decade
 # ety_types('ety_type_1_by_decade')
 # ety_types('ety_type_2_by_decade')
+
+# stats on ety types
+# ety_types_table_pl('ety_type_2_by_decade')
+# ety_types_bar_graph()
 # ety_types('ety_type_2_by_decade', normalized=True)
+# ety_types_table_pl('ety_type_2_by_decade')
 
 # cultural heritage
-# bar_graphs_ch() # "CH", 'cultural_heritage'
+bar_graphs_ch() # "CH", 'cultural_heritage'
 
 # version numbering
 # version_numbering("All")
