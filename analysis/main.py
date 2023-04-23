@@ -11,14 +11,23 @@ from analysis_by_decade import prepare_ety_by_decade_data
 from analysis_number_morphemes import number_of_morphemes
 from analysis_jargon_length import prepare_jargon_length
 from analysis_by_2nd_ety_type import prepare_2nd_ety_type_data
-from analysis_cultural_heritage import prepare_cultural_heritage_data
-
+from analysis_cultural_heritage import prepare_cultural_heritage_frequency_total, prepare_cultural_heritage_frequency_by_data_set
+from analysis_ety_types_by_set import prepare_ety_type_counts
 os.system('clear')
 
 # lines, element_hashmap, headers, header_hms = dataa[0], dataa[1], dataa[2], dataa[3] !!OBS!!
 # lines, headers, header_hms = dataa[0], dataa[1], dataa[2], dataa[3]
 
 def __main__():
+    """
+    Assuming that all necessary data is present in 'thesis_data/raw_data',
+    performs all of the analyses, and creates .csv files with their results.
+    Note, that this function does NOT visualize the data
+    
+    All executed functions below 'ACTUAL ANALYSIS' are the data sets that
+    will be created. Everything above it, are preparatory functions that
+    concatenate all data from various sources, validate, clean and preprocess it.
+    """
     # be = time.time()
     options = get_run_options(sys.argv)
 
@@ -58,7 +67,7 @@ def __main__():
     # writes data to final_ety_depths.csv
 
     # depths per entry
-    prepare_depth_data(dataa[0], cs, headers)
+    # prepare_depth_data(dataa[0], cs, headers)
     
     # ety types by year
     # prepare_ety_by_decade_data(dataa[0], headers, "PL", 1)
@@ -87,8 +96,13 @@ def __main__():
     # prepare_2nd_ety_type_data(dataa[0], headers, "RG")
     # prepare_2nd_ety_type_data(dataa[0], headers, "PM")
     
-    # prepare_cultural_heritage_data(dataa[0], headers)
+    prepare_cultural_heritage_frequency_total(dataa[0], headers)
+    prepare_cultural_heritage_frequency_by_data_set(dataa[0], headers, ["GNU", "ADD", "Fix"])
+    # preapre data of ety types per data set
+    # prepare_ety_type_counts(dataa[0], headers, ["PL", "CP", "RG", "PM"])
+    
     print("All done!")
+    
     # en = time.time()
     # print(en - be)
 

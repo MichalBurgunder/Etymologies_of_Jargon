@@ -30,6 +30,7 @@ to_analyze = [
     # 'GNU'
 ] # only fill out if you want to the output to include only specific data sets
 
+invalid_semantic_numbers = ['2','3','9', '10']
 additives = [] # here will be all the new name additives that have not been added just yet
 ety_depth = "Etymology Depth"
 clean_name = "Cleaned Name"
@@ -49,13 +50,19 @@ file_names = {
 top_languages = [name.lower() for name in ["Python", "C", "C++", "C#", "Java", "SQL", "JavaScript", "R", "HTML", "TypeScript", "Go", "PHP", "Shell", "Ruby", "Scala", "Matlab", "SAS", "ASM", "Kotlin", "Rust", "Perl", "Objective-C", "Dart", "Swift", "Verilog", "Arduino", "D", "Julia", "Cuda", "VHDL", "Visual Basic", "LabView", "Groovy", "Lua", "Ada", "Scheme", "ABAP", "Haskell", "COBOL", "Elixir", "F#", "LISP", "Pascal", "FORTRAN", "TCL", "Clojure", "Prolog", "Ocaml", "Ladder Logic", "Erlang", "J", "Forth", "Elm", "Raku", "WebAssembly", "CoffeeScript", "Eiffel"]]
 
 def prepare_virtual_fields(dataa, cs):
-    
+    """
+    Creates virtual fields in constants, for constant time variable lookup
+    """
     cs['ety_depth_pos'] = find_field_position(dataa[1], cs['ety_depth'])
     cs['clean_name_pos'] = find_field_position(dataa[1], cs['clean_name'])
     cs['scrape_name_pos'] = find_field_position(dataa[1], cs['scrape_name'])
     cs['scrape_identifier_pos'] = find_field_position(dataa[1], cs['scrape_identifier_pos'])
 
 def find_jargon_entry_positions(headers, jargons):
+    """
+    Finds the positions of the "\# Jargon" fields in the headers,
+    and returns their positions in the array
+    """
     entry_positions = []
     for h in range(0, len(headers)):
         for j in jargons:
@@ -71,6 +78,10 @@ def find_jargon_entry_positions(headers, jargons):
 # fills out missing clean name column entries.
 # By default, those that are empty, are simply the scrape name
 def fill_clean_names(dataa, cs):
+    """
+    For a given data set, fills out the "Cleaned Name" column with the "Scrape Name"
+    field, if it is not already filled out
+    """
     for i in range(0, len(dataa[0])):
         if dataa[0][i][cs['clean_name_pos']] == '':
             dataa[0][i][cs['clean_name_pos']] = dataa[0][i][cs['scrape_name_pos']]
@@ -81,6 +92,9 @@ def fill_clean_names(dataa, cs):
     
     
 def prepare_globals(dataa):
+    """
+    Creates the constants hashmap for constant time lookups of key variables
+    """
     global consts
     
     consts = {
