@@ -1,4 +1,4 @@
-from utils import find_field_position
+from analysis.utils import find_field_position
 
 jargon_entries = ["1st Jargon", "2nd Jargon", "3rd Jargon", "4th Jargon"] # the fields which will create our etymological tree
 jargon_entries_connection_types_titles = [the_string + " Connection Type" for the_string in jargon_entries] # the descriptions of the connection between jargons 
@@ -43,7 +43,7 @@ illegal_cultural_heritage_subclasses = ["Logo"]
 file_names = {
     "morpheme": "number_morphemes_",
     "ety_type_2": "ety_type_2_frequencies_",
-    "name_length": "name_length",
+    "name_length": "name_length_",
     "CH": "cultural_heritage",
 }
     # taken from https://spectrum.ieee.org/top-programming-languages-2022, (spectrum)

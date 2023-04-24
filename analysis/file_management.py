@@ -3,7 +3,7 @@ import csv
 from os.path import exists
 import random
 
-from config import raw_data_root, root
+from analysis.config import raw_data_root, root
 
 global options 
 global run_options 
