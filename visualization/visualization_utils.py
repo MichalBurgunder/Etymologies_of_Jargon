@@ -3,9 +3,9 @@ import matplotlib.pyplot as plt
 import numpy as np
 
 sys.path.append('/Users/michal/Documents/thesis/etymologies_of_jargon')
-# sys.path.insert(0, '/the/folder/path/name-package/')
+
 from analysis.config import file_names, root
-from analysis.file_management import read_csv, save_as_csv
+from analysis.file_management import read_csv
 
 
 key_to_long_title = {
@@ -16,7 +16,6 @@ key_to_long_title = {
    "ALL": "All Analyzed Software",
    "CH": "Cultural Heritage"
 }
-
 
 def print_length_stats_latex(stat_dataa, set_names):
     """
@@ -125,9 +124,6 @@ def create_bar_graph(ys, xs, info, log=False):
     plt.clf()
     
     return
-
-
-
 
 
 def bar_graphs_ch():

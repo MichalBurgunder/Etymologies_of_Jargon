@@ -1,41 +1,21 @@
-import csv
 import os
-import math
-import numpy as np
-import matplotlib.pyplot as plt
-import sys  
-import random 
-import os     
-import random 
-# bar_graphs_morphemesbar_graphs_ch
+
 from visualization_utils import bar_graphs_characters, print_length_stats_latex, bar_graphs_ch
 from stats import stats_on_numbers
 from visualization_morphemes import bar_graphs_morphemes
 from visualization_ety_types import ety_types, ety_types_table_pl, ety_types_bar_graph_normalized
 from visualization_depths import number_of_depths
 
-# sys.path.append('/Users/michal/Documents/thesis/etymologies_of_jargon/analysis')
-
-# from ..analysis.file_management import read_csv, save_as_csv
-# from ..analysis.config import file_names
-# from ..analysis.utils import concatenate
-
-import os     
 os.system('clear')
+
  
 # print(sys.path)
 # os.system('clear')
 
-root = '/Users/michal/Documents/thesis/etymologies_of_jargon/results'
-
-
-
-
-
+# root = '/Users/michal/Documents/thesis/etymologies_of_jargon/results'
 
 def pls_top_for_morphemes():
 
-    
     
     return 
 
@@ -46,10 +26,6 @@ def standardized_ety_types(filename):
     return
 
 
-    
-
-
-
 def bar_graphs_characters_by_year():
     data = get_bargraph_data("PL", path)
     return
@@ -57,8 +33,6 @@ def bar_graphs_characters_by_year():
 def version_numbering(data_set):
     
     return
-
-
 
 
 # -------------------------------
@@ -121,4 +95,4 @@ print("visualizing...")
 # bar_graphs_ch() # "CH", 'cultural_heritage'
 
 # version numbering
-version_numbering("All")
+# version_numbering("All")

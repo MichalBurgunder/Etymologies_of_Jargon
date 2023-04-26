@@ -1,7 +1,7 @@
 import numpy as np
 import matplotlib.pyplot as plt
 
-from visualization_utils import convert_to_ints, save_as_csv, read_csv, linify, root
+from visualization_utils import convert_to_ints, read_csv, linify, root
 
 def normalize_data(data):
     """
