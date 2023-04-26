@@ -136,7 +136,7 @@ class PageRank(unittest.TestCase):
             ["test3", "",      "test1", ""],
         ]
         
-        remove_cycles(matrix, the_hm, cs)
+        edges_removed = remove_cycles(matrix, the_hm, cs)
         
         self.assertEqual(matrix[0][1], "test2")
         self.assertEqual(matrix[0][2], "")
@@ -150,5 +150,14 @@ class PageRank(unittest.TestCase):
         self.assertEqual(matrix[2][2], "")
         self.assertEqual(matrix[2][3], "")
         
+        self.assertEqual(len(edges_removed), 1)
+        self.assertEqual(edges_removed[0][0], 2)
+        self.assertEqual(edges_removed[0][1], 2)
+        self.assertEqual(edges_removed[0][2], "test1")
+        
+    def test_prepare_influence_data__reinserts_data():
+        # TODO
+        return
+    
 if __name__ == '__main__':
     unittest.main()
