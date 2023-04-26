@@ -13,11 +13,11 @@ Most of these are sanity checks
 
 class PageRank(unittest.TestCase):
 
-    @unittest.skip('')
+    # @unittest.skip('')
     def test_create_pagerank_matrix1(self):
         headers = ['Cleaned Name', '1', '2', '3', '4']
         the_hashmap = {'A': 0, 'B': 1, 'C': 2, 'D': 3, 'E': 4, 'F': 5, 'G': 6, 'H': 7}
-        cs = {'jargon_entry_positions': [1,2,3,4]}
+        cs = {'jargon_entry_positions': [1,2,3,4], 'clean_name_pos': 0}
         the_matrix = np.array([
             ['A', 'D',  '',  '', ''],
             ['B', 'D', 'E',  '', ''],
@@ -39,23 +39,22 @@ class PageRank(unittest.TestCase):
         final_matrix[4][5] = 0.3333333333333333
         final_matrix[4][6] = 0.3333333333333333
         final_matrix[4][7] = 0.3333333333333333
-        final_matrix = np.array(final_matrix).T
+        final_matrix = np.round(np.array(final_matrix).T, 2)
         
-        # print(final_matrix)
-        # print(np.asarray(pg_matrix))
         
-        pg_matrix = create_pagerank_matrix(the_matrix, the_hashmap, headers, cs)
-        self.assertEqual((final_matrix == pg_matrix).all(), True)
-        # for i in range(0, 8):
-        #     for j in range(0, 8):
-        #         if final_matrix[i,j] != pg_matrix[i,j]:
-        #             print(i, j, final_matrix[i,j], pg_matrix[i,j])
         
-    @unittest.skip('')
+        pg_matrix, edges_removed = create_pagerank_matrix(the_matrix, the_hashmap, cs)
+        print(final_matrix)
+        print()
+        print(np.round(pg_matrix, 2))
+        self.assertEqual(np.array_equal(final_matrix, np.round(pg_matrix, 2)), True)
+
+        
+    # @unittest.skip('')
     def test_create_pagerank_matrix1_recursion_removal(self):
         headers = ['Cleaned Name', '1', '2', '3', '4']
         the_hashmap = {'A': 0, 'B': 1, 'C': 2, 'D': 3, 'E': 4, 'F': 5, 'G': 6, 'H': 7}
-        cs = {'jargon_entry_positions': [1,2,3,4]}
+        cs = {'jargon_entry_positions': [1,2,3,4], 'clean_name_pos': 0}
         the_matrix = np.array([
             ['A', 'A',  '',  '', ''], # 1-recursion
             ['B', 'D',  '',  '', ''], # 3-recursion
@@ -69,26 +68,23 @@ class PageRank(unittest.TestCase):
 
         final_matrix = np.zeros((8,8))
         
-        final_matrix[0][3] = 1
-        # final_matrix[1][3] = 0.5
-        # final_matrix[1][4] = 0.5
+        final_matrix[1][3] = 1
         final_matrix[2][4] = 1
-        final_matrix[3][5] = 1
+        final_matrix[3][7] = 1
         final_matrix[4][5] = 0.3333333333333333
         final_matrix[4][6] = 0.3333333333333333
         final_matrix[4][7] = 0.3333333333333333
-        final_matrix[7][1] = 1
+
         final_matrix = np.array(final_matrix).T
         
-        pg_matrix = create_pagerank_matrix(the_matrix, the_hashmap, headers, cs)
+        pg_matrix, edges_removed = create_pagerank_matrix(the_matrix, the_hashmap, cs)
          
         for i in range(0, len(final_matrix)):
             for j in range(0, len(final_matrix)):
-                print(i, j, final_matrix[i][j], pg_matrix[i][j])
-                
-        self.assertEqual((final_matrix == pg_matrix).all(), True)
+                self.assertEqual(final_matrix[i][j], pg_matrix[i][j])
         
-    @unittest.skip('')
+        
+    # @unittest.skip('')
     def test_is_recursive(self):
         
         jargon_poss = [1,2,3]
@@ -103,7 +99,6 @@ class PageRank(unittest.TestCase):
         self.assertEqual(edge[0], 0)
         self.assertEqual(edge[1], 1)
         
-    @unittest.skip('')
     def test_remove_cycles1(self):
         cs = {'jargon_entry_positions': [1,2,3], "clean_name_pos": 0}
         the_hm = {"test1": 0, "test2": 1, "test3": 2}
@@ -155,9 +150,9 @@ class PageRank(unittest.TestCase):
         self.assertEqual(edges_removed[0][1], 2)
         self.assertEqual(edges_removed[0][2], "test1")
         
-    def test_prepare_influence_data__reinserts_data():
+    def test_prepare_influence_data__reinserts_data(self):
         # TODO
-        return
+        placeholder = 0
     
 if __name__ == '__main__':
     unittest.main()
