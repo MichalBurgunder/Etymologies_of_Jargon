@@ -3,7 +3,7 @@ import os
 import copy
 from utils import concatenate
 from file_management import write_into_one_csv
-from config import find_field_position, clean_name, debug, element_limit, scrape_identifier
+from config import find_field_position, clean_name, debug, element_limit, scrape_identifier, invalid_semantic_numbers
 
 global element_hash_map
 global run_options
@@ -44,10 +44,16 @@ def header_hashmaps(headers, other_headers):
 
 
 def get_headers(path):
+    """
+    Fetches all of the used headers for a spefici file
+    """
     with open(path) as file:
             return next(file)
 
 def merge_csv_headers(root, paths):
+    """
+    Concatenates all headers of multiple .csv files into a matrix
+    """
     headerss = []
     path = write_into_one_csv(root, paths, "headers", True)
     
@@ -59,6 +65,9 @@ def merge_csv_headers(root, paths):
     return headerss
 
 def merge_csv_data(root, paths):
+    """
+    Concatenates all data included in .csv files into a single matrix
+    """
     lines = []
     path = write_into_one_csv(root, paths, "data")
     
@@ -66,10 +75,23 @@ def merge_csv_data(root, paths):
     for i in range(0,len(paths)):  
         lines.append(next(file))
     
+    # given that this data might want to be exported to somewhere else,
+    # uncomment the line below to retain the full .csv file of all data
     os.remove(path)
     return
 
 def get_headers_hashmap(root, paths, virtual_fields=[]):
+    """
+    Error handling wrapper to validate the inputted data for length 
+    and whitespace-stripped value of headers.
+    
+    Returns [[two hashmaps], [all headers]]: 
+    
+    (1) Hashmap that maps the value of a header into the integer position where it is located
+    (2) Hashmap that maps the position of a header in the array into the value of that position
+    
+    "All headers" are simply all headers used, actual and virtual
+    """
     headerss = merge_csv_headers(root, paths)
 
     # we verify: length
@@ -109,7 +131,16 @@ def get_headers_hashmap(root, paths, virtual_fields=[]):
     
     return header_hashmaps(headerss[0], virtual_fields), concatenate(headerss[0], virtual_fields)
 
-def get_element_hashmap(data, headers, cs):    
+def get_element_hashmap(data, headers, cs):
+    """
+    Validates uniqueness of the "Cleaned Name" value of all data
+    points and creates a nested hashmap (from them) of two fields: 
+    
+    (1) "ti", that maps the "text" "Cleaned Name" value of a data point
+    to the "integer" position in the matrix
+    (2) "it", that maps the "integer" position in the matrix to the "text"
+    "Cleaned Name" value of a data point
+    """ 
     clean_name_pos = find_field_position(headers, clean_name)  
     scrape_identifier_pos = find_field_position(headers, scrape_identifier)  
 
@@ -117,6 +148,7 @@ def get_element_hashmap(data, headers, cs):
     
     duplicates = []
     
+    print(len(data))
     for i in range(0, len(data)):
         if data[i][clean_name_pos] in element_hashmap["ti"]:
             duplicates.append([data[i][clean_name_pos], data[i][scrape_identifier_pos]])
@@ -139,6 +171,15 @@ def get_element_hashmap(data, headers, cs):
     
     
 def prepare_data(root, paths, options={}):
+    """
+    Performs all validations and key variable creation used for
+    the analysis of the the data included in the "paths" variable
+    
+    Possible options: 
+    
+    v: verbose
+    c: check (exits the function upon data validation)
+    """
     global clean_name_pos
     global element_limit
     
@@ -154,7 +195,6 @@ def prepare_data(root, paths, options={}):
         # we only use this route for hard to debug errors
     # path = f"{root}/temp_data.csv"
     
-    file = csv.reader(open(path, mode ='r'))
     # we add a virtual field, so that we may get the actual name back afterwards
     
     sem_num = find_field_position(headers, 'Semantic number')
@@ -174,6 +214,8 @@ def prepare_data(root, paths, options={}):
     
     i = 0
     
+    file = csv.reader(open(path, mode ='r'))
+    # names = []
     for line in file:
         clean_name_original = copy.copy(line[clean_name_pos])
         # we clean the certain fields, so as not to get differently whitespaced, or capitalized jargons
@@ -185,7 +227,7 @@ def prepare_data(root, paths, options={}):
              line[scrape_name_pos] = line[scrape_name_pos].lower().strip()
              
         # not adding line semantic numbers 2 (beginning/end scrape links), 3 (duplicate), 9 (false scrape), 10 (not included in analysis)
-        if line[sem_num] not in ['2','3','9', '10']:
+        if line[sem_num] not in invalid_semantic_numbers:
             if line[clean_name_pos] == '':
                 print(f'Clean name empty (for scrape entry {line[scrape_name_pos]}, scrape identifier {line[scrape_identifier_pos]})')
                 errors = True
@@ -219,6 +261,9 @@ def prepare_data(root, paths, options={}):
     return all_elements, headers, header_hashmap
 
 def add_virtual_columns(dataa, names, default_values):
+    """
+    Adds all virtual columns to be added to the data matrix
+    """
     # all_elements, element_hash_map, headers, header_hashmap = dataa[0], dataa[1], dataa[2], dataa[3]
     
     for i in range(0,len(names)):
@@ -234,6 +279,8 @@ def add_virtual_columns(dataa, names, default_values):
 # lines, element_hashmap, headers, header_hms = dataa[0], dataa[1], dataa[2], dataa[3]
 
 def merge_csv_headers(root, paths):
+    """
+    """
     headerss = []
 
     path = write_into_one_csv(root, paths, "headers", True)
