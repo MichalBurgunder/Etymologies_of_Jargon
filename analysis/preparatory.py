@@ -18,6 +18,7 @@ def get_additive_second_names(data, headers, element_hashmap, duplicates):
     """
     scr_name_pos = find_field_position(headers, "Scrape Name")
     scr_iden_pos = find_field_position(headers, "Scrape Identifier")
+    clean_name_pos = find_field_position(headers, "Cleaned Name")
     
     for i in range(0, len(data)):
         if data[i][scr_iden_pos] == "ADD" and data[i][scr_name_pos] != "":
@@ -25,7 +26,7 @@ def get_additive_second_names(data, headers, element_hashmap, duplicates):
                 element_hashmap["ti"][data[i][scr_name_pos]] = i
                 element_hashmap["it"][i] = data[i][scr_name_pos]
             else:
-                duplicates.append(f"{data[i][scr_name_pos]} is already in the scrape names additives (duplicate)")
+                duplicates.append([data[i][scr_name_pos], data[i][scr_iden_pos], data[element_hashmap["ti"][data[i][clean_name_pos]]][scr_iden_pos]])
      
 def header_hashmaps(headers, other_headers):
     head_i_hm = {}
@@ -148,7 +149,6 @@ def get_element_hashmap(data, headers, cs):
     
     duplicates = []
     
-    print(len(data))
     for i in range(0, len(data)):
         if data[i][clean_name_pos] in element_hashmap["ti"]:
             duplicates.append([data[i][clean_name_pos], data[i][scrape_identifier_pos]])
@@ -159,15 +159,40 @@ def get_element_hashmap(data, headers, cs):
     # we include additive aliases, in order to manage mistakenly adding two of the same additive jargons
     get_additive_second_names(data, headers, element_hashmap, duplicates) 
     
-    if 0 < len(duplicates):
+    if len(duplicates) > 0:
         print("Duplicate entries found upon lowercasing them:\n")
-        print(f"Clean Name | Scarpe Identifier ")
+        print(f"Clean Name | Scrape Identifier Duplicate | Scrape Identifier Original")
         for i in range(0, len(duplicates)):
-            print(f"{duplicates[i][0]} | {duplicates[i][1]}")
+            print(f"{duplicates[i][0]} | {duplicates[i][1]} | {duplicates[i][2]}")
         print("Remove duplicates from lists to proceed to analysis")
         exit()
 
     return element_hashmap
+    
+def verify_no_duplicate_jargons(data, headers):
+    clean_name_pos = find_field_position(headers, 'Cleaned Name')
+    scrap_name_pos = find_field_position(headers, 'Scrape Identifier')
+    jargon_poss = [
+            find_field_position(headers, '1st Jargon'),
+            find_field_position(headers, '2nd Jargon'),
+            find_field_position(headers, '3rd Jargon'),
+            find_field_position(headers, '4th Jargon')
+        ]
+        
+    errors = False
+    for i in range(0, len(data)):
+        jargons = []
+        for j_pos in jargon_poss:
+            if data[i][j_pos] != '':
+                jargons.append(data[i][j_pos])
+
+        set_jargons = list(set(jargons))
+        if len(jargons) != len(set_jargons):
+            print(data[i][clean_name_pos], data[i][scrap_name_pos])
+            errors = True
+    if errors:
+        print("Fix these issues before rerunning this program")
+        exit()
     
     
 def prepare_data(root, paths, options={}):
@@ -257,6 +282,7 @@ def prepare_data(root, paths, options={}):
         print("Data Correct (correct headers, no duplicates, names present)\nReady to proceed")
         exit()
     
+    verify_no_duplicate_jargons(all_elements, headers)
 
     return all_elements, headers, header_hashmap
 
