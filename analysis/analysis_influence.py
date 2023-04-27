@@ -95,43 +95,17 @@ def influence(matrix):
 
 def nice_results(data, pg_res, submatrix_hm, matrix_master_hm, headers):
     cn_pos = find_field_position(headers, "Cleaned Name")
+    si_pos = find_field_position(headers, "Scrape Identifier")
     keys_of_submatrix = list(submatrix_hm.keys())
     our_tuples = [None for i in range(0, len(pg_res))]
-    # print(len(our_tuples))
-    # print(len(pg_res))
-    # print(len(keys_of_submatrix))
+
     for i in range(0, len(pg_res)):
-        # print(keys_of_submatrix)
         pos_master_matrix = matrix_master_hm[keys_of_submatrix[i]]
         cleaned_name = data[pos_master_matrix][cn_pos]
-        our_tuples[i] = (cleaned_name, pg_res[i])
-    # our_tuples = [(cleaned_names[i], pg_res[i]) for i in range(len(pg_res))]
-    return sorted(our_tuples, key=lambda the_tuple: the_tuple[1], reverse=True)
-    
-def print_nice_results(res):
-    """
-    Prints out a latex appropriate text, to easily insert into the final document
-    """
-    final_data = []
-    for i in range(0, len(res)):
-        final_data.append([res[i][0], np.round(res[i][1]*(10**14), 2)])
-    
-    final_string = "\hline\n"
-    final_string += f"{final_data[0][0]}"
+        scrape_ident = data[pos_master_matrix][si_pos]
+        our_tuples[i] = (cleaned_name, pg_res[i], scrape_ident)
 
-    for i in range(1, len(final_data)):
-        final_string += f" & {final_data[i][0]}"
-        
-    final_string += " \\\\\n\hline"
-    
-    final_string += f" \n{final_data[i][1]}"
-    
-    for i in range(0, len(final_data)):
-        final_string += f" & {final_data[i][1]}"
-    
-    # res = f"\\begin\{tabular\}c\{c\{'|c' * len(final_data)}}"
-    final_string += " \\\\\n\hline\n"
-    print(final_string)
+    return sorted(our_tuples, key=lambda the_tuple: the_tuple[1], reverse=True)
     
 def reinsert_edges(data, edges):
     for i in range(0, len(edges)):
@@ -178,18 +152,15 @@ def create_data_set_specific_pg_matrices(data, elem_entry_hm, cs):
             
             fetch_other_jargon(hashmap_datasets_ti, data, i, cs, scrape_ident, elem_entry_hm)
 
-    # print(len(hashmap_datasets_ti['PL'].keys()))
-    # exit()
     # now we create the actual matricies. We loop through all possbile submatricies first
     final_matricies = []
     submatrix_hms = []
     for i in range(0, len(data_sets)):
-        # print(f"Now doing {data_sets[i]}")
+
         # we set up for the creation of one submatrix first. We have the count for keys for one data set, but we now just need to find, and create a new hashmap that defines where each point will be in our new submatrix
         the_keys = list(hashmap_datasets_ti[data_sets[i]].keys())
         the_keys.sort()
-        # print(the_keys)
-        # print(the_keys)
+
         n = len(the_keys)
         # exit()
         # we define the positions of each point in the submatrix, from the "master-matrix"
@@ -214,9 +185,8 @@ def create_data_set_specific_pg_matrices(data, elem_entry_hm, cs):
             
             # dividend = num_jargons if num_jargons > 0 else 1
             the_num = 1/num_jargons
-            # print(the_num)
+
             # we the num in place, we simply need to fill it in the correct positions in the pg_matrix
-            the_check = 0
             for j_pos in cs['jargon_entry_positions']:
                 
                 # we first find the actual jargon name from the original data set...
@@ -225,36 +195,11 @@ def create_data_set_specific_pg_matrices(data, elem_entry_hm, cs):
                 if jargon_clean_name != '':
                     # ...before we can fill it in with the help of our submatrix hashmap
                     pg_matrix[submatrix_hm[the_key]][submatrix_hm[jargon_clean_name]] = the_num
-                    the_check += 1
-               # sum(pg_matrix[submatrix_hm[the_key]]) != 1 or      
-            if the_check != num_jargons:
-                print("mistake")
-                print(sum(pg_matrix[submatrix_hm[the_key]]))
-                print(the_check)
-                print(the_num)
-                print(the_key)
-                for j_pos in cs['jargon_entry_positions']:
-                    print(data[elem_entry_hm[the_key]][j_pos])
-                print()
-                exit()
                 
-        res = np.array(pg_matrix)
-        # print(list(np.sum(res, axis=1)))
-        print(sum(res[0]))
-        # print
-        # exit()
         final_matricies.append(np.array(pg_matrix).T)
         submatrix_hms.append(submatrix_hm)
-    # print(final_matricies[3])
+
     return [final_matricies, data_sets, submatrix_hms]
-
-def recursively_find_elements(data, entry, jargon_poss, sub_hm, cs):
-    final_array = []
-    queue = []
-    intermed_hm = {} # to avoid recursive acronyms
-
-                
-    return final_array
                 
 
 def prepare_influence_data(data, elem_entry_hm, headers, cs):
@@ -265,33 +210,17 @@ def prepare_influence_data(data, elem_entry_hm, headers, cs):
     all_pg_matricies = concatenate(special_matricies, [pg_matrix_full])
     all_identifiers = concatenate(scrape_identifiers, ["ALL"])
     all_submatrix_hms = concatenate(submatrix_hms, [elem_entry_hm])
-    # ['CP', 'GNU', 'PL', 'PM', 'RG', 'ALL']      ____
-    d_values = [0.85, 0.85, 0.85, 0.85, 0.85, 0.85, 0.4]
-    d_values = [0.4, 0.4, 0.4, 0.4, 0.4, 0.4, 0.4]
-    num_iters = [100, 100, 100, 100, 100, 100, 100]
-    print(len(all_pg_matricies))
+
+    d_values = [0.4, 0.4, 0.4, 0.4, 0.4, 0.4, 0.4] # we do same everywhere
+    num_iters = [100, 100, 100, 100, 100, 100, 100] # here too
+
     for i in range(0, len(all_pg_matricies)):
         pg_res = pagerank(all_pg_matricies[i], d=d_values[i], num_iterations=num_iters[i])
         nice_pg_results = nice_results(data, pg_res, all_submatrix_hms[i], elem_entry_hm, headers)
         save_as_csv(nice_pg_results, f"page_rank_results_{all_identifiers[i]}")
     
-    # print_nice_results(nice_pg_results[0:10])
-    reinsert_edges(data, edges_removed) # TODO: reinsert this, eventually
+    reinsert_edges(data, edges_removed)
     return
-
-
-
-# cs = {'jargon_entry_positions': [1,2,3], "clean_name_pos": 0}
-# the_hm = {"test1": 0, "test2": 1, "test3": 2}
-# matrix = [
-#     ["test1", "test2", "",      ""], 
-#     ["test2", "",      "",      "test3"], 
-#     ["test3", "",      "test1", ""],
-# ]
-
-# print(matrix)
-# remove_cycles(matrix, the_hm, cs)
-# print(matrix)
 
 
         
