@@ -93,10 +93,19 @@ def influence(matrix):
         
     return resulting_matrix
 
-def nice_results(data, pg_res, headers):
+def nice_results(data, pg_res, submatrix_hm, matrix_master_hm, headers):
     cn_pos = find_field_position(headers, "Cleaned Name")
-    cleaned_names = [data[i][cn_pos] for i in range(0, len(data))]
-    our_tuples = [(cleaned_names[i], pg_res[i]) for i in range(len(pg_res))]
+    keys_of_submatrix = list(submatrix_hm.keys())
+    our_tuples = [None for i in range(0, len(pg_res))]
+    # print(len(our_tuples))
+    # print(len(pg_res))
+    # print(len(keys_of_submatrix))
+    for i in range(0, len(pg_res)):
+        # print(keys_of_submatrix)
+        pos_master_matrix = matrix_master_hm[keys_of_submatrix[i]]
+        cleaned_name = data[pos_master_matrix][cn_pos]
+        our_tuples[i] = (cleaned_name, pg_res[i])
+    # our_tuples = [(cleaned_names[i], pg_res[i]) for i in range(len(pg_res))]
     return sorted(our_tuples, key=lambda the_tuple: the_tuple[1], reverse=True)
     
 def print_nice_results(res):
@@ -130,23 +139,22 @@ def reinsert_edges(data, edges):
     return
 
 def fetch_other_jargon(the_hashmap, data, entry, cs, origin_scrape_ident, master_hm):
-    for i in range(0, len(cs['jargon_entry_positions'])):
-        the_jargon_pos = cs['jargon_entry_positions'][i]
-        the_jargon = data[entry][the_jargon_pos]
-        if (the_jargon is not '' and the_jargon not in the_hashmap[origin_scrape_ident]):
+    jargon_poss = cs['jargon_entry_positions']
+    
+    for j_pos in jargon_poss:
+        the_jargon = data[entry][j_pos]
+        if (the_jargon != '' and the_jargon not in the_hashmap[origin_scrape_ident]):
             
             the_hashmap[origin_scrape_ident][the_jargon] = master_hm[the_jargon]
-            # if the_jargon == 'library':
-            #     print("added " + data[entry][the_jargon_pos] + " to " + origin_scrape_ident)
             
-            fetch_other_jargon(the_hashmap, data, master_hm[data[entry][the_jargon_pos]], cs, origin_scrape_ident, master_hm)
+            fetch_other_jargon(the_hashmap, data, master_hm[data[entry][j_pos]], cs, origin_scrape_ident, master_hm)
     return
 
 def create_data_set_specific_pg_matrices(data, elem_entry_hm, cs):
     # an array of all different scrape identifiers
     data_sets = list(set(np.array(data)[:,cs["scrape_identifier_pos"]]))
-    data_sets.sort(reverse=True) # sorted for deterministic behaviour
-    
+    # data_sets.remove("ADD")
+    data_sets.sort() # sorted for deterministic behaviour
     # a hashmap, with n nested hashmaps for each scrape identifier,
     # where the clean name (key) and position in the data array (value) is recorded
     hashmap_datasets_ti = {} 
@@ -155,33 +163,41 @@ def create_data_set_specific_pg_matrices(data, elem_entry_hm, cs):
     for i in range(0, len(data_sets)):
         hashmap_datasets_ti[data_sets[i]] = {}
 
+
     # here, we fill out the each "scrape-identifier data-points set",
     # to get n different hashmaps, from which we can create pageRank matricies
     # we add the scrape identifier data points, and iterate through its jargons, and add these as well
     for i in range(0, len(data)):
         # if data[i][cs['clean_name_pos']] == "library":
         #     print("library is present")
-        if data[i][cs['clean_name_pos']] not in hashmap_datasets_ti[data[i][cs['scrape_identifier_pos']]]:
-            scrape_ident = data[i][cs['scrape_identifier_pos']]
-            clean_name = data[i][cs['clean_name_pos']]
+        scrape_ident = data[i][cs['scrape_identifier_pos']]
+        clean_name = data[i][cs['clean_name_pos']]
+        
+        if clean_name not in hashmap_datasets_ti[scrape_ident]:
             hashmap_datasets_ti[scrape_ident][clean_name] = i
             
             fetch_other_jargon(hashmap_datasets_ti, data, i, cs, scrape_ident, elem_entry_hm)
 
+    # print(len(hashmap_datasets_ti['PL'].keys()))
+    # exit()
     # now we create the actual matricies. We loop through all possbile submatricies first
     final_matricies = []
+    submatrix_hms = []
     for i in range(0, len(data_sets)):
         # print(f"Now doing {data_sets[i]}")
         # we set up for the creation of one submatrix first. We have the count for keys for one data set, but we now just need to find, and create a new hashmap that defines where each point will be in our new submatrix
         the_keys = list(hashmap_datasets_ti[data_sets[i]].keys())
+        the_keys.sort()
+        # print(the_keys)
+        # print(the_keys)
         n = len(the_keys)
-
+        # exit()
         # we define the positions of each point in the submatrix, from the "master-matrix"
         # we do this at the beginning, so that we can always fetch these names in the main "filling-out" loop
         submatrix_hm = {}
         for j in range(0, n):
             submatrix_hm[the_keys[j]] = j 
-        
+        # print(submatrix_hm)
         # we FINALLY define the final matrix that will be saved
         pg_matrix = [[0] * n for j in range(0, n)] # actual final pg_submatrix
         
@@ -191,26 +207,46 @@ def create_data_set_specific_pg_matrices(data, elem_entry_hm, cs):
             
             # this is the clean name key
             the_key = the_keys[j]
-            
             # we count the number of present jarongs (not ""), and take the reciprocal
-            jargons = [True if data[elem_entry_hm[the_key]][jargon_pos] != "" else False for jargon_pos in cs['jargon_entry_positions']]
-            dividend = len(jargons) if len(jargons) > 0 else 1
-            the_num = 1/dividend
+            num_jargons = [True if data[elem_entry_hm[the_key]][jargon_pos] != "" else False for jargon_pos in cs['jargon_entry_positions']].count(True)
+            if num_jargons == 0:
+                continue
             
+            # dividend = num_jargons if num_jargons > 0 else 1
+            the_num = 1/num_jargons
+            # print(the_num)
             # we the num in place, we simply need to fill it in the correct positions in the pg_matrix
+            the_check = 0
             for j_pos in cs['jargon_entry_positions']:
                 
                 # we first find the actual jargon name from the original data set...
                 # ...check that its not empty...
                 jargon_clean_name = data[elem_entry_hm[the_key]][j_pos]
-                if jargon_clean_name !=  '':
+                if jargon_clean_name != '':
                     # ...before we can fill it in with the help of our submatrix hashmap
                     pg_matrix[submatrix_hm[the_key]][submatrix_hm[jargon_clean_name]] = the_num
-        
-                    
+                    the_check += 1
+               # sum(pg_matrix[submatrix_hm[the_key]]) != 1 or      
+            if the_check != num_jargons:
+                print("mistake")
+                print(sum(pg_matrix[submatrix_hm[the_key]]))
+                print(the_check)
+                print(the_num)
+                print(the_key)
+                for j_pos in cs['jargon_entry_positions']:
+                    print(data[elem_entry_hm[the_key]][j_pos])
+                print()
+                exit()
+                
+        res = np.array(pg_matrix)
+        # print(list(np.sum(res, axis=1)))
+        print(sum(res[0]))
+        # print
+        # exit()
         final_matricies.append(np.array(pg_matrix).T)
-        
-    return [final_matricies, data_sets]
+        submatrix_hms.append(submatrix_hm)
+    # print(final_matricies[3])
+    return [final_matricies, data_sets, submatrix_hms]
 
 def recursively_find_elements(data, entry, jargon_poss, sub_hm, cs):
     final_array = []
@@ -224,13 +260,19 @@ def recursively_find_elements(data, entry, jargon_poss, sub_hm, cs):
 def prepare_influence_data(data, elem_entry_hm, headers, cs):
     # page rank first
     pg_matrix_full, edges_removed = create_pagerank_matrix(data, elem_entry_hm, cs)
-    special_matricies, scrape_identifiers = create_data_set_specific_pg_matrices(data, elem_entry_hm, cs)
+    special_matricies, scrape_identifiers, submatrix_hms = create_data_set_specific_pg_matrices(data, elem_entry_hm, cs)
     
     all_pg_matricies = concatenate(special_matricies, [pg_matrix_full])
     all_identifiers = concatenate(scrape_identifiers, ["ALL"])
+    all_submatrix_hms = concatenate(submatrix_hms, [elem_entry_hm])
+    # ['CP', 'GNU', 'PL', 'PM', 'RG', 'ALL']      ____
+    d_values = [0.85, 0.85, 0.85, 0.85, 0.85, 0.85, 0.4]
+    d_values = [0.4, 0.4, 0.4, 0.4, 0.4, 0.4, 0.4]
+    num_iters = [100, 100, 100, 100, 100, 100, 100]
+    print(len(all_pg_matricies))
     for i in range(0, len(all_pg_matricies)):
-        pg_res = pagerank(all_pg_matricies[i], d=0.4)
-        nice_pg_results = nice_results(data, pg_res, headers)
+        pg_res = pagerank(all_pg_matricies[i], d=d_values[i], num_iterations=num_iters[i])
+        nice_pg_results = nice_results(data, pg_res, all_submatrix_hms[i], elem_entry_hm, headers)
         save_as_csv(nice_pg_results, f"page_rank_results_{all_identifiers[i]}")
     
     # print_nice_results(nice_pg_results[0:10])
