@@ -49,7 +49,7 @@ file_names = {
     # taken from https://spectrum.ieee.org/top-programming-languages-2022, (spectrum)
 top_languages = [name.lower() for name in ["Python", "C", "C++", "C#", "Java", "SQL", "JavaScript", "R", "HTML", "TypeScript", "Go", "PHP", "Shell", "Ruby", "Scala", "Matlab", "SAS", "ASM", "Kotlin", "Rust", "Perl", "Objective-C", "Dart", "Swift", "Verilog", "Arduino", "D", "Julia", "Cuda", "VHDL", "Visual Basic", "LabView", "Groovy", "Lua", "Ada", "Scheme", "ABAP", "Haskell", "COBOL", "Elixir", "F#", "LISP", "Pascal", "FORTRAN", "TCL", "Clojure", "Prolog", "Ocaml", "Ladder Logic", "Erlang", "J", "Forth", "Elm", "Raku", "WebAssembly", "CoffeeScript", "Eiffel"]]
 
-def prepare_virtual_fields(dataa, cs):
+def prepare_cs_fields(dataa, cs):
     """
     Creates virtual fields in constants, for constant time variable lookup
     """
@@ -110,6 +110,7 @@ def prepare_globals(dataa):
         'clean_name': "Cleaned Name",
         'clean_name_pos': None,
         'scrape_name': 'Scrape Name', 
+        'scrape_name_pos': None,
         'ety_depth': "Etymology Depth",
         'ety_depth_pos': None,
         'analyzed_data_root': analyzed_data_root,
@@ -120,6 +121,6 @@ def prepare_globals(dataa):
     # lets find the jargon entry positions
     consts['jargon_entry_positions'] = find_jargon_entry_positions(dataa[1], consts['jargon_entries'])
 
-    prepare_virtual_fields(dataa, consts)
+    prepare_cs_fields(dataa, consts)
 
     return consts

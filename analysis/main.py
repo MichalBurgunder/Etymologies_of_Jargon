@@ -2,6 +2,8 @@ import os
 import sys
 # import time
 
+sys.path.append('/Users/michal/Documents/thesis/etymologies_of_jargon')
+
 from analysis_max_depth import populate_ety_depths, prepare_depth_data
 from preparatory import get_headers_hashmap, get_element_hashmap, prepare_data, add_virtual_columns
 from file_management import save_as_csv
@@ -13,7 +15,7 @@ from analysis_jargon_length import prepare_jargon_length
 from analysis_by_2nd_ety_type import prepare_2nd_ety_type_data
 from analysis_cultural_heritage import prepare_cultural_heritage_frequency_total, prepare_cultural_heritage_frequency_by_data_set
 from analysis_ety_types_by_set import prepare_ety_type_counts
-
+from analysis_influence import prepare_influence_data
 from search_data import possible_search
 os.system('clear')
 
@@ -44,7 +46,7 @@ def __main__():
 
     headers, header_hashmap = dataa[1], dataa[2]
 
-    # in case we are doing an ad hoc search of the data
+    # in case we are doing an ad hoc search of the data for some string
     possible_search(dataa[0], headers)    
     
     element_hash_map = get_element_hashmap(dataa[0], headers, cs)
@@ -101,11 +103,13 @@ def __main__():
     # prepare_2nd_ety_type_data(dataa[0], headers, "RG")
     # prepare_2nd_ety_type_data(dataa[0], headers, "PM")
     
-    prepare_cultural_heritage_frequency_total(dataa[0], headers)
+    # prepare_cultural_heritage_frequency_total(dataa[0], headers)
     # prepare_cultural_heritage_frequency_by_data_set(dataa[0], headers, ["GNU", "ADD", "Fix"])
     # preapre data of ety types per data set
     # prepare_ety_type_counts(dataa[0], headers, ["PL", "CP", "RG", "PM"])
     
+    # influence
+    prepare_influence_data(dataa[0], element_hash_map["ti"], headers, cs)
     print("All done!")
     
     # en = time.time()

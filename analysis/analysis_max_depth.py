@@ -155,7 +155,11 @@ def prepare_depth_data(data, cs, headers):
         # we differentiate between a full analysis, and an analysis of only a set of data
         if len(cs['to_analyze']) != 0:
             if data[i][cs["scrape_identifier_pos"]] in cs['to_analyze']:
-                final_data.append([data[i][cs["clean_name_pos"]], data[i][cs['ety_depth_pos']], data[i][scrape_iden_pos]])
+                final_data.append([
+                    data[i][cs["clean_name_pos"]],
+                    data[i][cs['ety_depth_pos']],
+                    data[i][scrape_iden_pos]]
+                )
         else:
             final_data.append([data[i][cs["clean_name_pos"]], data[i][cs['ety_depth_pos']], data[i][scrape_iden_pos]])
     
