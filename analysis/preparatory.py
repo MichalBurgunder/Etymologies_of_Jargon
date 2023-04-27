@@ -21,7 +21,7 @@ def get_additive_second_names(data, headers, element_hashmap, duplicates):
     
     for i in range(0, len(data)):
         if data[i][scr_iden_pos] == "ADD" and data[i][scr_name_pos] != "":
-            if data[i][scr_name_pos] not in element_hashmap:
+            if data[i][scr_name_pos] not in element_hashmap["ti"]:
                 element_hashmap["ti"][data[i][scr_name_pos]] = i
                 element_hashmap["it"][i] = data[i][scr_name_pos]
             else:
