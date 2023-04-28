@@ -5,7 +5,8 @@ from visualization_utils import root, read_csv
 
 def print_nice_results(res, scrape_iden=''):
     """
-    Prints out a latex appropriate text, to easily insert into the final document
+    Prints out a latex appropriate text, to easily insert into the final
+    document
     """
     final_data = []
     j = 0
@@ -34,7 +35,15 @@ def print_nice_results(res, scrape_iden=''):
     final_string += " \\\\\n    \hline\n\n"
     print(final_string)
     
+# This was an attempt to dynamically generate latex table text. As the tables
+# turned out to exceed the width of the page, I manually modfied them to make
+# them visually pleasing. As a result, this function turned out to be mostly
+# useless, and is certainly not useful going into the future.
 def print_page_rank_data(data_set):
+    """
+    Prints out a latex comparible string that consists of the body to create
+    tables out of
+    """
     data = read_csv(f"page_rank_results_{data_set}")
     print_nice_results(data, data_set)
     return

@@ -2,7 +2,8 @@ from visualization_utils import read_csv, create_bar_graph_log_subplots
 
 def number_of_depths(file_name, data_set='ALL'):
     """
-    Creates a bar graph/histogram with all the etymological depths of a specific file
+    Creates a bar graph/histogram with all the etymological depths of a specific
+    file
     """
     rows = read_csv(file_name)
     nums = [] # position of where the depth is located

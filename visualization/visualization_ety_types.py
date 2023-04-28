@@ -5,7 +5,8 @@ from visualization_utils import convert_to_ints, read_csv, linify, root
 
 def normalize_data(data):
     """
-    Normalizes the data to a standard of 100, so that ety types can be compared over the decades
+    Normalizes the data to a standard of 100, so that ety types can be compared
+    over the decades
     """
     sums = np.array(data, dtype=np.double).sum(axis=0)
 

@@ -19,7 +19,8 @@ key_to_long_title = {
 
 def print_length_stats_latex(stat_dataa, set_names):
     """
-    Allows for super fast intergration of a vector of statistical data into a Latex table
+    Allows for super fast intergration of a vector of statistical data into a
+    Latex table
     """
     print("Data Set & Mean & Median & Standard Deviation & Variance & Min Value & Max Value \\\\")
     print("\hline")
@@ -94,9 +95,9 @@ def create_bar_graph_log_subplots(ys, xs, info):
 
 def create_bar_graph(ys, xs, info, log=False):
     """
-    Creates a simple bar graphs, given the appropriate inputs.
-    'info' is a dictionary consisting of 'xlabel', 'ylabel' and 'title'.
-    Skipping any of these parameters will cause an error
+    Creates a simple bar graphs, given the appropriate inputs. 'info' is a
+    dictionary consisting of 'xlabel', 'ylabel' and 'title'. Skipping any of
+    these parameters will cause an error
     """
     
     # the bar plot
