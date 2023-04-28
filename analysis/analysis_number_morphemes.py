@@ -4,8 +4,8 @@ from config import file_names, top_languages
 
 def number_of_morphemes(data, headers, scrape_ident=''):
     """
-    Extracts the number of morphemes from a given data set (scrape 
-    identifier) and saves easily graphable results into a .csv file
+    Extracts the number of morphemes from a given data set (scrape  identifier)
+    and saves easily graphable results into a .csv file
     """
     no_morph_pos = find_field_position(headers, "Nr. of Morphemes")
     scrape_ident_pos = find_field_position(headers, "Scrape Identifier")

@@ -5,7 +5,8 @@ from file_management import save_as_csv
 
 def prepare_cultural_heritage_frequency_total(data, headers):
     """
-    Counts the frequency of different Cultural Heritage enumerations within a given dataset 
+    Counts the frequency of different Cultural Heritage enumerations within a
+    given dataset 
     """
     hash_table_ch = {}
     ch_pos = find_field_position(headers, "Cultural Heritage (CH)")

@@ -8,7 +8,8 @@ from file_management import save_as_csv
 
 def count_field_types_by_scrape(data, ety_type2_pos, scr_name_pos, scr_ident=''):
     """
-    Counts the number of occurences of ety types within the data we are analyzing.
+    Counts the number of occurences of ety types within the data we are
+    analyzing.
     """
     all_types = {}
     for i in range(0,len(data)):

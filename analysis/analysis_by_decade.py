@@ -6,8 +6,9 @@ from file_management import save_as_csv
 
 def remove_special_chars_year(all_elements, headers):
     """
-    For the "Year" field, it makes sure that the field will always be an integer.
-    If it isn't it tries to give a best estimate of what year was meant.
+    For the "Year" field, it makes sure that the field will always be an
+    integer. If it isn't it tries to give a best estimate of what year was
+    meant.
     """
     year_pos = find_field_position(headers, "Year")
     si_pos = find_field_position(headers, "Scrape Identifier")

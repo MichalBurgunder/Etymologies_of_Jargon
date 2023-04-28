@@ -10,8 +10,8 @@ recur_limit = 20
 # The function that computes the max depth of an entry
 def get_max_depth(data, entry, element_hashmap, header_hms, cs, previous_jargons, options={}):
     """
-    Computes the maximum etymological depth of elements to be analyzed.
-    For recursive calls, it only ever computes the depth up to a unique jargon term.
+    Computes the maximum etymological depth of elements to be analyzed. For
+    recursive calls, it only ever computes the depth up to a unique jargon term.
     """
     global recur
 
@@ -74,8 +74,9 @@ def get_max_depth(data, entry, element_hashmap, header_hms, cs, previous_jargons
 
 def verify_jargon_connection_entries(dataa, cs):
     """
-    Verifies that the jargon connection type fields are all present in the enumeration.
-    Otherwise, we'd have to include these for the next batch of data. 
+    Verifies that the jargon connection type fields are all present in the
+    enumeration. Otherwise, we'd have to include these for the next batch of
+    data. 
     """ 
     jct_poss = []
     jct_hash = {}
@@ -106,11 +107,12 @@ def verify_jargon_connection_entries(dataa, cs):
 # # computes the etymology depth of any given entry
 def populate_ety_depths(dataa, cs, options={}):
     """
-    Goes through all inputted jargons and computes the maximum depth of any single
-    jargon entry. Additives that have not been included in the data, are saves in
-    cs["additives"], so that the user will have the include these in the data next
-    time they run the program. Note that because it is essential that these be
-    included, the program will exit if even 1 additive that should be present, isn't.
+    Goes through all inputted jargons and computes the maximum depth of any
+    single jargon entry. Additives that have not been included in the data, are
+    saves in cs["additives"], so that the user will have the include these in
+    the data next time they run the program. Note that because it is essential
+    that these be included, the program will exit if even 1 additive that should
+    be present, isn't.
     """
     print('starting ety. depth analysis')
     
@@ -146,8 +148,8 @@ def populate_ety_depths(dataa, cs, options={}):
 
 def prepare_depth_data(data, cs, headers):
     """
-    Assuming that the ety depth data has already been documented, we now
-    save the data in a easily readable format for further analysis and graphing, 
+    Assuming that the ety depth data has already been documented, we now save
+    the data in a easily readable format for further analysis and graphing 
     """
     scrape_iden_pos = find_field_position(headers, "Scrape Identifier")
     final_data = []

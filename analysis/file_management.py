@@ -11,9 +11,9 @@ global run_options
 
 def write_into_one_csv(root, paths, descriptor, just_headers=False):
     """
-    Because having multiple CSV files is irrelevant to the anaylysis,
-    we combine all inputted CSV files and combine them into one. This 
-    data is then saved into a "{root}/temp_{descriptor}.csv".
+    Because having multiple CSV files is irrelevant to the anaylysis, we combine
+    all inputted CSV files and combine them into one. This data is then saved
+    into a "{root}/temp_{descriptor}.csv".
     """
     # code originating from here: https://stackoverflow.com/questions/36698839/python-3-opening-multiple-csv-files
     with open(f"{root}/temp_{descriptor}.csv", "wt") as fw:

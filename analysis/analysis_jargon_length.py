@@ -5,9 +5,9 @@ from file_management import save_as_csv
 
 def remove_specification(name):
     """
-    Given that certain data points' Cleaned Name field specify the data set, this function
-    removes this specification to get the actual name, instead of the one used during
-    deduplication
+    Given that certain data points' Cleaned Name field specify the data set,
+    this function removes this specification to get the actual name, instead of
+    the one used during deduplication
     """
     
     the_range = [None, None]
@@ -28,8 +28,8 @@ def remove_specification(name):
 
 def prepare_jargon_length(data, headers, scrape_ident=''):
     """
-    Collects all data necessary to analyze and graph the length of jargons (Cleaned Name). 
-    It saves the data into a name_length.csv
+    Collects all data necessary to analyze and graph the length of jargons
+    (Cleaned Name). It saves the data into a name_length.csv
     """
     print("starting jargon length analysis...")
     
