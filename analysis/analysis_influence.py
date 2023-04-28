@@ -202,7 +202,7 @@ def create_data_set_specific_pg_matrices(data, elem_entry_hm, cs):
     return [final_matricies, data_sets, submatrix_hms]
                 
 
-def prepare_influence_data(data, elem_entry_hm, headers, cs):
+def prepare_influence_data(data, elem_entry_hm, headers, cs, pg_matricies_only=False):
     # page rank first
     pg_matrix_full, edges_removed = create_pagerank_matrix(data, elem_entry_hm, cs)
     special_matricies, scrape_identifiers, submatrix_hms = create_data_set_specific_pg_matrices(data, elem_entry_hm, cs)
@@ -211,6 +211,11 @@ def prepare_influence_data(data, elem_entry_hm, headers, cs):
     all_identifiers = concatenate(scrape_identifiers, ["ALL"])
     all_submatrix_hms = concatenate(submatrix_hms, [elem_entry_hm])
 
+    # this is for testing the io algorithm
+    if pg_matricies_only:
+        # reinsert_edges(data, edges_removed) # we don't reinsert them, just yet
+        return [all_pg_matricies, all_identifiers, all_submatrix_hms], edges_removed
+    
     d_values = [0.4, 0.4, 0.4, 0.4, 0.4, 0.4, 0.4] # we do same everywhere
     num_iters = [100, 100, 100, 100, 100, 100, 100] # here too
 
@@ -220,7 +225,70 @@ def prepare_influence_data(data, elem_entry_hm, headers, cs):
         save_as_csv(nice_pg_results, f"page_rank_results_{all_identifiers[i]}")
     
     reinsert_edges(data, edges_removed)
+    return all_pg_matricies
+
+
+def go_down(data, entry, cs, count_array, element_pos_hm, leaf_array):
+    leaf = True
+    for i in range(0, len(data[entry])):
+        if data[entry][i] != 0:
+            leaf = False
+            count_array[i] += 1 
+            go_down(data, i, cs, count_array, element_pos_hm, leaf_array)
+    if leaf == True:
+        leaf_array[entry] = True
     return
 
+def influence_opacity_algorithm(data, element_pos_hm, cs):
+    count_array = [1] * len(data)
+    leaf_array = [False] * len(data)
+    
+    for i in range(0, len(data)):
+        go_down(data, i, cs, count_array, element_pos_hm, leaf_array)
 
-        
+    return count_array, leaf_array
+
+def io_algo_wrapper(data, element_pos_hm, cs, scrape_identifier):
+    # edges_removed = remove_cycles(data, element_pos_hm, cs)
+    
+    # print(data)
+    # print(scrape_identifier)
+    # exit()
+    pos_to_name_hm = {}
+    items_hm = list(element_pos_hm.items())
+    for i in range(0, len(items_hm)):
+        pos_to_name_hm[items_hm[i][1]] = items_hm[i][0]
+    # print(pos_to_name_hm)
+    # exit()
+    print("starting io_algorithm (leaf)...")
+    count_array_leaf, leaf_array = influence_opacity_algorithm(data, element_pos_hm, cs)
+    # print("starting io_algorithm (root)...")
+    # count_array_root, root_array = influence_opacity_algorithm(data.T, element_pos_hm, cs)
+    # print("done")
+    # exit()
+
+    
+    clean_names_array = [pos_to_name_hm[i] for i in range(0, len(data))]
+    results_leaf = [(clean_names_array[i], count_array_leaf[i], leaf_array[i]) for i in range(0, len(count_array_leaf))]
+    # results_root = [(clean_names_array[i], count_array_root[i], root_array[i]) for i in range(0, len(count_array_leaf))]
+    
+    results_leaf.sort(key=lambda name_val: name_val[1], reverse=True)
+    # results_root.sort(key=lambda name_val: name_val[1], reverse=True)
+
+    top_50 = 0
+    for i in range(0, len(data)):
+        if results_leaf[i][2]: # leaf == True
+            print(results_leaf[i])
+            top_50 += 1
+        if top_50 == 30:
+            break
+       
+    # top_50 = 0
+    # for i in range(0, len(data)):
+    #     if results_root[i][2]: # leaf == True
+    #         print(results_root[i])
+    #         top_50 += 1
+    #     if top_50 == 30:
+    #         break 
+    reinsert_edges(data, edges_removed)
+    return
