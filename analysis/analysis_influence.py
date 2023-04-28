@@ -212,6 +212,7 @@ def prepare_influence_data(data, elem_entry_hm, headers, cs, pg_matricies_only=F
     all_submatrix_hms = concatenate(submatrix_hms, [elem_entry_hm])
 
     # this is for testing the io algorithm
+    # or otherwise, only fetching the matricies for the io algorithm
     if pg_matricies_only:
         # reinsert_edges(data, edges_removed) # we don't reinsert them, just yet
         return [all_pg_matricies, all_identifiers, all_submatrix_hms], edges_removed
@@ -248,47 +249,54 @@ def influence_opacity_algorithm(data, element_pos_hm, cs):
 
     return count_array, leaf_array
 
-def io_algo_wrapper(data, element_pos_hm, cs, scrape_identifier):
-    # edges_removed = remove_cycles(data, element_pos_hm, cs)
-    
-    # print(data)
-    # print(scrape_identifier)
-    # exit()
-    pos_to_name_hm = {}
-    items_hm = list(element_pos_hm.items())
+def reverse_hashmap(hash_map_to_reverse):
+    final_map = {}
+    items_hm = list(hash_map_to_reverse.items())
     for i in range(0, len(items_hm)):
-        pos_to_name_hm[items_hm[i][1]] = items_hm[i][0]
-    # print(pos_to_name_hm)
-    # exit()
+        final_map[items_hm[i][1]] = items_hm[i][0]
+    return final_map
+
+# def filter_out_non_important():
+    
+def io_algo_wrapper(data, element_pos_hm, cs, og_data):
+    # we reverse the existing hashmap.
+    # # this way we know what name each index refers to
+    pos_to_name_hm = reverse_hashmap(element_pos_hm)
+
+
+    # we run the io algorithm here
+    # first, we calculate influence...
     print("starting io_algorithm (leaf)...")
-    count_array_leaf, leaf_array = influence_opacity_algorithm(data, element_pos_hm, cs)
-    # print("starting io_algorithm (root)...")
-    # count_array_root, root_array = influence_opacity_algorithm(data.T, element_pos_hm, cs)
-    # print("done")
-    # exit()
-
+    count_array_leaf, leaf_array = influence_opacity_algorithm(data.T, element_pos_hm, cs)
     
+    #...and second, we calculate opacity
+    print("starting io_algorithm (root)...")
+    count_array_root, root_array = influence_opacity_algorithm(data, element_pos_hm, cs)
+
+    # we compile the clean names, so we know exactly what index belongs to what name
     clean_names_array = [pos_to_name_hm[i] for i in range(0, len(data))]
-    results_leaf = [(clean_names_array[i], count_array_leaf[i], leaf_array[i]) for i in range(0, len(count_array_leaf))]
-    # results_root = [(clean_names_array[i], count_array_root[i], root_array[i]) for i in range(0, len(count_array_leaf))]
     
+    # fetch the scrape identifier of the name, i.e. what data set it comes from
+    scrp_ient = [og_data[element_pos_hm[clean_names_array[i]]][cs['scrape_identifier_pos']] for i in range(0, len(count_array_leaf))]
+    
+    # compiling the (near) final results, before we sort
+    # this can be done in a lot more elegance, but you know, I'm running of time... 
+    # technically, this is still part of the 
+    results_leaf = [
+        (clean_names_array[i], count_array_leaf[i], leaf_array[i], scrp_ient[i])
+                for i in range(0, len(count_array_leaf)) if leaf_array[i] == True]
+    results_root = [
+        (clean_names_array[i], count_array_root[i], root_array[i], scrp_ient[i])
+        for i in range(0, len(count_array_leaf)) if root_array[i] == True]
+    
+    # now we sort, and we are done
+    # technically, this is still part of the io algorithm, although I will
+    # elaborate on the algorithm at a later time...
     results_leaf.sort(key=lambda name_val: name_val[1], reverse=True)
-    # results_root.sort(key=lambda name_val: name_val[1], reverse=True)
+    results_root.sort(key=lambda name_val: name_val[1], reverse=True)
 
-    top_50 = 0
-    for i in range(0, len(data)):
-        if results_leaf[i][2]: # leaf == True
-            print(results_leaf[i])
-            top_50 += 1
-        if top_50 == 30:
-            break
+    # we just save
+    save_as_csv(results_leaf, "io_algorithm_max_influence")
+    save_as_csv(results_root, "io_algorithm_max_opacity") 
        
-    # top_50 = 0
-    # for i in range(0, len(data)):
-    #     if results_root[i][2]: # leaf == True
-    #         print(results_root[i])
-    #         top_50 += 1
-    #     if top_50 == 30:
-    #         break 
-    reinsert_edges(data, edges_removed)
     return
