@@ -5,7 +5,7 @@ import sys
 
 sys.path.append('/Users/michal/Documents/thesis/etymologies_of_jargon')
 
-from analysis.analysis_influence import create_pagerank_matrix, is_recursive, remove_cycles
+from analysis.analysis_influence import create_pagerank_matrix, is_recursive, remove_cycles, create_data_set_specific_pg_matrices
 
 """
 Most of these are sanity checks
@@ -44,9 +44,7 @@ class PageRank(unittest.TestCase):
         
         
         pg_matrix, edges_removed = create_pagerank_matrix(the_matrix, the_hashmap, cs)
-        print(final_matrix)
-        print()
-        print(np.round(pg_matrix, 2))
+
         self.assertEqual(np.array_equal(final_matrix, np.round(pg_matrix, 2)), True)
 
         
@@ -98,7 +96,8 @@ class PageRank(unittest.TestCase):
         edge = is_recursive(matrix, 0, jargon_poss, the_hm, "test1")
         self.assertEqual(edge[0], 0)
         self.assertEqual(edge[1], 1)
-        
+    
+    # @unittest.skip('')
     def test_remove_cycles1(self):
         cs = {'jargon_entry_positions': [1,2,3], "clean_name_pos": 0}
         the_hm = {"test1": 0, "test2": 1, "test3": 2}
@@ -121,7 +120,8 @@ class PageRank(unittest.TestCase):
         self.assertEqual(matrix[2][1], "")
         self.assertEqual(matrix[2][2], "")
         self.assertEqual(matrix[2][3], "")
-        
+    
+    # @unittest.skip('')
     def test_remove_cycles2(self):
         cs = {'jargon_entry_positions': [1,2,3], "clean_name_pos": 0}
         the_hm = {"test1": 0, "test2": 1, "test3": 2}
@@ -150,9 +150,65 @@ class PageRank(unittest.TestCase):
         self.assertEqual(edges_removed[0][1], 2)
         self.assertEqual(edges_removed[0][2], "test1")
         
-    def test_prepare_influence_data__reinserts_data(self):
+    @unittest.skip('') 
+    def test_prepare_pagerank_data__reinserts_data(self):
         # TODO
         placeholder = 0
     
+    # @unittest.skip('') 
+    def test_prepare_dynamic_pg_matricies(self):
+        elem_entry_hm = {
+            "all1": 0,
+            "all2": 1,
+            "test1": 2,
+            "test2": 3,
+            "test3": 4
+        }
+        data = [
+            ["all1" , "ALL"  ,      "", "all2",      "", ""],
+            ["all2" , "ALL"  ,      "",     "",      "", ""],
+            ["test1", "TEST" , "test2",     "",      "", "test3"],
+            ["test2", "TEST" ,      "",     "", "test3", ""],
+            ["test3", "OTHER",      "",     "",      "", ""],
+        ]
+        cs = {"clean_name_pos": 0, "scrape_identifier_pos": 1, "jargon_entry_positions": [2,3,4] }
+        
+        matricies = create_data_set_specific_pg_matrices(data, elem_entry_hm, cs)
+        # print(matricies[0][0])
+        self.assertEqual(matricies[0][0][0][0], 0)
+        self.assertEqual(matricies[0][0][0][1], 0)
+        self.assertEqual(matricies[0][0][0][2], 0)
+        
+        self.assertEqual(matricies[0][0][1][0], 1)
+        self.assertEqual(matricies[0][0][1][1], 0)
+        self.assertEqual(matricies[0][0][1][2], 0)
+        
+        self.assertEqual(matricies[0][0][2][0], 0)
+        self.assertEqual(matricies[0][0][2][1], 1)
+        self.assertEqual(matricies[0][0][2][2], 0)
+    
+    
+    def test_prepare_dynamic_pg_matricies(self):
+        elem_entry_hm = {
+            "all1": 0,
+            "all2": 1,
+            "test1": 2,
+            "test2": 3,
+            "test3": 4
+        }
+        data = [
+            ["all1" , "ALL"  ,      "", "all2",      "", ""],
+            ["all2" , "ALL"  ,      "",     "",      "", ""],
+            ["test1", "TEST" , "test2",     "",      "", "test3"],
+            ["test2", "TEST" ,      "",     "", "test3", ""],
+            ["test3", "OTHER",      "",     "",      "", ""],
+        ]
+        cs = {"clean_name_pos": 0, "scrape_identifier_pos": 1, "jargon_entry_positions": [2,3,4,5] }
+        
+        matricies = create_data_set_specific_pg_matrices(data, elem_entry_hm, cs)
+        # print(matricies[0][0])
+        print(matricies[0])
+        
+        
 if __name__ == '__main__':
     unittest.main()
