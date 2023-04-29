@@ -9,7 +9,8 @@ from analysis.utils import concatenate
 
 def pagerank(M, num_iterations: int = 100, d: float = 0.85):
     """
-    copied from wikipedia https://en.wikipedia.org/wiki/PageRank
+    A basic implementation of pagerank. Copied from Wikipedia,
+    https://en.wikipedia.org/wiki/PageRank
     """
     N = M.shape[1]
     v = np.ones(N) / N
@@ -19,6 +20,11 @@ def pagerank(M, num_iterations: int = 100, d: float = 0.85):
     return v
 
 def is_recursive(data, entry, jargon_poss, ti_hashmap, start_val, recursion_depth=0):
+    """
+    Performs a DFS on a single entry in a matrix. If any edge is detected that
+    brings it back to the starting value, it returns that edge. Otherwise,
+    returns fase.
+    """
     if recursion_depth == 5: # max recursion depth (max so far is 2)
         return False
     
@@ -39,6 +45,10 @@ def is_recursive(data, entry, jargon_poss, ti_hashmap, start_val, recursion_dept
     return False
 
 def remove_cycles(data, elem_entry_hm, cs):
+    """
+    Removes 1 edge from every cycle detected within the data, recursively
+    searching the graph in DFS fashion, for every data point.
+    """
     removed_edges = []
     for i in range(0, len(data)):
         edge = is_recursive(data, i, cs['jargon_entry_positions'], elem_entry_hm, data[i][cs["clean_name_pos"]])
@@ -48,6 +58,12 @@ def remove_cycles(data, elem_entry_hm, cs):
     return removed_edges
 
 def create_pagerank_matrix(data, elem_entry_hm, cs):
+    """
+    Creates a pagerank matrix, based on some data
+    
+    Because cycles skew the results in non-sightful way, we remove them prior to
+    the creation of the matrix. 
+    """
     n = len(data)
     the_matrix = [[0] * n for i in range(0, n)]
     edges_removed = remove_cycles(data, elem_entry_hm, cs)
@@ -67,33 +83,14 @@ def create_pagerank_matrix(data, elem_entry_hm, cs):
     return np.array(the_matrix).T, edges_removed
         
 
-def recursive_influ(matrix, resulting_matrix, i, adder=0):
-    # additional_here = 0
-    for j in range(0,len(matrix[i])):
-        if matrix[i][j] == 1:
-            resulting_matrix[j] += 1
-            adder += 1
-            recursive_influ(matrix, resulting_matrix, j, adder)
-            # print(i, additional)
-            # additional_here += additional
-    # print(additional_here)
-    resulting_matrix[i] += adder
-    # print(str(resulting_matrix))
-    
-    # return additional_here + 1
-    return 0
-    
-def influence(matrix):
-    n = matrix.shape[0]
-    resulting_matrix = np.zeros(n)
-    # arrival_matrix = np.zeros((n,n))
-    # print(" A  B  C  D  E  F  G  H")
-    for i in range(0,len(matrix)):
-        recursive_influ(matrix, resulting_matrix, i) 
-        
-    return resulting_matrix
-
 def nice_results(data, pg_res, submatrix_hm, matrix_master_hm, headers):
+    """
+    Compiles the results of the pagerank algorithm and returns a list of sorted
+    tuples containing 
+        name: The name of the data point
+        value: the pagerank associated value
+        dataset identifier: the scrape identifier of the data point in question)
+    """
     cn_pos = find_field_position(headers, "Cleaned Name")
     si_pos = find_field_position(headers, "Scrape Identifier")
     keys_of_submatrix = list(submatrix_hm.keys())
@@ -108,11 +105,18 @@ def nice_results(data, pg_res, submatrix_hm, matrix_master_hm, headers):
     return sorted(our_tuples, key=lambda the_tuple: the_tuple[1], reverse=True)
     
 def reinsert_edges(data, edges):
+    """
+    Inserts edges (with a specific value) into a graph,
+    """
     for i in range(0, len(edges)):
         data[edges[i][0]][edges[i][1]] = edges[i][2]
     return
 
 def fetch_other_jargon(the_hashmap, data, entry, cs, origin_scrape_ident, master_hm):
+    """
+    Recursively traverses a tree, and inserts the discovered nodes into
+    "the_hashmap", with position in the (master) matrix
+    """
     jargon_poss = cs['jargon_entry_positions']
     
     for j_pos in jargon_poss:
@@ -125,6 +129,21 @@ def fetch_other_jargon(the_hashmap, data, entry, cs, origin_scrape_ident, master
     return
 
 def create_data_set_specific_pg_matrices(data, elem_entry_hm, cs):
+    """
+    Creates all necessary submatricies and their associated hashmaps in order to
+    run pagerank on submatricies of the original (data). Note that each
+    submatrix will not only include those data points that have an associated
+    scrape identifier, but also all those points that their jargons refer to
+    (and their jargons, etc.).
+    
+    For this reason, find the number of elements in each set by putting the
+    names in a hashmap (name: position_in_original_matrix). We construct another
+    hashmap per identifier, that maps the keys of the submatrix to a position in
+    that submatrix (name: position_in_submatrix). This way, we can run pagerank,
+    and eventually reinsert the names for saving data.
+    
+    The matricies, hashmaps and scrape identifiers are eventually all returned.
+    """
     # an array of all different scrape identifiers
     data_sets = list(set(np.array(data)[:,cs["scrape_identifier_pos"]]))
     # data_sets.remove("ADD")
@@ -142,8 +161,6 @@ def create_data_set_specific_pg_matrices(data, elem_entry_hm, cs):
     # to get n different hashmaps, from which we can create pageRank matricies
     # we add the scrape identifier data points, and iterate through its jargons, and add these as well
     for i in range(0, len(data)):
-        # if data[i][cs['clean_name_pos']] == "library":
-        #     print("library is present")
         scrape_ident = data[i][cs['scrape_identifier_pos']]
         clean_name = data[i][cs['clean_name_pos']]
         
@@ -159,7 +176,7 @@ def create_data_set_specific_pg_matrices(data, elem_entry_hm, cs):
 
         # we set up for the creation of one submatrix first. We have the count for keys for one data set, but we now just need to find, and create a new hashmap that defines where each point will be in our new submatrix
         the_keys = list(hashmap_datasets_ti[data_sets[i]].keys())
-        the_keys.sort()
+        the_keys.sort() # was included for determinism
 
         n = len(the_keys)
         # exit()
@@ -202,7 +219,18 @@ def create_data_set_specific_pg_matrices(data, elem_entry_hm, cs):
     return [final_matricies, data_sets, submatrix_hms]
                 
 
-def prepare_influence_data(data, elem_entry_hm, headers, cs, pg_matricies_only=False):
+def prepare_pagerank_data(data, elem_entry_hm, headers, cs, pg_matricies_only=False):
+    """
+    Creates all of the data produced by pagerank. If run without
+    "pg_matricies_only", it executes pagerank on the incoming data matrix (more
+    specifically, its jargons), as well as all of the submatricies that would
+    exist if only these data sets were to exist on their own. The number of
+    iterations and damping can be specified for each dat set below, although
+    I've kept them the same, seeing that it gives ok results. 
+    
+    With "pg_matricies_only" == True, it only returns all pagerank matricies (1
+    of all data, n of submatrices, one for each scrape identifier in cs)
+    """
     # page rank first
     pg_matrix_full, edges_removed = create_pagerank_matrix(data, elem_entry_hm, cs)
     special_matricies, scrape_identifiers, submatrix_hms = create_data_set_specific_pg_matrices(data, elem_entry_hm, cs)
@@ -225,11 +253,17 @@ def prepare_influence_data(data, elem_entry_hm, headers, cs, pg_matricies_only=F
         nice_pg_results = nice_results(data, pg_res, all_submatrix_hms[i], elem_entry_hm, headers)
         save_as_csv(nice_pg_results, f"page_rank_results_{all_identifiers[i]}")
     
+    # we've taken out edges to turn the graph into a DAG (instead of a  DAAG)
+    # here, we put them back in, in case further processing depends on this
     reinsert_edges(data, edges_removed)
     return all_pg_matricies
 
 
 def go_down(data, entry, cs, count_array, element_pos_hm, leaf_array):
+    """
+    The recursive part of the io algorithm. Traverses all paths for every node,
+    and increments a node's count upon arrival
+    """
     leaf = True
     for i in range(0, len(data[entry])):
         if data[entry][i] != 0:
@@ -241,6 +275,11 @@ def go_down(data, entry, cs, count_array, element_pos_hm, leaf_array):
     return
 
 def influence_opacity_algorithm(data, element_pos_hm, cs):
+    """
+    The part of the io algorithm tha manages the DFS. The current implementation
+    of this subroutine has not been optimized, and needs to be improved at a
+    later date, perhaps in its own separate paper/article
+    """
     count_array = [1] * len(data)
     leaf_array = [False] * len(data)
     
@@ -250,15 +289,21 @@ def influence_opacity_algorithm(data, element_pos_hm, cs):
     return count_array, leaf_array
 
 def reverse_hashmap(hash_map_to_reverse):
+    """
+    Takes some hashmap and uses its values as keys, and keys as values
+    """
     final_map = {}
     items_hm = list(hash_map_to_reverse.items())
     for i in range(0, len(items_hm)):
         final_map[items_hm[i][1]] = items_hm[i][0]
     return final_map
-
-# def filter_out_non_important():
     
 def io_algo_wrapper(data, element_pos_hm, cs, og_data):
+    """
+    This is a wrapper around the DFS-like recursion function. Apart from the
+    recursion, the function also sorts things, and eventually saves the
+    resulting data.
+    """
     # we reverse the existing hashmap.
     # # this way we know what name each index refers to
     pos_to_name_hm = reverse_hashmap(element_pos_hm)
@@ -295,7 +340,7 @@ def io_algo_wrapper(data, element_pos_hm, cs, og_data):
     results_leaf.sort(key=lambda name_val: name_val[1], reverse=True)
     results_root.sort(key=lambda name_val: name_val[1], reverse=True)
 
-    # we just save
+    # we save
     save_as_csv(results_leaf, "io_algorithm_max_influence")
     save_as_csv(results_root, "io_algorithm_max_opacity") 
        
