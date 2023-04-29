@@ -15,7 +15,7 @@ from analysis_jargon_length import prepare_jargon_length
 from analysis_by_2nd_ety_type import prepare_2nd_ety_type_data
 from analysis_cultural_heritage import prepare_cultural_heritage_frequency_total, prepare_cultural_heritage_frequency_by_data_set
 from analysis_ety_types_by_set import prepare_ety_type_counts
-from analysis_influence import prepare_influence_data
+from analysis_influence import prepare_pagerank_data, io_algo_wrapper, reinsert_edges
 from search_data import possible_search
 os.system('clear')
 
@@ -24,13 +24,14 @@ os.system('clear')
 
 def __main__():
     """
-    Assuming that all necessary data is present in 'thesis_data/raw_data',
+    Assuming that all necessary data is present in 'thesis_data/raw_data', 
     performs all of the analyses, and creates .csv files with their results.
     Note, that this function does NOT visualize the data
     
     All executed functions below 'ACTUAL ANALYSIS' are the data sets that
     will be created. Everything above it, are preparatory functions that
-    concatenate all data from various sources, validate, clean and preprocess it.
+    concatenate all data from various sources, validate, clean and preprocess
+    it.
     """
     # be = time.time()
     options = get_run_options(sys.argv)
@@ -109,7 +110,11 @@ def __main__():
     # prepare_ety_type_counts(dataa[0], headers, ["PL", "CP", "RG", "PM"])
     
     # influence
-    prepare_influence_data(dataa[0], element_hash_map["ti"], headers, cs)
+    # [all_pg_matricies, all_identifiers, all_submatrix_hms]
+    pg_matricies_info, edges_removed = prepare_pagerank_data(dataa[0], element_hash_map["ti"], headers, cs, True)
+    # print(len(pg_matricies_info))
+    io_algo_wrapper(pg_matricies_info[0][-1], pg_matricies_info[2][-1], cs, dataa[0])
+    
     print("All done!")
     
     # en = time.time()
