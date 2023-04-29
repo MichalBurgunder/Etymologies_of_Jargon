@@ -100,4 +100,7 @@ def print_errors(errors):
     
 
 def clean_scrape_name(name):
+    """
+    Returns an appropriate data set identifer, if it is empty
+    """
     return 'ALL' if name == '' else name

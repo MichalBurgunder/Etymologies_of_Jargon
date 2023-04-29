@@ -1,7 +1,7 @@
 import numpy as np
 import matplotlib.pyplot as plt
 
-from visualization_utils import convert_to_ints, read_csv, linify, root
+from visualization_utils import convert_to_ints, read_csv, save_as_csv, linify, root
 
 def normalize_data(data):
     """
@@ -34,12 +34,13 @@ def order_data_by_frequency(data, old_rows):
 
     return sorted_data, new_rows
 
-   
-
-
-
-
 def ety_types(filename, normalized=False):
+    """
+    Visualizes the ety types discovered, by decade.
+    If the "normalized" parameter is set to true, it also creates a .csv file
+    that includes all the data that is needed to created a normalized graph, and
+    visualizes it as well
+    """
     data_csv = read_csv(filename)
     columns = linify(data_csv[0]) # fetching columns
     rows = data_csv[-1] # fetching rows

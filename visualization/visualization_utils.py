@@ -5,7 +5,7 @@ import numpy as np
 sys.path.append('/Users/michal/Documents/thesis/etymologies_of_jargon')
 
 from analysis.config import file_names, root
-from analysis.file_management import read_csv
+from analysis.file_management import read_csv, save_as_csv
 
 
 key_to_long_title = {
@@ -34,7 +34,7 @@ def print_length_stats_latex(stat_dataa, set_names):
 
 def new_line_for_space(data):
     """
-    TODO
+    Inserts a new line for every new n=word within the name of an item
     """
     for i in range(0, len(data[0])):
         while(True):
@@ -69,7 +69,10 @@ def get_bargraph_data(data_set, path):
     data = read_csv(path)
     return [data[0], [int(data[1][j]) for j in range(0, len(data[0]))] ]
 
-def create_bar_graph_log_subplots(ys, xs, info):   
+def create_bar_graph_log_subplots(ys, xs, info):
+    """
+    Creates a bar graph, and an adjacent log scatter graph 
+    """
     fig, (ax1, ax2) = plt.subplots(1, 2, figsize=(9.5, 2))
     
     # bar graph

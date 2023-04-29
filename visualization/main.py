@@ -5,35 +5,9 @@ from stats import stats_on_numbers
 from visualization_morphemes import bar_graphs_morphemes
 from visualization_ety_types import ety_types, ety_types_table_pl, ety_types_bar_graph_normalized
 from visualization_depths import number_of_depths
+from visualization_influence import print_page_rank_data
 
 os.system('clear')
-
- 
-# print(sys.path)
-# os.system('clear')
-
-# root = '/Users/michal/Documents/thesis/etymologies_of_jargon/results'
-
-def pls_top_for_morphemes():
-
-    
-    return 
-
-
-
-def standardized_ety_types(filename):
-    
-    return
-
-
-def bar_graphs_characters_by_year():
-    data = get_bargraph_data("PL", path)
-    return
-
-def version_numbering(data_set):
-    
-    return
-
 
 # -------------------------------
 # ------- VISUALIZATION ---------
@@ -48,8 +22,6 @@ print("visualizing...")
 # bar_graphs_characters("CP")
 # bar_graphs_characters("RG")
 # bar_graphs_characters("PM")
-
-# bar_graphs_characters_by_year()
 
 # noc_all = stats_on_numbers("All", "name_length", "Number of Characters")
 # noc_pl = stats_on_numbers("PL", "name_length", "Number of Characters")
@@ -90,6 +62,13 @@ print("visualizing...")
 # ety_types_bar_graph_normalized()
 # ety_types('ety_type_2_by_decade', normalized=True)
 # ety_types_table_pl('ety_type_2_by_decade')
+
+# page rank data
+# print_page_rank_data('ALL')
+print_page_rank_data('PL')
+print_page_rank_data('CP')
+print_page_rank_data('RG')
+print_page_rank_data('PM')
 
 # cultural heritage
 # bar_graphs_ch() # "CH", 'cultural_heritage'

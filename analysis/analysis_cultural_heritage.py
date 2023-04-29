@@ -33,6 +33,9 @@ def prepare_cultural_heritage_frequency_total(data, headers):
     return
 
 def prepare_cultural_heritage_frequency_by_data_set(data, headers, disallowed=[]): 
+    """
+    Creates as csv that counts the number of cultural heritage values in data
+    """
     hash_table_ds_ch_num = {}
     hash_table_ds_num = {}
     ch_pos = find_field_position(headers, "Cultural Heritage (CH)")
@@ -40,11 +43,6 @@ def prepare_cultural_heritage_frequency_by_data_set(data, headers, disallowed=[]
     sem_num_pos = find_field_position(headers, "Semantic number")
     
     for i in range(0, len(data)):
-        # print(str(data[i][scrape_ident_pos]) in disallowed)
-        # if (data[i][scrape_ident_pos] in disallowed or # disallowed scrape identifiers, to filter old data sets
-        #     str(data[i][sem_num_pos]) in invalid_semantic_numbers) == True:
-            # print(str(data[i][sem_num_pos]), invalid_semantic_numbers)
-        # print(data[i][sem_num_pos])
         if (data[i][scrape_ident_pos] in disallowed or # disallowed scrape identifiers, to filter old data sets
             str(data[i][sem_num_pos]) in invalid_semantic_numbers): # semantic numbers that mention duplicates
             continue

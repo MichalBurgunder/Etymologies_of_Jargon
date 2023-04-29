@@ -29,6 +29,10 @@ def get_additive_second_names(data, headers, element_hashmap, duplicates):
                 duplicates.append([data[i][scr_name_pos], data[i][scr_iden_pos], data[element_hashmap["ti"][data[i][clean_name_pos]]][scr_iden_pos]])
      
 def header_hashmaps(headers, other_headers):
+    """
+    Creates two hashmaps, that map the header name to a position, and a position
+    to a header name
+    """
     head_i_hm = {}
     i_head_hm = {}
     
@@ -170,6 +174,10 @@ def get_element_hashmap(data, headers, cs):
     return element_hashmap
     
 def verify_no_duplicate_jargons(data, headers):
+    """
+    Verifies that jargons of a data point are not documented.
+    If they are, it prints out the name of the point in question, and its 
+    """
     clean_name_pos = find_field_position(headers, 'Cleaned Name')
     scrap_name_pos = find_field_position(headers, 'Scrape Identifier')
     jargon_poss = [
@@ -179,7 +187,7 @@ def verify_no_duplicate_jargons(data, headers):
             find_field_position(headers, '4th Jargon')
         ]
         
-    errors = False
+    strings = []
     for i in range(0, len(data)):
         jargons = []
         for j_pos in jargon_poss:
@@ -188,9 +196,12 @@ def verify_no_duplicate_jargons(data, headers):
 
         set_jargons = list(set(jargons))
         if len(jargons) != len(set_jargons):
-            print(data[i][clean_name_pos], data[i][scrap_name_pos])
-            errors = True
-    if errors:
+            strings.append(data[i][clean_name_pos], data[i][scrap_name_pos])
+
+    if len(strings):
+        print("Duplicate jargons mentions found for singular data points:")
+        for i in range(0, len(0, len(strings))):
+            print(f"Point: {strings[0]} Scrape Identifier: {strings[1]}")
         print("Fix these issues before rerunning this program")
         exit()
     
@@ -306,6 +317,7 @@ def add_virtual_columns(dataa, names, default_values):
 
 def merge_csv_headers(root, paths):
     """
+    Returns an array of the headers of multiple .csv files
     """
     headerss = []
 

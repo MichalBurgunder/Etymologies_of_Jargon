@@ -3,10 +3,11 @@ import pandas as pd
 from file_management import save_as_csv
 from config import raw_data_root, root
 
-"""
-Script for sampling 100 ruby gems from the available +170'000 
-"""
+
 def sample_from_csv(file_name, resulting_file_name):
+    """
+    Script for sampling 100 ruby gems from the available +170'000 
+    """
     final_data = []
 
     df = pd.read_csv(f"{raw_data_root}/{file_name}.csv")

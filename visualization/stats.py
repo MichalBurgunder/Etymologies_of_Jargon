@@ -42,7 +42,7 @@ def get_mean_special(data):
 
 def get_variance_special(data, mean):
     """
-    computes the variance of an array of numbers
+    Computes the variance of an array of numbers
     TODO: verify this
     """
     variance = 0
@@ -64,7 +64,7 @@ def get_median_special(data):
 
 def get_max_min(the_array):
     """
-    gets the minimum and maximum values of an array
+    Gets the minimum and maximum values of an array
     """            
     return [np,min(the_array), np.max(the_array)]
 
