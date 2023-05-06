@@ -20,8 +20,12 @@ import re
 import json
 import requests
 import time
+import sys
 from datetime import datetime
-from file_management import save_as_csv, read_csv
+
+sys.path.append('/Users/michal/Documents/thesis/etymologies_of_jargon')
+
+from analysis.file_management import save_as_csv, read_csv
 
 def fetch_json(url):
     """
@@ -48,7 +52,7 @@ def get_strings(url):
 
 
 # we require a list of links to every package we would like to analyze
-data = read_csv('links_anaconda_packages', False, '')
+data = read_csv('links_anaconda_packages', False, 'thesis_data')
 
 final_data = [] # we store the data to be saved here
 
