@@ -1,7 +1,11 @@
 import random
 import pandas as pd
-from file_management import save_as_csv
-from config import raw_data_root, root
+import sys
+
+sys.path.append('/Users/michal/Documents/thesis/etymologies_of_jargon')
+
+from analysis.file_management import save_as_csv
+from analysis.config import raw_data_root, root
 
 
 def sample_from_csv(file_name, resulting_file_name):
@@ -10,7 +14,7 @@ def sample_from_csv(file_name, resulting_file_name):
     """
     final_data = []
 
-    df = pd.read_csv(f"{raw_data_root}/{file_name}.csv")
+    df = pd.read_csv(f"{raw_data_root}/{file_name}.csv", low_memory=False)
     number_rows = len(df.axes[0])
     random_numbers = [random.randrange(0, number_rows) for i in range(0,100)]
     
@@ -25,7 +29,7 @@ def sample_from_csv(file_name, resulting_file_name):
                     break
             final_data.append([word])
 
-    save_as_csv(final_data, "sampled_gems", False, {"subfolder": "raw_data"})
+    save_as_csv(final_data, "sampled_gems", False, {"subfolder": "thesis_data/raw_data"})
     return f"{root}/{resulting_file_name}.csv"
 
 sample_from_csv('gems', 'sampled_gems')
