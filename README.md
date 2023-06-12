@@ -1,4 +1,4 @@
-# Onomastics of Software
+# onomastiware (Onomastics of Software)
 
 This repository is published in conjunction with the hand-in of my Master's thesis "Onomastics of Software". It is primarily meant as an addtional source of information for the Master's committee, who are evaluating my handed in thesis (see `latex/main.tex` for the full latex text for the thesis.). It's secondary use, is for any researchers who might be interested in either creating & analyzing their own data sets, or researchers who would like to build on on this thesis, to either perform more analyses, extend data sets, or use this repo for any other endeavor they might have.  
 
