@@ -18,7 +18,7 @@ def count_field_types_by_scrape(data, ety_type2_pos, scr_name_pos, scr_ident='')
                 all_types[data[i][ety_type2_pos]] = 1
             else: 
                 all_types[data[i][ety_type2_pos]] += 1
-    
+    print(all_types)
     return all_types
 
 def prepare_2nd_ety_type_data(all_elements, headers, scr_ident=""):

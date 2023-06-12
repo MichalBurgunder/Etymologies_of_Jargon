@@ -20,3 +20,19 @@ playground*.*
 # python 
 __pycache__
 
+# latex
+*.aux
+*.fdb_latexmk
+*.fls
+*.log
+*.lot
+*.lof
+*.idx
+*.bbl
+*.out
+*.toc
+*.gz
+*.txt
+
+word_counter.py
+settings.json

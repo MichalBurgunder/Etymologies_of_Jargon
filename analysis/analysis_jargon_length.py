@@ -12,9 +12,10 @@ def remove_specification(name):
     
     the_range = [None, None]
     edge = 1
-    # we go backwards, in case a name for some reason uses brackets otherwise, if later on
-    # brackets are added at the end for every name (for standardize deduplication), this
-    # ensures that the complexity of this function is minimal
+    # we go backwards, in case a name for some reason uses brackets otherwise,
+    # if later on brackets are added at the end for every name (for standardize
+    # deduplication), this ensures that the complexity of this function is
+    # minimal
     for i in range(len(name)-1, 0, -1): 
         if edge and name[i] == ")":
             the_range[edge] = i
@@ -46,6 +47,3 @@ def prepare_jargon_length(data, headers, scrape_ident=''):
     cleaned_scrape_name = clean_scrape_name(scrape_ident)
     save_as_csv([[i for i in range(0, the_max)], final_data], f'name_length_{cleaned_scrape_name}')
     return
-
-# name = "julia (programming lang)"
-# print(remove_specification(name))

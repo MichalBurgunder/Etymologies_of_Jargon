@@ -8,7 +8,7 @@ from analysis_max_depth import populate_ety_depths, prepare_depth_data
 from preparatory import get_headers_hashmap, get_element_hashmap, prepare_data, add_virtual_columns
 from file_management import save_as_csv
 from config import prepare_globals, fill_clean_names, root, paths, ety_depth
-from utils import get_run_options
+from utils import get_run_options, find_field_position
 from analysis_by_decade import prepare_ety_by_decade_data
 from analysis_number_morphemes import number_of_morphemes
 from analysis_jargon_length import prepare_jargon_length
@@ -59,6 +59,14 @@ def __main__():
     print("No new additives. Proceeding to analysis...")
     # -----------------------------------
     
+    # hs = {"GNU": 0, "PL": 0, "CP": 0, "RG": 0, "PM": 0, "ADD": 0}
+    # for i in range(0, len(dataa[0])):
+    #     krhjgbiejrngvak = find_field_position(headers, "Scrape Identifier")
+    #     hs[dataa[0][i][krhjgbiejrngvak]] += 1
+    # print(hs)
+    # # print(normal)
+    # exit()
+    
     # prepare_ety_by_decade_data(dataa[0], headers, "PL", 1)
     # prepare_ety_by_decade_data(dataa[0], headers, "PL", 2)
     # prepare_jargon_length(dataa[0], headers)
@@ -102,7 +110,7 @@ def __main__():
     # prepare_2nd_ety_type_data(dataa[0], headers, "PL")
     # prepare_2nd_ety_type_data(dataa[0], headers, "CP")
     # prepare_2nd_ety_type_data(dataa[0], headers, "RG")
-    # prepare_2nd_ety_type_data(dataa[0], headers, "PM")
+    prepare_2nd_ety_type_data(dataa[0], headers, "PM")
     
     # prepare_cultural_heritage_frequency_total(dataa[0], headers)
     # prepare_cultural_heritage_frequency_by_data_set(dataa[0], headers, ["GNU", "ADD", "Fix"])
@@ -111,9 +119,10 @@ def __main__():
     
     # influence
     # [all_pg_matricies, all_identifiers, all_submatrix_hms]
-    pg_matricies_info, edges_removed = prepare_pagerank_data(dataa[0], element_hash_map["ti"], headers, cs, True)
-    # print(len(pg_matricies_info))
-    io_algo_wrapper(pg_matricies_info[0][-1], pg_matricies_info[2][-1], cs, dataa[0])
+    # pg_matricies_info, edges_removed = prepare_pagerank_data(dataa[0], element_hash_map["ti"], headers, cs, True)
+    # pg_matricies_info = prepare_pagerank_data(dataa[0], element_hash_map["ti"], headers, cs)
+    # print(edges_removed)
+    # io_algo_wrapper(pg_matricies_info[0][-1], pg_matricies_info[2][-1], cs, dataa[0])
     
     print("All done!")
     

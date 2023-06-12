@@ -24,7 +24,8 @@ def number_of_morphemes(data, headers, scrape_ident=''):
                 (scrape_ident == 'TOP' and data[i][scrape_clean_pos].lower() in top_languages) # taking only those fields that are within a specific array of strings
         ):
             try:
-                # number of mophemes cannot exceed 10. Used to verify the correctness of the field. Increase if necessary
+                # number of mophemes cannot exceed 10. Used to verify the
+                # correctness of the field. Increase if necessary
                 if int(data[i][no_morph_pos]) < mm: 
                     final_data[1][int(data[i][no_morph_pos])-1] += 1
             except:

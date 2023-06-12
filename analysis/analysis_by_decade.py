@@ -1,5 +1,6 @@
 
 import numpy as np    # to create dummy data
+
 from config import find_field_position
 from utils import number_only, fill_no_etymology, print_errors
 from file_management import save_as_csv
@@ -103,6 +104,6 @@ def prepare_ety_by_decade_data(all_elements, headers, scrape_ident='', type=1):
     print("starting ety type by year analysis...")
     remove_special_chars_year(all_elements, headers)
     fill_no_etymology(all_elements, headers, field=ety_type)
-    unique_ety_types = get_all_unique_etymology_types(all_elements, headers, scrape_ident, ety_type)
+    get_all_unique_etymology_types(all_elements, headers, scrape_ident, ety_type)
     data = prepare_year_type_data(all_elements, headers, scrape_ident, ety_type)
     save_as_csv(data, f"ety_type_{type}_by_decade")

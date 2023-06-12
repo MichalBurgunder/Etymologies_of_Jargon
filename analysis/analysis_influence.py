@@ -179,13 +179,13 @@ def create_data_set_specific_pg_matrices(data, elem_entry_hm, cs):
         the_keys.sort() # was included for determinism
 
         n = len(the_keys)
-        # exit()
+
         # we define the positions of each point in the submatrix, from the "master-matrix"
         # we do this at the beginning, so that we can always fetch these names in the main "filling-out" loop
         submatrix_hm = {}
         for j in range(0, n):
             submatrix_hm[the_keys[j]] = j 
-        # print(submatrix_hm)
+
         # we FINALLY define the final matrix that will be saved
         pg_matrix = [[0] * n for j in range(0, n)] # actual final pg_submatrix
         
@@ -200,7 +200,6 @@ def create_data_set_specific_pg_matrices(data, elem_entry_hm, cs):
             if num_jargons == 0:
                 continue
             
-            # dividend = num_jargons if num_jargons > 0 else 1
             the_num = 1/num_jargons
 
             # we the num in place, we simply need to fill it in the correct positions in the pg_matrix
@@ -256,7 +255,7 @@ def prepare_pagerank_data(data, elem_entry_hm, headers, cs, pg_matricies_only=Fa
     # we've taken out edges to turn the graph into a DAG (instead of a  DAAG)
     # here, we put them back in, in case further processing depends on this
     reinsert_edges(data, edges_removed)
-    return all_pg_matricies
+    return all_pg_matricies, all_identifiers, all_submatrix_hms
 
 
 def go_down(data, entry, cs, count_array, element_pos_hm, leaf_array):
@@ -305,9 +304,8 @@ def io_algo_wrapper(data, element_pos_hm, cs, og_data):
     resulting data.
     """
     # we reverse the existing hashmap.
-    # # this way we know what name each index refers to
+    # this way we know what name each index refers to
     pos_to_name_hm = reverse_hashmap(element_pos_hm)
-
 
     # we run the io algorithm here
     # first, we calculate influence...

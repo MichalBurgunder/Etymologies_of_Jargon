@@ -2,10 +2,13 @@ import unittest
 import numpy as np
 import copy
 import sys
+import os
 
 sys.path.append('/Users/michal/Documents/thesis/etymologies_of_jargon')
 
-from analysis.analysis_influence import create_pagerank_matrix, is_recursive, remove_cycles, create_data_set_specific_pg_matrices
+from analysis.analysis_influence import create_pagerank_matrix, is_recursive, remove_cycles, create_data_set_specific_pg_matrices, influence_opacity_algorithm, pagerank
+
+os.system('clear')
 
 """
 Most of these are sanity checks
@@ -82,7 +85,7 @@ class PageRank(unittest.TestCase):
                 self.assertEqual(final_matrix[i][j], pg_matrix[i][j])
         
         
-    # @unittest.skip('')
+    @unittest.skip('')
     def test_is_recursive(self):
         
         jargon_poss = [1,2,3]
@@ -97,7 +100,7 @@ class PageRank(unittest.TestCase):
         self.assertEqual(edge[0], 0)
         self.assertEqual(edge[1], 1)
     
-    # @unittest.skip('')
+    @unittest.skip('')
     def test_remove_cycles1(self):
         cs = {'jargon_entry_positions': [1,2,3], "clean_name_pos": 0}
         the_hm = {"test1": 0, "test2": 1, "test3": 2}
@@ -121,7 +124,7 @@ class PageRank(unittest.TestCase):
         self.assertEqual(matrix[2][2], "")
         self.assertEqual(matrix[2][3], "")
     
-    # @unittest.skip('')
+    @unittest.skip('')
     def test_remove_cycles2(self):
         cs = {'jargon_entry_positions': [1,2,3], "clean_name_pos": 0}
         the_hm = {"test1": 0, "test2": 1, "test3": 2}
@@ -155,7 +158,7 @@ class PageRank(unittest.TestCase):
         # TODO
         placeholder = 0
     
-    # @unittest.skip('') 
+    @unittest.skip('') 
     def test_prepare_dynamic_pg_matricies(self):
         elem_entry_hm = {
             "all1": 0,
@@ -187,7 +190,7 @@ class PageRank(unittest.TestCase):
         self.assertEqual(matricies[0][0][2][1], 1)
         self.assertEqual(matricies[0][0][2][2], 0)
     
-    
+    @unittest.skip('')
     def test_prepare_dynamic_pg_matricies(self):
         elem_entry_hm = {
             "all1": 0,
@@ -209,6 +212,110 @@ class PageRank(unittest.TestCase):
         # print(matricies[0][0])
         print(matricies[0])
         
+    @unittest.skip('')
+    def test_io_algorithm_simple_test_case(self):
+        elem_entry_hm = {
+            "A": 0,
+            "B": 1,
+            "C": 2,
+            "D": 3,
+            "E": 4,
+            "F": 5,
+            "G": 6,
+            "H": 7
+            
+        }
+        data = [
+            ["A", "test", "D",  "",  "", ""],
+            ["B", "test", "D", "E",  "", ""],
+            ["C", "test", "E",  "",  "", ""],
+            ["D", "test", "F",  "",  "", ""],
+            ["E", "test", "F", "G", "H", ""],
+            ["F", "test",  "",  "",  "", ""],
+            ["G", "test",  "",  "",  "", ""],
+            ["H", "test",  "",  "",  "", ""]
+        ]
+        data = np.array([
+           # A  B  C  D  E  F  G  H
+            [0, 0, 0, 0, 0, 0, 0, 0], # A
+            [0, 0, 0, 0, 0, 0, 0, 0], # B
+            [0, 0, 0, 0, 0, 0, 0, 0], # C
+            [1, 1, 0, 0, 0, 0, 0, 0], # D
+            [0, 1, 1, 0, 0, 0, 0, 0], # E
+            [0, 0, 0, 1, 1, 0, 0, 0], # F
+            [0, 0, 0, 0, 1, 0, 0, 0], # G
+            [0, 0, 0, 0, 1, 0, 0, 0], # H
+        ])
+        cs = {"clean_name_pos": 0, "scrape_identifier_pos": 1, "jargon_entry_positions": [2,3,4,5] }
+        cs = {}
         
+        result_opacity = influence_opacity_algorithm(data, elem_entry_hm, cs)
+        result_influence = influence_opacity_algorithm(data.T, elem_entry_hm, cs)
+        print(result_opacity[0])
+        print(result_influence[0])
+        
+        self.assertEqual(result_opacity[0][0], 3)
+        self.assertEqual(result_opacity[0][1], 7)
+        self.assertEqual(result_opacity[0][2], 5)
+        self.assertEqual(result_opacity[0][3], 2)
+        self.assertEqual(result_opacity[0][4], 4)
+        self.assertEqual(result_opacity[0][5], 1)
+        self.assertEqual(result_opacity[0][6], 1)
+        self.assertEqual(result_opacity[0][7], 1)
+            
+        self.assertEqual(result_influence[0][0], 1)
+        self.assertEqual(result_influence[0][1], 1)
+        self.assertEqual(result_influence[0][2], 1)
+        self.assertEqual(result_influence[0][3], 3)
+        self.assertEqual(result_influence[0][4], 3)
+        self.assertEqual(result_influence[0][5], 7)
+        self.assertEqual(result_influence[0][6], 4)
+        self.assertEqual(result_influence[0][7], 4)
+        self.assertEqual(result_influence[0][7], 4)
+            
+        
+        
+    @unittest.skip('')
+    def test_page_rank_thesis_result(self):
+        basic_matrix = np.array(
+            [
+                [0, 1, 1, 0],
+                [0, 0, 0, 0],
+                [0, 0, 0, 1],
+                [0, 0, 0, 0]
+            ]
+        )
+            
+        basic_matrix_with_cycle = np.array(
+            [
+                [0, 1, 1, 0],
+                [0, 1, 0, 0],
+                [0, 0, 0, 1],
+                [0, 0, 0, 0]
+            ]
+        ) 
+        
+        basic_matrix_with_extra_node = np.array(
+            [
+                [0, 1, 1, 0, 0],
+                [0, 0, 0, 0, 1],
+                [0, 0, 0, 1, 0],
+                [0, 0, 0, 0, 0],
+                [0, 0, 0, 0, 0]
+            ]
+        )   
+        basic_matrix_pg_results = pagerank(basic_matrix, 20, )
+        basic_matrix_with_cycle_pg_results = pagerank(basic_matrix_with_cycle, 20)
+        basic_matrix_with_extra_node_pg_results = pagerank(basic_matrix_with_extra_node, 20)
+        # print(sum(basic_matrix_with_extra_node_pg_results))
+        # exit()
+        basic_matrix_pg_results_norm = basic_matrix_pg_results/sum(basic_matrix_pg_results)
+        basic_matrix_with_cycle_pg_results_norm = basic_matrix_with_cycle_pg_results/sum(basic_matrix_with_cycle_pg_results)
+        basic_matrix_unwinded_pg_results_norm = basic_matrix_with_extra_node_pg_results/sum(basic_matrix_with_extra_node_pg_results)
+        # # print()
+        print(np.round(basic_matrix_pg_results_norm,2))
+        print(np.round(basic_matrix_with_cycle_pg_results_norm,2))
+        print(np.round(basic_matrix_unwinded_pg_results_norm,2))
+            
 if __name__ == '__main__':
     unittest.main()

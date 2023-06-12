@@ -59,16 +59,16 @@ print("visualizing...")
 
 # stats on ety types
 # ety_types_table_pl('ety_type_2_by_decade')
-# ety_types_bar_graph_normalized()
+ety_types_bar_graph_normalized()
 # ety_types('ety_type_2_by_decade', normalized=True)
 # ety_types_table_pl('ety_type_2_by_decade')
 
 # page rank data
 # print_page_rank_data('ALL')
-print_page_rank_data('PL')
-print_page_rank_data('CP')
-print_page_rank_data('RG')
-print_page_rank_data('PM')
+# print_page_rank_data('PL')
+# print_page_rank_data('CP')
+# print_page_rank_data('RG')
+# print_page_rank_data('PM')
 
 # cultural heritage
 # bar_graphs_ch() # "CH", 'cultural_heritage'

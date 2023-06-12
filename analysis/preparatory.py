@@ -249,11 +249,14 @@ def prepare_data(root, paths, options={}):
     name_hm = {}
     
     i = 0
-    
+    hs = {"GNU": 0, "PL": 0, "CP": 0, "RG": 0, "PM": 0, "ADD": 0}
     file = csv.reader(open(path, mode ='r'))
     # names = []
     for line in file:
         clean_name_original = copy.copy(line[clean_name_pos])
+        hs[line[scrape_identifier_pos]] += 1
+
+    
         # we clean the certain fields, so as not to get differently whitespaced, or capitalized jargons
         for dirty_field_pos in to_clean_fields:
             line[dirty_field_pos] = line[dirty_field_pos].lower().strip()
