@@ -4,15 +4,13 @@ This repository is published in conjunction with the hand-in of my Master's thes
 
 ## Analyses
 
-**Name length**: Outputs simple bar graphs that showcase the number of characters per name, per data set
-
-**Number of Morphemes**: Computes the number of morphemes in a jargon
-
-**Max_depth**: Computes the maximum depth of a tree of data points
-
-**Ety_type 2**: Visualizes the 2nd Ety. Type of data points
-
-**Influence-Opacity**: Computes the influence and opacity values of names, as defined by the maste's thesis
+**Name Length**: Counts the length of the names inserted
+**Morpheme Count**: Counts the number of morphemes per node
+**Maximum Depth**: Computes the maximum depth of a single node
+**Ety_type 1**: Creates a histogram of Ety. types by decade
+**Ety_type 2**: Does the same thing as the above anaylsis, but instead, with the 2nd "Ety. Type" field
+**Power Iteration**: Computes the power iteration values for each node, on the whole inserted data set, or on a dataset with a particular identifier
+**Influence & Opacity**: Computes the *influence* and *opacity* of a node
 
 
 ## Usage
