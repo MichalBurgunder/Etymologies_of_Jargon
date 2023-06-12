@@ -5,11 +5,17 @@ This repository is published in conjunction with the hand-in of my Master's thes
 ## Analyses
 
 **Name Length**: Counts the length of the names inserted
+
 **Morpheme Count**: Counts the number of morphemes per node
+
 **Maximum Depth**: Computes the maximum depth of a single node
+
 **Ety_type 1**: Creates a histogram of Ety. types by decade
+
 **Ety_type 2**: Does the same thing as the above anaylsis, but instead, with the 2nd "Ety. Type" field
+
 **Power Iteration**: Computes the power iteration values for each node, on the whole inserted data set, or on a dataset with a particular identifier
+
 **Influence & Opacity**: Computes the *influence* and *opacity* of a node
 
 
