@@ -5,10 +5,15 @@ This repository is published in conjunction with the hand-in of my Master's thes
 ## Analyses
 
 **Name length**: Outputs simple bar graphs that showcase the number of characters per name, per data set
+
 **Number of Morphemes**: Computes the number of morphemes in a jargon
+
 **Max_depth**: Computes the maximum depth of a tree of data points
+
 **Ety_type 2**: Visualizes the 2nd Ety. Type of data points
+
 **Influence-Opacity**: Computes the influence and opacity values of names, as defined by the maste's thesis
+
 
 ## Usage
 
