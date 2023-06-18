@@ -143,9 +143,15 @@ def ety_types_table_pl(filename):
     
     return
 
+def choose_color(row, arr_len, presentation=False):
+    """
+    Because we are now choosing a new order of colors, we also need to choose
+    different positions in the color array
+    """
+    return row if not presentation else arr_len-row-1
 
 
-def ety_types_bar_graph_normalized():
+def ety_types_bar_graph_normalized(presentation=False):
     """
     Creates a normalized stacked bar graph that compares the ratios of
     ety types between different data sets. 
@@ -160,15 +166,49 @@ def ety_types_bar_graph_normalized():
     
     raw_data_normalized = normalize_data(raw_data.T).T
 
+
+    # these are the categories found in the ety type per decade visualization, in this order. 
+    # in order to match color, we might want to align our entries with there
+    # ['Missing', 'Implicit', 'Artifact', 'Abbreviation', 'Reference', 'Legal Entity', 'Attribution', 'Version', 'Descriptor', 'None', 'Theme']
+    
+    # determines if I am creatig a graph for the presetation (modern) or a quick fix for the first version of the thesis
+    if presentation:
+        translation = {
+            'Missing': 1,
+            'Implicit': 8,
+            'Artifact': 5,
+            'Abbreviation': 0,
+            'Reference': 9,
+            'Legal Entity': 4,
+            'Attribution': 3,
+            'Version': 10,
+            'Descriptor': 2,
+            'None': 7,
+            'Theme': 6 
+        }
+        new_ety_types_list = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
+        new_raw_data =       [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
+        
+        # here we make the switch, with the label, and the data
+        for i in range(0, len(ety_types_list)):
+            new_ety_types_list[translation[ety_types_list[i]]] = ety_types_list[i]
+            new_raw_data[translation[ety_types_list[i]]] = np.round(raw_data[:,i],1)
+
+        new_raw_data = np.array(new_raw_data).T
+        raw_data_normalized = normalize_data(new_raw_data.T).T
+        ety_types_list = new_ety_types_list
+        
+
     for row in range(0,len(ety_types_list)):
         bottoms = [0]*len(data_set_names) if row == 0 else bottoms + raw_data_normalized[:,row-1]
-        plt.bar(data_set_names, raw_data_normalized[:,row], color=colors[row],  bottom=bottoms, align='center')
+        plt.bar(data_set_names, raw_data_normalized[:,row], color=colors[choose_color(row, len(ety_types_list), presentation)],  bottom=bottoms, align='center')
 
     plt.subplots_adjust(right=0.7)
     plt.legend(ety_types_list, loc='center left', bbox_to_anchor=(1.2, 0.5))
     plt.title("2nd Ety. Types per Data Set")
     plt.xlabel("Data Sets")
     plt.ylabel("Relative Percentage of 2nd Ety. Types")
-    plt.savefig(f"{root}/figures/bar_graph_2nd_ety_types_data_sets.png", bbox_inches='tight')
+    # plt.savefig(f"{root}/figures/bar_graph_2nd_ety_types_data_sets.png", bbox_inches='tight')
+    plt.show()
 
     return
