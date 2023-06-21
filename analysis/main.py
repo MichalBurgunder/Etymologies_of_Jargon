@@ -17,6 +17,7 @@ from analysis_cultural_heritage import prepare_cultural_heritage_frequency_total
 from analysis_ety_types_by_set import prepare_ety_type_counts
 from analysis_influence import prepare_pagerank_data, io_algo_wrapper, reinsert_edges
 from search_data import possible_search
+from create_etymology import create_etymology
 os.system('clear')
 
 # lines, element_hashmap, headers, header_hms = dataa[0], dataa[1], dataa[2], dataa[3] !!OBS!!
@@ -56,6 +57,11 @@ def __main__():
 
     populate_ety_depths(ready_dataa, cs, options)
 
+    name = "_ipyw_jlab_nb_ext_conf"
+    print(name)
+    create_etymology(ready_dataa[0], element_hash_map["ti"], name, headers)
+    
+    exit()
     print("No new additives. Proceeding to analysis...")
     # -----------------------------------
     
@@ -110,7 +116,7 @@ def __main__():
     # prepare_2nd_ety_type_data(dataa[0], headers, "PL")
     # prepare_2nd_ety_type_data(dataa[0], headers, "CP")
     # prepare_2nd_ety_type_data(dataa[0], headers, "RG")
-    prepare_2nd_ety_type_data(dataa[0], headers, "PM")
+    # prepare_2nd_ety_type_data(dataa[0], headers, "PM")
     
     # prepare_cultural_heritage_frequency_total(dataa[0], headers)
     # prepare_cultural_heritage_frequency_by_data_set(dataa[0], headers, ["GNU", "ADD", "Fix"])
