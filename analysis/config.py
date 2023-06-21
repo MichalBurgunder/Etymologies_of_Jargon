@@ -46,7 +46,8 @@ file_names = {
     "name_length": "name_length_",
     "CH": "cultural_heritage",
 }
-    # taken from https://spectrum.ieee.org/top-programming-languages-2022, (spectrum)
+
+# taken from https://spectrum.ieee.org/top-programming-languages-2022, (spectrum)
 top_languages = [name.lower() for name in ["Python", "C", "C++", "C#", "Java", "SQL", "JavaScript", "R", "HTML", "TypeScript", "Go", "PHP", "Shell", "Ruby", "Scala", "Matlab", "SAS", "ASM", "Kotlin", "Rust", "Perl", "Objective-C", "Dart", "Swift", "Verilog", "Arduino", "D", "Julia", "Cuda", "VHDL", "Visual Basic", "LabView", "Groovy", "Lua", "Ada", "Scheme", "ABAP", "Haskell", "COBOL", "Elixir", "F#", "LISP", "Pascal", "FORTRAN", "TCL", "Clojure", "Prolog", "Ocaml", "Ladder Logic", "Erlang", "J", "Forth", "Elm", "Raku", "WebAssembly", "CoffeeScript", "Eiffel"]]
 
 def prepare_cs_fields(dataa, cs):

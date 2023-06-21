@@ -1,12 +1,15 @@
 
 import numpy as np
-from utils import copy_array
-from file_management import save_as_txt, save_as_csv
+
+from utils import copy_array, find_field_position
 from config import element_limit, jargon_entries_connection_types_titles, jargon_entries_connection_types_types
-from utils import find_field_position
+from file_management import save_as_txt, save_as_csv
+
+
 global recur
 recur = 0
 recur_limit = 20
+
 # The function that computes the max depth of an entry
 def get_max_depth(data, entry, element_hashmap, header_hms, cs, previous_jargons, options={}):
     """

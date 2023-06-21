@@ -1,7 +1,6 @@
 
 import csv
 from os.path import exists
-import random
 
 from analysis.config import raw_data_root, root
 
