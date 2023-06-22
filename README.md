@@ -34,6 +34,11 @@ While the software can recreate the proessed data & tables, its most useful feat
 9. Modify the `visualization.py` file, to specify which data sets should be visualized
 10. Run `python visualization.py`. You will find your figures in `figures`
 
+
+## Link to Data
+
+https://docs.google.com/spreadsheets/d/1h_RDU8NZPRNrLs1YORYF9m4SB2vk-hXwp4goTW8GlEM/edit#gid=1796049351
+
 ## Licence
 
 All of this software and its data is licensed under the GPL licence. The reason for this, is that while I'd support the MIT licence in order to allow others to use the data as they wish, I'd like to avoid people to use the software in ways that I did not intend (e.g. sell the software). Licensing it under GPL avoid this, so that an extensions/modifications to the software, requires them to make it open-source as well. The study has (in a vague shape or form) been funded by the Università della svizzera italiana (USI), a institution funded by the state, so the the products of the university ought to "belong" to the state, i.e. everyone in the country, and by extension of the internet, the world. Thus, GPL is the best choice. 
